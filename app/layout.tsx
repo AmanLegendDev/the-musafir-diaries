@@ -87,7 +87,7 @@ export default function RootLayout({
     >
     
       <body>
-        <Navbaar/>
+       
         {children}   <Toaster richColors /> </body>
     </html>
   );
