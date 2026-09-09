@@ -1,141 +1,92 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
-import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
+import { useId } from "react";
 
 interface DestinationSearchProps {
-  search: string;
-  setSearch: Dispatch<SetStateAction<string>>;
+  value: string;
+  onChange: (value: string) => void;
+  onClear?: () => void;
 }
 
 export default function DestinationSearch({
-  search,
-  setSearch,
+  value,
+  onChange,
+  onClear,
 }: DestinationSearchProps) {
+  const inputId = useId();
+
+  const hasValue = value.trim().length > 0;
+
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.5,
-      }}
-      viewport={{
-        once: true,
+    <div className="relative">
+      <label htmlFor={inputId} className="sr-only">
+        Search destinations
+      </label>
 
-        
-      }}
+      <div
+        className={[
+          "group relative flex min-h-[72px] items-center overflow-hidden rounded-[24px] mt-4",
+          "border bg-white transition-all duration-300",
+          hasValue
+            ? "border-[#087E8B]/40 shadow-[0_12px_40px_rgba(8,126,139,0.08)]"
+            : "border-[#071A33]/10 shadow-[0_8px_30px_rgba(7,26,51,0.04)]",
+          "focus-within:border-[#087E8B]/45",
+          "focus-within:shadow-[0_12px_45px_rgba(8,126,139,0.10)]",
+        ].join(" ")}
+      >
+        {/* Left accent */}
+        <span
+          aria-hidden="true"
+          className="absolute left-0 top-0 h-full w-[3px] bg-[#087E8B] opacity-0 transition-opacity duration-300 group-focus-within:opacity-100"
+        />
 
-      
-     className="
-sticky
-top-20
-z-30
+        {/* Search icon */}
+        <div className="flex h-full w-[68px] shrink-0 items-center justify-center sm:w-[76px]">
+          <Search
+            className={[
+              "h-5 w-5 transition-colors duration-300",
+              hasValue
+                ? "text-[#087E8B]"
+                : "text-[#071A33]/35 group-focus-within:text-[#087E8B]",
+            ].join(" ")}
+            strokeWidth={1.7}
+          />
+        </div>
 
-w-full
+        {/* Input */}
+        <input
+          id={inputId}
+          type="search"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder="Where would you like to wander?"
+          autoComplete="off"
+          spellCheck={false}
+          className="h-full min-w-0 flex-1 bg-transparent pr-3 text-sm text-[#071A33] outline-none placeholder:text-[#071A33]/35 sm:text-base"
+        />
 
-bg-slate-50/90
-backdrop-blur-md
+        {/* Clear */}
+        {hasValue && (
+          <button
+            type="button"
+            onClick={onClear ?? (() => onChange(""))}
+            aria-label="Clear destination search"
+            className="mr-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#071A33]/10 bg-[#FAF9F5] text-[#071A33]/50 transition-all duration-200 hover:border-[#087E8B]/30 hover:bg-[#087E8B]/5 hover:text-[#087E8B] sm:mr-4"
+          >
+            <X className="h-4 w-4" strokeWidth={1.8} />
+          </button>
+        )}
 
-pb-4
-"
-    >
-      {/* Search Icon */}
-
-     <motion.div
-  animate={{
-    scale: search ? 1.1 : 1,
-    rotate: search ? 8 : 0,
-
-    
-  }}
-  transition={{
-    duration: 0.2,
-  }}
-  whileInView={{
-  opacity: 1,
-  y: 0,
-}}
-
-whileHover={{
-  scale: 1.005,
-}}
-  className="absolute left-5 top-1/2 -translate-y-1/2"
->
-  <Search
-  className={`h-5 w-5 ${
-    search
-      ? "text-emerald-600"
-      : "text-slate-400"
-  }`}
-/>
-</motion.div>
-
-      {/* Input */}
-
-      <input
-        type="text"
-        placeholder={
-  search
-    ? "Searching destinations..."
-    : "Search destinations..."
-}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="
-          h-14
-          w-full
-          rounded-2xl
-          border
-          border-slate-200
-          bg-white
-          pl-14
-          pr-14
-          text-slate-800
-          shadow-sm
-          outline-none
-          transition-all
-          duration-300
-          placeholder:text-slate-400
-          focus:border-emerald-500
-          focus:ring-4
-          focus:ring-emerald-100
-        "
-      />
-
-      {/* Clear Button */}
-
-      {search && (
-     <motion.button
-  initial={{ scale: 0 }}
-  animate={{ scale: 1 }}
-  exit={{ scale: 0 }}
-  whileTap={{ scale: 0.9 }}
-  type="button"
-  onClick={() => {
-  setSearch("");
-}}
-  className="
-    absolute
-    right-4
-    top-1/2
-    -translate-y-1/2
-    rounded-full
-    bg-slate-100
-    p-2
-    transition
-    hover:bg-slate-200
-  "
->
-  <X className="h-4 w-4 text-slate-600" />
-</motion.button>
-      )}
-    </motion.div>
+        {/* Keyboard hint — desktop only */}
+        {!hasValue && (
+          <div className="mr-5 hidden shrink-0 items-center gap-1.5 md:flex">
+            <kbd className="rounded-md border border-[#071A33]/10 bg-[#FAF9F5] px-2 py-1 text-[9px] font-medium tracking-wide text-[#071A33]/35">
+              SEARCH
+            </kbd>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -1,70 +1,44 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+
+import type { Destination } from "@/lib/types/destination";
 
 import DestinationCard from "./DestinationCard";
 import DestinationEmpty from "./DestinationEmpty";
 
-interface Destination {
-  _id: string;
-  slug: string;
-  name: string;
-  heroImage: string;
-  shortDescription: string;
-  city: string;
-  state: string;
-  bestTime: string;
-  altitude: string;
-  duration: string;
-  rating: number;
-  reviewCount: number;
-  featured: boolean;
-  startingPrice: number;
-}
-
 interface DestinationGridProps {
   destinations: Destination[];
+  onClear?: () => void;
 }
 
 export default function DestinationGrid({
   destinations,
+  onClear,
 }: DestinationGridProps) {
   if (destinations.length === 0) {
-    return <DestinationEmpty />;
+    return <DestinationEmpty onClear={onClear} />;
   }
 
   return (
-    <motion.section
+    <div
       id="destinations"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{
-        once: true,
-        amount: 0.15,
-      }}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: 0.12,
-          },
-        },
-      }}
-      className="
-        mt-14
-        grid
-        gap-8
-        sm:grid-cols-2
-        xl:grid-cols-3
-      "
+      className="scroll-mt-28"
     >
-      {destinations.map((destination) => (
-       <div key={destination._id}>
-          <DestinationCard
-            destination={destination}
-          />
-        </div>
-      ))}
-    </motion.section>
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          layout
+          className="grid gap-5 lg:grid-cols-12"
+        >
+          {destinations.map((destination, index) => (
+            <DestinationCard
+              key={destination._id}
+              destination={destination}
+              index={index}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

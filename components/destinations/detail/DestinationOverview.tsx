@@ -1,148 +1,177 @@
 import {
   CalendarDays,
   Clock3,
-  Globe,
-  MapPin,
   Mountain,
+  Star,
 } from "lucide-react";
 
+import type { Destination } from "@/lib/types/destination";
+
 interface DestinationOverviewProps {
-  description: string;
-  country: string;
-  state: string;
-  city: string;
-  altitude: string;
-  bestTime: string;
-  duration: string;
-  startingPrice: number;
-rating: number;
-reviewCount: number;
+  destination: Destination;
 }
 
-import DestinationSidebar from "./DestinationSidebar";
-
 export default function DestinationOverview({
-  description,
-  country,
-  state,
-  city,
-  altitude,
-  bestTime,
-  duration,
-  startingPrice,
-  rating,
-  reviewCount,
+  destination,
 }: DestinationOverviewProps) {
-  const info = [
-    {
-      icon: MapPin,
-      label: "Location",
-      value: [city, state, country]
-        .filter(Boolean)
-        .join(", "),
-    },
-    {
-      icon: Mountain,
-      label: "Altitude",
-      value: altitude || "Not Available",
-    },
-    {
-      icon: CalendarDays,
-      label: "Best Time",
-      value: bestTime || "Year Round",
-    },
-    {
-      icon: Clock3,
-      label: "Duration",
-      value: duration || "Flexible",
-    },
-  ];
+  const hasRating =
+    destination.rating > 0 && destination.reviewCount > 0;
+
+  const hasStartingPrice =
+    destination.startingPrice > 0;
 
   return (
-    <section className="py-14 lg:py-16">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section
+      id="overview"
+      className="scroll-mt-24 bg-[#FAF9F5]"
+    >
+      <div className="mx-auto max-w-[1400px] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28 xl:px-20">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
+          {/* Editorial heading */}
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#F59E0B]" />
 
-        <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
-
-          {/* Left */}
-
-          <div>
-
-            <div className="mb-8">
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
-                <Globe className="h-4 w-4" />
-                Destination Overview
+              <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#087E8B]">
+                About {destination.name}
               </span>
-
-              <h2 className="mt-4 text-3xl font-bold text-slate-900">
-                Discover Your Next Adventure
-              </h2>
-
-              <p className="mt-5 leading-8 text-slate-600">
-                {description ||
-                  "Experience breathtaking landscapes, unforgettable adventures, and memorable journeys carefully crafted for every traveler."}
-              </p>
             </div>
 
-            {/* Information Grid */}
+            <h2 className="mt-6 max-w-xl font-serif text-4xl font-medium leading-[1.02] tracking-[-0.035em] text-[#071A33] sm:text-5xl lg:text-6xl">
+              A place to
+              <span className="block text-[#087E8B]">
+                experience, not rush.
+              </span>
+            </h2>
 
-            <div className="grid gap-5 sm:grid-cols-2">
-              {info.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={item.label}
-                    className="
-                      rounded-2xl
-                      border
-                      border-slate-200
-                      bg-white
-                      p-5
-                      transition-all
-                      duration-300
-                      hover:border-emerald-300
-                      hover:shadow-lg
-                    "
-                  >
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-                      <Icon className="h-6 w-6" />
-                    </div>
-
-                    <p className="text-sm text-slate-500">
-                      {item.label}
-                    </p>
-
-                    <h3 className="mt-1 font-semibold text-slate-900">
-                      {item.value}
-                    </h3>
-                  </div>
-                );
-              })}
-            </div>
-
+            <p className="mt-6 max-w-lg text-sm leading-7 text-[#071A33]/55 sm:text-base sm:leading-8">
+              Discover what makes {destination.name} worth the
+              journey — from its landscapes and atmosphere to
+              the moments that stay with you long after you leave.
+            </p>
           </div>
 
-          {/* Right */}
+          {/* Destination story */}
+          <div className="lg:col-span-7">
+            <div className="max-w-3xl">
+              {destination.description ? (
+                <div className="whitespace-pre-line text-base leading-8 text-[#071A33]/65 sm:text-lg sm:leading-9">
+                  {destination.description}
+                </div>
+              ) : (
+                <p className="text-base leading-8 text-[#071A33]/55 sm:text-lg sm:leading-9">
+                  Explore {destination.name} at your own pace with
+                  thoughtfully chosen journeys, stays and experiences
+                  from The Musafir Diaries.
+                </p>
+              )}
 
-  {/* Right */}
+              {/* Quick facts */}
+              <div className="mt-10 grid border-y border-[#071A33]/10 sm:grid-cols-2">
+                {destination.bestTime && (
+                  <div className="flex gap-4 border-b border-[#071A33]/10 py-5 sm:border-r sm:pr-7">
+                    <CalendarDays
+                      className="mt-0.5 h-5 w-5 shrink-0 text-[#087E8B]"
+                      strokeWidth={1.6}
+                    />
 
-<div>
-  <DestinationSidebar
-    startingPrice={startingPrice}
-    rating={rating}
-    reviewCount={reviewCount}
-    city={city}
-    state={state}
-    country={country}
-    altitude={altitude}
-    bestTime={bestTime}
-  />
-</div>
-        
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-[#071A33]/35">
+                        Best time
+                      </p>
 
+                      <p className="mt-1 text-sm font-medium text-[#071A33]">
+                        {destination.bestTime}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {destination.altitude && (
+                  <div className="flex gap-4 border-b border-[#071A33]/10 py-5 sm:pl-7">
+                    <Mountain
+                      className="mt-0.5 h-5 w-5 shrink-0 text-[#087E8B]"
+                      strokeWidth={1.6}
+                    />
+
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-[#071A33]/35">
+                        Altitude
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium text-[#071A33]">
+                        {destination.altitude}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {destination.duration && (
+                  <div className="flex gap-4 py-5 sm:border-r sm:pr-7">
+                    <Clock3
+                      className="mt-0.5 h-5 w-5 shrink-0 text-[#087E8B]"
+                      strokeWidth={1.6}
+                    />
+
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-[#071A33]/35">
+                        Typical duration
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium text-[#071A33]">
+                        {destination.duration}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {hasRating && (
+                  <div className="flex gap-4 border-t border-[#071A33]/10 py-5 sm:border-t-0 sm:pl-7">
+                    <Star
+                      className="mt-0.5 h-5 w-5 shrink-0 fill-[#F59E0B] text-[#F59E0B]"
+                      strokeWidth={1.5}
+                    />
+
+                    <div>
+                      <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-[#071A33]/35">
+                        Guest rating
+                      </p>
+
+                      <p className="mt-1 text-sm font-medium text-[#071A33]">
+                        {destination.rating.toFixed(1)}{" "}
+                        <span className="font-normal text-[#071A33]/40">
+                          · {destination.reviewCount} reviews
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Starting price — only when actual data exists */}
+              {hasStartingPrice && (
+                <div className="mt-7 flex flex-col gap-2 rounded-2xl border border-[#071A33]/8 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-[#071A33]/35">
+                      Journeys from
+                    </p>
+
+                    <p className="mt-1 text-lg font-semibold text-[#071A33]">
+                      ₹
+                      {destination.startingPrice.toLocaleString(
+                        "en-IN"
+                      )}
+                    </p>
+                  </div>
+
+                  <span className="text-xs text-[#071A33]/35">
+                    Subject to itinerary & availability
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-
       </div>
     </section>
   );

@@ -1,9 +1,5 @@
-"use client";
-
-import { useMemo, useState } from "react";
 import Image from "next/image";
-import { Camera } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, Images } from "lucide-react";
 
 interface DestinationGalleryProps {
   heroImage: string;
@@ -16,30 +12,28 @@ export default function DestinationGallery({
   gallery,
   destinationName,
 }: DestinationGalleryProps) {
-  const images = useMemo(() => {
-    const allImages = [heroImage, ...gallery].filter(Boolean);
-
-    return [...new Set(allImages)];
-  }, [heroImage, gallery]);
-
-  const [selectedImage, setSelectedImage] = useState(
-    images[0] || ""
-  );
+  const images = gallery.filter(Boolean);
 
   if (images.length === 0) {
     return (
-      <section className="py-16">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex h-72 flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50 text-center">
-            <Camera className="mb-4 h-12 w-12 text-slate-400" />
+      <section
+        id="gallery"
+        className="bg-[#FAF9F5] px-6 py-24 sm:px-8 lg:px-12"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-[32px] border border-[#071A33]/10 bg-white p-12 text-center">
+            <Images className="mx-auto mb-5 text-[#087E8B]" size={30} />
 
-            <h3 className="text-xl font-semibold text-slate-800">
-              No Photos Available
-            </h3>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#087E8B]">
+              Gallery
+            </p>
 
-            <p className="mt-2 max-w-md text-slate-500">
-              Images for this destination will be added
-              soon.
+            <h2 className="mt-3 font-serif text-3xl text-[#071A33]">
+              More moments from {destinationName}
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-[#071A33]/60">
+              Destination photography will appear here soon.
             </p>
           </div>
         </div>
@@ -48,200 +42,67 @@ export default function DestinationGallery({
   }
 
   return (
-    <section className="py-14 lg:py-16">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section
+      id="gallery"
+      className="bg-[#FAF9F5] px-6 py-24 sm:px-8 lg:px-12"
+    >
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#087E8B]">
+              A glimpse of {destinationName}
+            </p>
 
-        {/* Heading */}
+            <h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight tracking-[-0.03em] text-[#071A33] sm:text-5xl">
+              Moments worth
+              <span className="block text-[#087E8B]">
+                remembering.
+              </span>
+            </h2>
+          </div>
 
-        <div className="mb-8">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
-            <Camera className="h-4 w-4" />
-            Gallery
-          </span>
-
-          <h2 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">
-            Explore {destinationName}
-          </h2>
-
-          <p className="mt-3 max-w-2xl text-slate-600">
-            Experience the beauty of this destination
-            through carefully selected photographs.
+          <p className="max-w-sm text-sm leading-6 text-[#071A33]/60">
+            A visual collection from the landscapes, stays and moments that
+            make this destination special.
           </p>
         </div>
 
-        {/* Layout */}
-
-        <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-
-          {/* Featured Image */}
-
-          <motion.div
-            layout
-            className="relative overflow-hidden rounded-3xl"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedImage}
-                initial={{
-                  opacity: 0,
-                  scale: 1.03,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                }}
-                exit={{
-                  opacity: 0,
-                }}
-                transition={{
-                  duration: 0.35,
-                }}
-                className="relative aspect-[16/10] w-full"
-              >
-                <Image
-                  src={selectedImage}
-                  alt={destinationName}
-                  fill
-                  priority
-                  sizes="(max-width:1024px) 100vw, 70vw"
-                  className="
-                    object-cover
-                    transition-transform
-                    duration-700
-                    hover:scale-105
-                  "
-                />
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Image Count */}
-
-            <div
-              className="
-                absolute
-                bottom-4
-                right-4
-                rounded-full
-                bg-black/60
-                px-4
-                py-2
-                text-sm
-                font-medium
-                text-white
-                backdrop-blur-md
-              "
+        <div className="grid auto-rows-[240px] grid-cols-2 gap-4 md:auto-rows-[280px] md:grid-cols-4">
+          {images.slice(0, 5).map((image, index) => (
+            <a
+              key={`${image}-${index}`}
+              href={image}
+              target="_blank"
+              rel="noreferrer"
+              className={[
+                "group relative overflow-hidden rounded-[24px]",
+                index === 0
+                  ? "col-span-2 row-span-2"
+                  : index === 1
+                    ? "col-span-2 md:col-span-1"
+                    : "",
+              ].join(" ")}
             >
-              {images.length} Photos
-            </div>
-          </motion.div>
+              <Image
+                src={image}
+                alt={`${destinationName} travel view ${index + 1}`}
+                fill
+                sizes={
+                  index === 0
+                    ? "(max-width: 768px) 100vw, 50vw"
+                    : "(max-width: 768px) 50vw, 25vw"
+                }
+                className="object-cover transition duration-700 group-hover:scale-105"
+              />
 
-          {/* Desktop Thumbnails */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#071A33]/50 via-transparent to-transparent opacity-80" />
 
-          <div className="hidden grid-cols-2 gap-4 lg:grid">
-
-                        {images.slice(0, 4).map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() => setSelectedImage(image)}
-                className={`
-                  group
-                  relative
-                  aspect-square
-                  overflow-hidden
-                  rounded-2xl
-                  border-2
-                  transition-all
-                  duration-300
-
-                  ${
-                    selectedImage === image
-                      ? "border-emerald-500 ring-2 ring-emerald-200"
-                      : "border-transparent hover:border-emerald-300"
-                  }
-                `}
-              >
-                <Image
-                  src={image}
-                  alt={`${destinationName} ${index + 1}`}
-                  fill
-                  loading="lazy"
-                  sizes="250px"
-                  className="
-                    object-cover
-                    transition-transform
-                    duration-500
-                    group-hover:scale-110
-                  "
-                />
-
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    bg-black/10
-                    opacity-0
-                    transition-opacity
-                    duration-300
-                    group-hover:opacity-100
-                  "
-                />
-
-                {selectedImage === image && (
-                  <div
-                    className="
-                      absolute
-                      inset-0
-                      border-4
-                      border-emerald-500
-                      rounded-2xl
-                    "
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+              <div className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#071A33] opacity-0 transition duration-300 group-hover:opacity-100">
+                <ArrowUpRight size={16} />
+              </div>
+            </a>
+          ))}
         </div>
-
-        {/* Mobile Thumbnails */}
-
-        <div className="mt-6 lg:hidden">
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {images.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() => setSelectedImage(image)}
-                className={`
-                  relative
-                  h-24
-                  w-32
-                  flex-shrink-0
-                  overflow-hidden
-                  rounded-xl
-                  border-2
-                  transition-all
-
-                  ${
-                    selectedImage === image
-                      ? "border-emerald-500"
-                      : "border-transparent"
-                  }
-                `}
-              >
-                <Image
-                  src={image}
-                  alt={`${destinationName} ${index + 1}`}
-                  fill
-                  loading="lazy"
-                  sizes="140px"
-                  className="object-cover"
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-
       </div>
     </section>
   );

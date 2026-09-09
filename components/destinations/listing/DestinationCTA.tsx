@@ -1,185 +1,106 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowUpRight, Compass } from "lucide-react";
 
 export default function DestinationCTA() {
   return (
-    <section className="relative mt-24 overflow-hidden rounded-[40px]">
-
-      {/* Background Image */}
-
-      <Image
-        src="/images/hero-main.webp"
-        alt="Himalayan Adventure"
-        fill
-        className="object-cover"
+    <section className="relative overflow-hidden bg-[#071A33]">
+      {/* Editorial accent */}
+      <div
+        aria-hidden="true"
+        className="absolute left-0 top-0 h-px w-28 bg-[#F59E0B] sm:w-40"
       />
 
-      {/* Overlay */}
+      {/* Decorative rings */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full border border-[#1597C7]/10"
+      />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/70 to-emerald-900/60" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full border border-[#1597C7]/5"
+      />
 
-      {/* Decorative Blur */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-1/3 h-px w-48 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+      />
 
-      <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-emerald-500/20 blur-[120px]" />
+      <div className="relative mx-auto max-w-[1400px] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28 xl:px-20">
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
+          {/* Copy */}
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{
+              duration: 0.6,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="lg:col-span-8"
+          >
+            <div className="mb-6 flex items-center gap-3">
+              <span className="h-px w-10 bg-[#F59E0B]" />
 
-      <div className="absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-sky-500/20 blur-[120px]" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#1597C7]">
+                Where next?
+              </span>
+            </div>
 
-      <div className="relative z-10 px-8 py-20 lg:px-20">
+            <h2 className="max-w-4xl font-serif text-4xl font-medium leading-[1.06] tracking-[-0.035em] text-[#FAF9F5] sm:text-5xl lg:text-6xl xl:text-7xl">
+              Every destination has
+              <span className="block text-[#1597C7]">
+                a story waiting for you.
+              </span>
+            </h2>
 
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 40,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.7,
-          }}
-          className="max-w-3xl"
-        >
+            <p className="mt-7 max-w-2xl text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
+              You choose the place. We help shape the journey
+              around it — thoughtfully planned, personally
+              considered and made to be remembered.
+            </p>
+          </motion.div>
 
-          {/* Badge */}
-
-          <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-medium text-emerald-300 backdrop-blur-xl">
-            Luxury Himalayan Experiences
-          </span>
-
-          {/* Heading */}
-
-          <h2 className="mt-8 text-4xl font-bold leading-tight text-white md:text-6xl">
-            Ready For Your Next
-            <span className="block bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-              Himalayan Adventure?
-            </span>
-          </h2>
-
-          {/* Description */}
-
-          <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-300">
-            Let our travel experts craft a personalized itinerary
-            filled with breathtaking landscapes, unforgettable stays,
-            and experiences you'll remember forever.
-          </p>
-                    {/* CTA Buttons */}
-
-          <div className="mt-10 flex flex-wrap gap-4">
-
+          {/* Action */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{
+              duration: 0.6,
+              delay: 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="lg:col-span-4 lg:flex lg:flex-col lg:items-end"
+          >
             <Link
-              href="/packages"
-              className="
-                group
-                inline-flex
-                items-center
-                rounded-2xl
-                bg-gradient-to-r
-                from-emerald-500
-                to-teal-600
-                px-8
-                py-4
-                font-semibold
-                text-white
-                shadow-xl
-                transition-all
-                duration-300
-                hover:scale-105
-              "
+              href="/inquiry"
+              className="group inline-flex items-center gap-3 rounded-full bg-[#F59E0B] px-6 py-3.5 text-sm font-semibold text-[#071A33] transition-all duration-300 hover:bg-[#FAF9F5]"
             >
-              Explore Packages
+              Plan Your Journey
 
-              <ArrowRight
-                className="
-                  ml-2
-                  h-5
-                  w-5
-                  transition-transform
-                  duration-300
-                  group-hover:translate-x-1
-                "
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#071A33] text-white transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight
+                  className="h-4 w-4"
+                  strokeWidth={1.8}
+                />
+              </span>
+            </Link>
+
+            <div className="mt-5 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/30">
+              <Compass
+                className="h-3.5 w-3.5 text-[#1597C7]"
+                strokeWidth={1.7}
               />
-            </Link>
 
-            <Link
-              href="/contact"
-              className="
-                inline-flex
-                items-center
-                rounded-2xl
-                border
-                border-white/20
-                bg-white/10
-                px-8
-                py-4
-                font-semibold
-                text-white
-                backdrop-blur-xl
-                transition-all
-                duration-300
-                hover:bg-white/20
-              "
-            >
-              <Phone className="mr-2 h-5 w-5" />
-
-              Talk To Expert
-            </Link>
-
-          </div>
-
-          {/* Trust Cards */}
-
-          <div className="mt-14 grid gap-5 sm:grid-cols-3">
-
-            <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-
-              <h3 className="text-3xl font-bold text-white">
-                500+
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-300">
-                Happy Travelers
-              </p>
-
+              Thoughtfully considered
             </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-
-              <h3 className="text-3xl font-bold text-white">
-                4.9★
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-300">
-                Average Rating
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl">
-
-              <h3 className="text-3xl font-bold text-white">
-                100%
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-300">
-                Customized Trips
-              </p>
-
-            </div>
-
-          </div>
-
-        </motion.div>
-
+          </motion.div>
+        </div>
       </div>
-
     </section>
   );
 }

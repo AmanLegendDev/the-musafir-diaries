@@ -1,218 +1,142 @@
 "use client";
 
-import { motion } from "framer-motion";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { useId } from "react";
 
 interface DestinationFiltersProps {
-  featured: string;
-  setFeatured: (value: string) => void;
-
   state: string;
-  setState: (value: string) => void;
-
+  featured: string;
   sort: string;
-  setSort: (value: string) => void;
 
   states: string[];
+
+  onStateChange: (value: string) => void;
+  onFeaturedChange: (value: string) => void;
+  onSortChange: (value: string) => void;
 }
 
+const selectBaseClass =
+  "h-12 w-full appearance-none rounded-full border border-[#071A33]/10 bg-[#FAF9F5] px-5 pr-11 text-sm text-[#071A33] outline-none transition-all duration-200 hover:border-[#071A33]/20 focus:border-[#087E8B]/45 focus:bg-white focus:ring-4 focus:ring-[#087E8B]/5";
+
 export default function DestinationFilters({
-  featured,
-  setFeatured,
   state,
-  setState,
+  featured,
   sort,
-   states,
-  setSort,
+  states,
+  onStateChange,
+  onFeaturedChange,
+  onSortChange,
 }: DestinationFiltersProps) {
+  const stateId = useId();
+  const featuredId = useId();
+  const sortId = useId();
+
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.5,
-      }}
-      className="
-        mt-8
-        grid
-        gap-4
-        rounded-3xl
-        border
-        border-slate-200
-        bg-white/90
-        p-5
-        shadow-lg
-        backdrop-blur-xl
-        md:grid-cols-3
-      "
+    <section
+      aria-label="Destination filters"
+      className="rounded-[24px] border border-[#071A33]/10 bg-white p-4 shadow-[0_8px_30px_rgba(7,26,51,0.03)] sm:p-5 lg:p-6"
     >
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        {/* Label */}
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#087E8B]/8">
+            <SlidersHorizontal
+              className="h-4 w-4 text-[#087E8B]"
+              strokeWidth={1.8}
+            />
+          </div>
 
-      {/* Featured */}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#087E8B]">
+              Refine your journey
+            </p>
 
-      <div>
+            <p className="mt-1 text-xs text-[#071A33]/40">
+              Find a place that feels right
+            </p>
+          </div>
+        </div>
 
-        <label className="mb-2 block text-sm font-medium text-slate-600">
-          Featured
-        </label>
+        {/* Controls */}
+        <div className="grid gap-3 sm:grid-cols-2 lg:flex lg:w-auto lg:min-w-[680px] lg:justify-end">
+          {/* Region */}
+          <div className="relative lg:w-[210px]">
+            <label htmlFor={stateId} className="sr-only">
+              Filter by region
+            </label>
 
-      <Select
-  value={featured}
-  onValueChange={(value) => setFeatured(value ?? "all")}
->
-          <SelectTrigger className="h-12 rounded-xl">
-            <SelectValue placeholder="Featured" />
-          </SelectTrigger>
+            <select
+              id={stateId}
+              value={state}
+              onChange={(event) => onStateChange(event.target.value)}
+              className={selectBaseClass}
+            >
+              <option value="all">All regions</option>
 
-          <SelectContent>
+              {states.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
 
-            <SelectItem value="all">
-              All Destinations
-            </SelectItem>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#071A33]/40"
+              strokeWidth={1.8}
+            />
+          </div>
 
-            <SelectItem value="featured">
-              Featured Only
-            </SelectItem>
+          {/* Journey */}
+          <div className="relative lg:w-[210px]">
+            <label htmlFor={featuredId} className="sr-only">
+              Filter by journey type
+            </label>
 
-          </SelectContent>
+            <select
+              id={featuredId}
+              value={featured}
+              onChange={(event) => onFeaturedChange(event.target.value)}
+              className={selectBaseClass}
+            >
+              <option value="all">All destinations</option>
+              <option value="featured">Featured only</option>
+            </select>
 
-        </Select>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#071A33]/40"
+              strokeWidth={1.8}
+            />
+          </div>
 
+          {/* Sort */}
+          <div className="relative sm:col-span-2 lg:w-[210px]">
+            <label htmlFor={sortId} className="sr-only">
+              Sort destinations
+            </label>
+
+            <select
+              id={sortId}
+              value={sort}
+              onChange={(event) => onSortChange(event.target.value)}
+              className={selectBaseClass}
+            >
+              <option value="featured">Featured first</option>
+              <option value="name">Name: A–Z</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
+            </select>
+
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#071A33]/40"
+              strokeWidth={1.8}
+            />
+          </div>
+        </div>
       </div>
-
-      {/* State */}
-
-      <div>
-
-        <label className="mb-2 block text-sm font-medium text-slate-600">
-          State
-        </label>
-
-       <Select
-  value={state}
-  onValueChange={(value) => setState(value ?? "all")}
->
-          <SelectTrigger className="h-12 rounded-xl">
-            <SelectValue placeholder="Select State" />
-          </SelectTrigger>
-
-          <SelectContent>
-
-            
-
-           <SelectItem value="all">
-  All States
-</SelectItem>
-
-{states.map((stateName) => (
-  <SelectItem
-    key={stateName}
-    value={stateName}
-  >
-    {stateName}
-  </SelectItem>
-))}
-
-          </SelectContent>
-
-        </Select>
-
-      </div>
-            {/* Sort */}
-
-      <div>
-
-        <label className="mb-2 block text-sm font-medium text-slate-600">
-          Sort By
-        </label>
-
-       <Select
-  value={sort}
-  onValueChange={(value) => setSort(value ?? "latest")}
->
-          <SelectTrigger className="h-12 rounded-xl">
-            <SelectValue placeholder="Sort Destinations" />
-          </SelectTrigger>
-
-          <SelectContent>
-
-            <SelectItem value="latest">
-              Latest
-            </SelectItem>
-
-            <SelectItem value="rating">
-              Highest Rating
-            </SelectItem>
-
-            <SelectItem value="price-low">
-              Price : Low to High
-            </SelectItem>
-
-            <SelectItem value="price-high">
-              Price : High to Low
-            </SelectItem>
-
-            <SelectItem value="name">
-              Name (A-Z)
-            </SelectItem>
-
-          </SelectContent>
-
-        </Select>
-
-      </div>
-
-      {/* Bottom Row */}
-
-      <div className="col-span-full mt-2 flex flex-col items-start justify-between gap-4 border-t border-slate-200 pt-5 md:flex-row md:items-center">
-
-        <p className="text-sm text-slate-500">
-          Refine destinations by featured status, state and sorting preference.
-        </p>
-
-        <button
-          type="button"
-          onClick={() => {
-            setFeatured("all");
-            setState("all");
-            setSort("latest");
-          }}
-          className="
-            rounded-xl
-            border
-            border-slate-200
-            px-5
-            py-2.5
-            text-sm
-            font-medium
-            text-slate-700
-            transition-all
-            duration-300
-            hover:border-emerald-500
-            hover:bg-emerald-50
-            hover:text-emerald-600
-          "
-        >
-          Reset Filters
-        </button>
-
-      </div>
-
-    </motion.div>
+    </section>
   );
 }
