@@ -3,8 +3,7 @@ import { Geist, Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/footer/Footer";
+import PublicChrome from "@/components/layout/PublicChrome";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -138,19 +137,17 @@ export default function RootLayout({
         "font-sans",
       )}
     >
-      <body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
-        <Navbar />
+<body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
+  <PublicChrome>
+    {children}
+  </PublicChrome>
 
-        {children}
-
-        <Footer />
-
-        <Toaster
-          richColors
-          position="top-right"
-          closeButton
-        />
-      </body>
+  <Toaster
+    richColors
+    position="top-right"
+    closeButton
+  />
+</body>
     </html>
   );
 }
