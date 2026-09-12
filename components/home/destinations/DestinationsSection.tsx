@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 import DestinationsHeader from "./DestinationsHeader";
 import DestinationGrid from "./DestinationGrid";
+import { ArrowRight } from "lucide-react";
 
 export interface HomeDestination {
   _id: string;
@@ -75,6 +78,25 @@ export default function DestinationsSection({
         <DestinationGrid
           destinations={visibleDestinations}
         />
+
+   <div className="mt-14 flex justify-center sm:mt-16 lg:mt-20">
+  <Link
+    href="/destinations"
+    className="group inline-flex items-center gap-4 text-sm font-semibold tracking-[0.02em] text-[#071A33] transition-colors duration-200 hover:text-[#087E8B] focus:outline-none focus:ring-4 focus:ring-[#087E8B]/10"
+  >
+    <span className="relative pb-1">
+      Explore all destinations
+      <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-100 bg-[#071A33]/30 transition-transform duration-300 group-hover:scale-x-0 group-hover:bg-[#087E8B]" />
+    </span>
+
+    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#071A33]/15 bg-white transition-all duration-200 group-hover:border-[#087E8B]/40 group-hover:bg-[#087E8B] group-hover:text-white">
+      <ArrowRight
+        className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+        strokeWidth={1.7}
+      />
+    </span>
+  </Link>
+</div>
       </div>
     </section>
   );

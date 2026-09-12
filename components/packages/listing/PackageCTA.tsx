@@ -1,156 +1,97 @@
-"use client";
-
 import Link from "next/link";
-
-import { motion } from "framer-motion";
-
 import {
-  ArrowRight,
-  MessageCircle,
-  Phone,
-  Sparkles,
+  ArrowUpRight,
+  Compass,
+  Mountain,
 } from "lucide-react";
 
 export default function PackageCTA() {
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden bg-[#071A33]">
+      {/* Accent */}
+      <div
+        aria-hidden="true"
+        className="absolute left-0 top-0 h-px w-28 bg-[#F59E0B] sm:w-40"
+      />
 
-      {/* Background */}
+      {/* Decorative geometry */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full border border-[#1597C7]/10"
+      />
 
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-700" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 -top-24 h-[360px] w-[360px] rounded-full border border-[#1597C7]/8"
+      />
 
-      <div className="absolute inset-0 bg-[url('/images/patterns/grid.svg')] opacity-10" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-[#087E8B]/5 blur-3xl"
+      />
 
-      {/* Glow */}
+      <div className="relative mx-auto max-w-[1400px] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28 xl:px-20">
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#F59E0B]" />
 
-      <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-
-      <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-cyan-300/10 blur-3xl" />
-
-      <div className="container relative z-10 mx-auto px-6">
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.6,
-          }}
-          className="mx-auto max-w-4xl text-center"
-        >
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold text-white backdrop-blur">
-
-            <Sparkles className="h-4 w-4" />
-
-            Tailor-Made Experiences
-
-          </div>
-
-          <h2 className="mt-6 text-4xl font-bold leading-tight text-white md:text-5xl">
-            Can't Find Your
-            <br />
-            Perfect Travel Package?
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-emerald-50">
-            Every traveler is unique. Tell us your destination,
-            budget, travel dates and preferences, and our travel
-            experts will craft a personalized itinerary designed
-            just for you.
-          </p>
-
-          {/* Features */}
-
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-
-            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur">
-
-              <h3 className="font-semibold text-white">
-                Personalized Itinerary
-              </h3>
-
-              <p className="mt-2 text-sm text-emerald-50">
-                Customized day-wise plans based on your travel
-                style.
-              </p>
-
+              <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#1597C7]">
+                Your journey, your way
+              </span>
             </div>
 
-            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+            <h2 className="mt-6 max-w-4xl font-serif text-4xl font-medium leading-[1.03] tracking-[-0.04em] text-[#FAF9F5] sm:text-5xl lg:text-6xl xl:text-7xl">
+              Don&apos;t see exactly
+              <span className="block text-[#1597C7]">
+                what you&apos;re looking for?
+              </span>
+            </h2>
 
-              <h3 className="font-semibold text-white">
-                Best Price Guarantee
-              </h3>
-
-              <p className="mt-2 text-sm text-emerald-50">
-                Premium experiences at transparent pricing.
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur">
-
-              <h3 className="font-semibold text-white">
-                24×7 Travel Support
-              </h3>
-
-              <p className="mt-2 text-sm text-emerald-50">
-                Dedicated assistance before and during your trip.
-              </p>
-
-            </div>
-
+            <p className="mt-7 max-w-2xl text-sm leading-7 text-white/50 sm:text-base sm:leading-8">
+              Tell us where you want to go, when you want to travel
+              and what kind of experience you have in mind. We can
+              help shape a journey around you.
+            </p>
           </div>
 
-          {/* CTA Buttons */}
-
-          <div className="mt-12 flex flex-col justify-center gap-4 sm:flex-row">
-
+          <div className="lg:col-span-4 lg:flex lg:flex-col lg:items-end">
             <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-4 font-semibold text-emerald-700 transition hover:bg-slate-100"
+              href="/inquiry"
+              className="group inline-flex items-center gap-3 rounded-full bg-[#F59E0B] px-6 py-3.5 text-sm font-semibold text-[#071A33] transition-colors duration-300 hover:bg-[#FAF9F5]"
             >
-              <ArrowRight className="h-5 w-5" />
+              Plan a custom journey
 
-              Plan My Trip
-
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#071A33] text-white transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight
+                  className="h-4 w-4"
+                  strokeWidth={1.8}
+                />
+              </span>
             </Link>
+          </div>
+        </div>
 
-            <Link
-              href="https://wa.me/919999999999"
-              target="_blank"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 px-7 py-4 font-semibold text-white transition hover:bg-white/10"
-            >
-              <MessageCircle className="h-5 w-5" />
-
-              WhatsApp Us
-
-            </Link>
-
-            <Link
-              href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 px-7 py-4 font-semibold text-white transition hover:bg-white/10"
-            >
-              <Phone className="h-5 w-5" />
-
-              Call Now
-
-            </Link>
-
+        <div className="mt-14 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/10 pt-5">
+          <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.28em] text-white/25">
+            <Mountain
+              className="h-4 w-4 text-[#1597C7]"
+              strokeWidth={1.6}
+            />
+            Himalayan journeys
           </div>
 
-        </motion.div>
+          <span className="hidden h-1 w-1 rounded-full bg-[#F59E0B] sm:block" />
 
+          <div className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.28em] text-white/25">
+            <Compass
+              className="h-4 w-4 text-[#1597C7]"
+              strokeWidth={1.6}
+            />
+            Explore · Experience · Belong
+          </div>
+        </div>
       </div>
-
     </section>
   );
 }

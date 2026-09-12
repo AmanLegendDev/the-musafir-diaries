@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 import connectDB from "@/lib/db";
-
 import Booking from "@/models/booking.model";
-
 import Package from "@/models/package.model";
 
-import {
-  bookingSchema,
-} from "@/lib/validations/booking";
-
-function generateBookingNumber() {
-  return (
-    "AE-" +
-    Date.now().toString().slice(-8)
-  );
-}
+import { bookingSchema } from "@/lib/validations/booking.schema";
+import { calculateBookingPrice } from "@/lib/booking/calculate-booking-price";
+import { generateBookingNumber } from "@/lib/booking/generate-booking-number";
 
 export async function POST(request: Request) {
   try {
@@ -23,128 +15,237 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    const parsed =
-      bookingSchema.safeParse(body);
+    /*
+     * Validate incoming request.
+     */
+    const parsed = bookingSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Invalid booking details.",
-          errors:
-            parsed.error.flatten(),
+          message: "Please check the booking details.",
+          errors: parsed.error.flatten().fieldErrors,
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
     const data = parsed.data;
 
-    const packageExists =
-      await Package.findById(
-        data.package
-      );
-
-    if (!packageExists) {
+    /*
+     * Validate package ObjectId.
+     */
+    if (!mongoose.isValidObjectId(data.package)) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Package not found.",
+          message: "Invalid package selected.",
         },
         {
-          status: 404,
-        }
+          status: 400,
+        },
       );
     }
 
-    const booking =
-      await Booking.create({
-        bookingNumber:
-          generateBookingNumber(),
+    /*
+     * Validate travel date.
+     */
+    const travelDate = new Date(`${data.travelDate}T00:00:00`);
 
-        package: data.package,
+    if (Number.isNaN(travelDate.getTime())) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Invalid travel date.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
 
-        customerName:
-          data.customerName,
+    const today = new Date();
 
-        phone: data.phone,
+    today.setHours(0, 0, 0, 0);
 
-        email: data.email,
+    if (travelDate < today) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Travel date cannot be in the past.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
 
-        travelDate:
-          data.travelDate,
+    /*
+     * Fetch package from database.
+     *
+     * Frontend package price is NEVER trusted.
+     */
+    const selectedPackage = await Package.findOne({
+      _id: data.package,
+      status: "active",
+    })
+      .select(
+        [
+          "name",
+          "slug",
+          "duration",
+          "originalPrice",
+          "discountedPrice",
+          "childPolicy",
+        ].join(" "),
+      )
+      .lean();
 
-        adults: data.adults,
+    if (!selectedPackage) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "The selected package is no longer available.",
+        },
+        {
+          status: 404,
+        },
+      );
+    }
 
-        children: data.childrenCount,
+    /*
+     * Safety check for children.
+     */
+    const childrenAges =
+      data.childrenCount > 0
+        ? data.childrenAges
+        : [];
 
-        pickupLocation:
-          data.pickupLocation,
+    if (
+      childrenAges.length !==
+      data.childrenCount
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Please provide the age of every child.",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
 
-        specialRequest:
-          data.specialRequest,
-
-        totalPrice:
-          data.totalPrice,
-      });
-
-    return NextResponse.json({
-      success: true,
-      bookingId: booking._id,
-      bookingNumber:
-        booking.bookingNumber,
+    /*
+     * SERVER-SIDE PRICE CALCULATION.
+     *
+     * Never use data.totalPrice from the browser.
+     */
+    const pricing = calculateBookingPrice({
+      adultPrice: selectedPackage.discountedPrice,
+      adults: data.adults,
+      childrenAges,
+      childPolicy: selectedPackage.childPolicy,
     });
+
+    /*
+     * Generate human-readable booking reference.
+     */
+    let bookingNumber = generateBookingNumber();
+
+    /*
+     * Extremely unlikely collision protection.
+     */
+    let exists = await Booking.exists({
+      bookingNumber,
+    });
+
+    while (exists) {
+      bookingNumber = generateBookingNumber();
+
+      exists = await Booking.exists({
+        bookingNumber,
+      });
+    }
+
+    /*
+     * Create booking request.
+     */
+    const booking = await Booking.create({
+      bookingNumber,
+
+      package: selectedPackage._id,
+
+      packageSnapshot: {
+        name: selectedPackage.name,
+        slug: selectedPackage.slug,
+        duration: selectedPackage.duration,
+        originalPrice: selectedPackage.originalPrice,
+        discountedPrice: selectedPackage.discountedPrice,
+      },
+
+      customerName: data.customerName,
+      phone: data.phone,
+      email: data.email,
+
+      travelDate,
+
+      adults: data.adults,
+      children: data.childrenCount,
+      childrenAges,
+
+      pickupLocation: data.pickupLocation,
+
+      specialRequest:
+        data.specialRequest ?? "",
+
+      pricing,
+
+      paymentStatus: "pending",
+      bookingStatus: "pending",
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+
+        message:
+          "Booking request submitted successfully.",
+
+        bookingId: booking.bookingNumber,
+
+        bookingNumber:
+          booking.bookingNumber,
+
+        bookingStatus:
+          booking.bookingStatus,
+
+        pricing: {
+          total: pricing.total,
+        },
+      },
+      {
+        status: 201,
+      },
+    );
   } catch (error) {
-    console.error(error);
+    console.error(
+      "BOOKING_CREATE_ERROR:",
+      error,
+    );
 
     return NextResponse.json(
       {
         success: false,
         message:
-          "Something went wrong.",
+          "We couldn't submit your booking request right now. Please try again.",
       },
       {
         status: 500,
-      }
-    );
-  }
-}
-
-export async function GET() {
-  try {
-    await connectDB();
-
-    const packages = await Package.find({
-      status: "active",
-    })
-      .select(
-        "name pricing duration heroImage"
-      )
-      .sort({
-        createdAt: -1,
-      });
-
-    return NextResponse.json({
-      success: true,
-      packages,
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Server Error",
       },
-      {
-        status: 500,
-      }
     );
   }
 }

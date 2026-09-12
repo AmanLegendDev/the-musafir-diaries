@@ -9,7 +9,7 @@ export default function DestinationBreadcrumb({
   destinationName,
 }: DestinationBreadcrumbProps) {
   return (
-    <div className="border-b border-white/10 bg-[#071A33]/20 backdrop-blur-sm">
+    <div className="border-b border-white/10 bg-[#071A33]/20 backdrop-blur-sm mt-24">
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10 lg:px-16 xl:px-20">
         <nav
           aria-label="Breadcrumb"

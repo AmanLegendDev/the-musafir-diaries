@@ -17,55 +17,56 @@ export const NAV_ITEMS = [
     icon: Home,
     hasMegaMenu: false,
   },
+
   {
     label: "Destinations",
-    href: "/under-development",
+    href: "/destinations",
     icon: Compass,
     hasMegaMenu: true,
   },
+
   {
     label: "Packages",
-    href: "/under-development",
+    href: "/packages",
     icon: Package,
     hasMegaMenu: false,
   },
+
   {
     label: "Hotels",
-    href: "/under-development",
+    href: "/hotels",
     icon: Hotel,
     hasMegaMenu: false,
   },
-  {
-    label: "Gallery",
-    href: "/under-development",
-    icon: Images,
-    hasMegaMenu: false,
-  },
+
+  
   {
     label: "Blogs",
-    href: "/under-development",
+    href: "/blogs",
     icon: BookOpen,
     hasMegaMenu: false,
   },
+
   {
     label: "FAQs",
-    href: "/under-development",
+    href: "/faq",
     icon: HelpCircle,
     hasMegaMenu: false,
   },
+
   {
     label: "About",
-    href: "/under-development",
+    href: "/about",
     icon: Info,
     hasMegaMenu: false,
   },
+
   {
     label: "Contact",
-    href: "/under-development",
+    href: "/contact",
     icon: Mail,
     hasMegaMenu: false,
   },
 ] as const;
 
 export type NavItem = (typeof NAV_ITEMS)[number];
-

@@ -37,7 +37,7 @@ import FAQ from "@/models/faq.model";
 
 import FinalCTASection from "@/components/home/final-cta/FinalCTASection";
 
-import Footer from "@/components/layout/footer/Footer";
+
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -203,7 +203,7 @@ const faqs = JSON.parse(
 
   return (
     <>
-      <NavBaar />
+      
 
       <Hero />
 
@@ -234,7 +234,7 @@ const faqs = JSON.parse(
 
 <FinalCTASection />
 
-<Footer />
+
       {/* Journal will be added after Blog model is finalized */}
     </>
   );

@@ -91,7 +91,7 @@ export default async function DestinationsPage({
   return (
     <main className="min-h-screen bg-[#FAF9F5]">
       {/* Navbar */}
-      <Navbar />
+    
 
       {/* Cinematic destination introduction */}
       <DestinationHero />
@@ -109,7 +109,7 @@ export default async function DestinationsPage({
       <DestinationCTA />
 
       {/* Global footer */}
-      <Footer />
+ 
     </main>
   );
 }

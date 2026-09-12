@@ -1,269 +1,105 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown, HelpCircle } from "lucide-react";
+import type { FAQItem } from "./types";
 
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ChevronDown,
-  MessageCircleQuestion,
-} from "lucide-react";
-
-import type { InquiryFAQProps } from "./types";
+interface InquiryFAQProps {
+  faqs: FAQItem[];
+}
 
 export default function InquiryFAQ({
   faqs,
 }: InquiryFAQProps) {
-  const [activeIndex, setActiveIndex] =
-    useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  if (!faqs.length) {
+    return null;
+  }
 
   return (
-    <section className="bg-slate-50 py-20 lg:py-28">
-      <div className="mx-auto max-w-4xl px-6 lg:px-8">
-        {/* Header */}
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.6,
-          }}
-          className="text-center"
-        >
-          <div
-            className="
-              mx-auto
-              flex
-              h-16
-              w-16
-              items-center
-              justify-center
-              rounded-2xl
-              bg-gradient-to-br
-              from-[#0F4C81]
-              to-[#3BAEA0]
-              text-white
-              shadow-lg
-            "
-          >
-            <MessageCircleQuestion size={30} />
+    <section
+      id="inquiry-faq"
+      className="bg-[#F7F6F1] px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24"
+    >
+      <div className="mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+        {/* Intro */}
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E7F4F5] text-[#087E8B]">
+            <HelpCircle size={21} strokeWidth={1.7} />
           </div>
 
-          <span
-            className="
-              mt-6
-              inline-flex
-              rounded-full
-              bg-[#3BAEA0]/10
-              px-4
-              py-2
-              text-sm
-              font-semibold
-              text-[#0F4C81]
-            "
-          >
-            Frequently Asked Questions
-          </span>
+          <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-[#087E8B]">
+            Before you begin
+          </p>
 
-          <h2
-            className="
-              mt-5
-              text-3xl
-              font-bold
-              text-[#081C2D]
-              md:text-5xl
-            "
-          >
-            Everything You Need
-            <br />
-            Before You Travel
+          <h2 className="mt-3 max-w-md font-serif text-3xl font-semibold tracking-tight text-[#071A33] sm:text-4xl">
+            A few things worth knowing.
           </h2>
 
-          <p
-            className="
-              mt-6
-              text-lg
-              leading-8
-              text-slate-600
-            "
-          >
-            Still have questions? Here are the
-            most common things travelers ask
-            before submitting an inquiry.
+          <p className="mt-4 max-w-md text-sm leading-7 text-[#071A33]/60 sm:text-base">
+            If you're still deciding on the details of your
+            journey, these answers should help you understand
+            what happens after an inquiry.
           </p>
-        </motion.div>
+        </div>
 
-        {/* FAQ */}
+        {/* Accordion */}
+        <div className="min-w-0">
+          <div className="overflow-hidden rounded-[1.75rem] border border-[#071A33]/8 bg-white">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
 
-        <div className="mt-16 space-y-5">
-          {faqs.map((faq, index) => {
-            const isOpen =
-              activeIndex === index;
-
-            return (
-              <motion.div
-                key={faq.question}
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.08,
-                }}
-                className="
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                  border-slate-200
-                  bg-white
-                  shadow-sm
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setActiveIndex(
-                      isOpen
-                        ? null
-                        : index
-                    )
-                  }
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    justify-between
-                    p-6
-                    text-left
-                    transition-colors
-                    hover:bg-slate-50
-                  "
+              return (
+                <div
+                  key={`${faq.question}-${index}`}
+                  className="border-b border-[#071A33]/8 last:border-b-0"
                 >
-                  <h3
-                    className="
-                      text-lg
-                      font-semibold
-                      text-[#081C2D]
-                    "
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() =>
+                      setOpenIndex(
+                        isOpen ? null : index,
+                      )
+                    }
+                    className="flex w-full items-center justify-between gap-5 px-5 py-5 text-left transition hover:bg-[#FAF9F5] sm:px-7 sm:py-6"
                   >
-                    {faq.question}
-                  </h3>
+                    <span className="text-sm font-semibold leading-6 text-[#071A33] sm:text-base">
+                      {faq.question}
+                    </span>
 
-                  <ChevronDown
-                    className={`
-                      transition-transform
-                      duration-300
-                      ${
+                    <span
+                      className={[
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition",
                         isOpen
-                          ? "rotate-180"
-                          : ""
-                      }
-                    `}
-                  />
-                </button>
-
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{
-                        height: 0,
-                        opacity: 0,
-                      }}
-                      animate={{
-                        height: "auto",
-                        opacity: 1,
-                      }}
-                      exit={{
-                        height: 0,
-                        opacity: 0,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                      }}
+                          ? "border-[#087E8B] bg-[#087E8B] text-white"
+                          : "border-[#071A33]/10 text-[#071A33]/50",
+                      ].join(" ")}
                     >
-                      <div
-                        className="
-                          border-t
-                          border-slate-100
-                          px-6
-                          py-5
-                        "
-                      >
-                        <p
-                          className="
-                            leading-8
-                            text-slate-600
-                          "
-                        >
+                      <ChevronDown
+                        size={16}
+                        className={[
+                          "transition-transform duration-200",
+                          isOpen ? "rotate-180" : "",
+                        ].join(" ")}
+                      />
+                    </span>
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-6 sm:px-7">
+                      <div className="max-w-2xl border-l-2 border-[#087E8B]/25 pl-4">
+                        <p className="text-sm leading-7 text-[#071A33]/60">
                           {faq.answer}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Bottom */}
-
-        <div
-          className="
-            mt-16
-            rounded-3xl
-            bg-gradient-to-r
-            from-[#0F4C81]
-            to-[#3BAEA0]
-            p-8
-            text-center
-            text-white
-          "
-        >
-          <h3 className="text-2xl font-bold">
-            Still Have Questions?
-          </h3>
-
-          <p className="mt-3 text-white/90">
-            Our travel specialists are happy to
-            help you plan your perfect Himalayan
-            adventure.
-          </p>
-
-          <a
-            href="tel:+919999999999"
-            className="
-              mt-6
-              inline-flex
-              rounded-full
-              bg-white
-              px-6
-              py-3
-              font-semibold
-              text-[#0F4C81]
-              transition-all
-              duration-300
-              hover:-translate-y-1
-            "
-          >
-            Call Our Travel Expert
-          </a>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

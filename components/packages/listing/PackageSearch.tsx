@@ -1,119 +1,43 @@
 "use client";
-import { AnimatePresence, motion } from "framer-motion";
 
-import { useState } from "react";
 import { Search, X } from "lucide-react";
 
 interface PackageSearchProps {
-  value?: string;
-  onSearch?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
 export default function PackageSearch({
-  value = "",
-  onSearch,
+  value,
+  onChange,
 }: PackageSearchProps) {
-  const [search, setSearch] = useState(value);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-
-    setSearch(value);
-
-    onSearch?.(value);
-    console.log("Typing:", value);
-  };
-
-  const clearSearch = () => {
-    setSearch("");
-
-    onSearch?.("");
-  };
-
   return (
-    <section
-  className="
-    sticky
-    top-20
-    z-30
+    <div className="relative">
+      <Search
+        aria-hidden="true"
+        className="pointer-events-none absolute left-5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#087E8B]"
+        strokeWidth={1.7}
+      />
 
-    -mt-12
+      <input
+        type="search"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Search journeys, destinations..."
+        aria-label="Search journeys"
+        className="h-14 w-full rounded-2xl border border-[#071A33]/10 bg-white pl-12 pr-12 text-sm text-[#071A33] outline-none transition-all placeholder:text-[#071A33]/30 focus:border-[#087E8B]/40 focus:ring-4 focus:ring-[#087E8B]/5"
+      />
 
-    px-6
-
-    bg-white/90
-    backdrop-blur-md
-
-    pb-4
-  "
->
-      <div className="container mx-auto">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
-          <div className="flex items-center gap-3">
-           <motion.div
-  animate={{
-    scale: search ? 1.1 : 1,
-    rotate: search ? 8 : 0,
-  }}
-  transition={{
-    duration: 0.2,
-  }}
-  className="
-    flex
-    h-12
-    w-12
-    items-center
-    justify-center
-    rounded-xl
-    bg-emerald-100
-  "
->
-  <Search
-    className={`h-5 w-5 ${
-      search
-        ? "text-emerald-700"
-        : "text-emerald-600"
-    }`}
-  />
-</motion.div>
-
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={search}
-                onChange={handleChange}
-               placeholder={
-  search
-    ? "Searching packages..."
-    : "Search by package, destination, adventure..."
-}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-4 pr-12 text-slate-700 outline-none transition-all duration-200 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
-              />
-
-              {search && (
-                <button
-                  type="button"
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            <button
-              type="button"
-              className="hidden rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700 md:block"
-            >
-              Search
-            </button>
-          </div>
-
-         
-        </div>
-      </div>
-    </section>  
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          aria-label="Clear search"
+          className="absolute right-4 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[#071A33]/40 transition-colors hover:bg-[#FAF9F5] hover:text-[#087E8B]"
+        >
+          <X className="h-4 w-4" strokeWidth={1.7} />
+        </button>
+      )}
+    </div>
   );
 }

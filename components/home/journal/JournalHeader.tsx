@@ -45,7 +45,7 @@ export default function JournalHeader() {
 
       {/* CTA */}
       <Link
-        href="/blog"
+        href="/blogs"
         className="group inline-flex w-fit items-center gap-3 border-b border-[#071A33]/20 pb-2 text-sm font-semibold text-[#071A33] transition-colors duration-300 hover:border-[#F59E0B] hover:text-[#087E8B]"
       >
         <span>Read all stories</span>

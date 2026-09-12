@@ -6,27 +6,27 @@ export default function NavbarLogo() {
     <Link
       href="/"
       aria-label="The Musafir Diaries home"
-      className="flex items-center gap-3"
+      className="group flex shrink-0 items-center gap-2.5"
     >
-      {/* Logo */}
-     <div className="relative h-[60px] w-[60px] shrink-0">
-  <Image
-    src="/logo.png"
-    alt="The Musafir Diaries"
-    width={60}
-    height={60}
-    priority
-    className="h-[60px] w-[60px] object-contain"
-  />
-</div>
+      {/* Brand mark */}
+      <span className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center">
+        <Image
+          src="/logo.png"
+          alt="The Musafir Diaries"
+          width={52}
+          height={52}
+          priority
+          className="h-[52px] w-[52px] object-contain transition-transform duration-200 group-hover:scale-[1.03]"
+        />
+      </span>
 
-      {/* Brand Name */}
-      <span className="flex flex-col leading-[0.95]">
-        <span className="font-serif text-[17px] font-bold tracking-[-0.025em] text-[#071A33]">
+      {/* Brand name */}
+      <span className="flex flex-col leading-[0.9]">
+        <span className="font-serif text-[16px] font-semibold tracking-[-0.025em] text-[#071A33]">
           The Musafir
         </span>
 
-        <span className="mt-1 font-serif text-[17px] font-bold tracking-[-0.025em] text-[#087E8B]">
+        <span className="mt-1 font-serif text-[16px] font-semibold tracking-[-0.025em] text-[#087E8B]">
           Diaries
         </span>
       </span>

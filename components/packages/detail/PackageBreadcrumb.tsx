@@ -1,19 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-import {
-  ChevronRight,
-  Home,
-  ArrowLeft,
-  MapPin,
-} from "lucide-react";
+import { ChevronRight, MapPin, Package as PackageIcon } from "lucide-react";
 
 interface PackageBreadcrumbProps {
   packageName: string;
   destinationName: string;
-  destinationSlug: string;
+  destinationSlug?: string;
 }
 
 export default function PackageBreadcrumb({
@@ -21,69 +12,89 @@ export default function PackageBreadcrumb({
   destinationName,
   destinationSlug,
 }: PackageBreadcrumbProps) {
-  const router = useRouter();
-
   return (
-    <section className="border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="container mx-auto px-6 py-5">
-
-<div className="flex flex-col gap-4">
-          {/* Back Button */}
-
-          <button
-            onClick={() => router.back()}
-            className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700"
+    <div className="border-b border-white/10 bg-[#071A33]/20 backdrop-blur-sm pt-22">
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16 xl:px-20">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex min-h-12 items-center gap-2 overflow-x-auto whitespace-nowrap"
+        >
+          {/* Home */}
+          <Link
+            href="/"
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:text-[#087E8B]"
           >
-            <ArrowLeft className="h-4 w-4" />
+            Home
+          </Link>
 
-            Back
-          </button>
+          <ChevronRight
+            aria-hidden="true"
+            className="h-3.5 w-3.5 shrink-0 text-white/25"
+            strokeWidth={1.7}
+          />
 
-          {/* Breadcrumb */}
+          {/* Packages */}
+          <Link
+            href="/packages"
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:text-[#087E8B]"
+          >
+            Packages
+          </Link>
 
-        <nav aria-label="Breadcrumb">
-  <ol className="flex flex-wrap items-center gap-2 text-sm">
+          {/* Destination */}
+          {destinationName && (
+            <>
+              <ChevronRight
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 text-white/25"
+                strokeWidth={1.7}
+              />
 
-    <li>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-slate-500 transition hover:text-emerald-600"
-      >
-        <Home className="h-4 w-4" />
-        <span className="hidden sm:inline">
-          Home
-        </span>
-      </Link>
-    </li>
+              {destinationSlug ? (
+                <Link
+                  href={`/destinations/${destinationSlug}`}
+                  className="hidden items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 transition-colors hover:text-[#087E8B] sm:flex"
+                >
+                  <MapPin
+                    aria-hidden="true"
+                    className="h-3 w-3 text-[#1597C7]"
+                    strokeWidth={1.7}
+                  />
 
-    <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+                  {destinationName}
+                </Link>
+              ) : (
+                <span className="hidden items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55 sm:flex">
+                  <MapPin
+                    aria-hidden="true"
+                    className="h-3 w-3 text-[#1597C7]"
+                    strokeWidth={1.7}
+                  />
 
-    <li>
-      <Link
-        href="/packages"
-        className="rounded-lg px-2 py-1 text-slate-500 transition hover:text-emerald-600"
-      >
-        Packages
-      </Link>
-    </li>
+                  {destinationName}
+                </span>
+              )}
+            </>
+          )}
 
-    <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+          <ChevronRight
+            aria-hidden="true"
+            className="h-3.5 w-3.5 shrink-0 text-white/25"
+            strokeWidth={1.7}
+          />
 
-    <li className="min-w-0 flex-1">
-      <span
-        className="block truncate rounded-lg bg-emerald-50 px-3 py-1 font-semibold text-emerald-700"
-        title={packageName}
-      >
-        {packageName}
-      </span>
-    </li>
+          {/* Current Package */}
+          <span className="flex min-w-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
+            <PackageIcon
+              aria-hidden="true"
+              className="h-3 w-3 shrink-0 text-[#F59E0B]"
+              strokeWidth={1.7}
+            />
 
-  </ol>
-</nav>
-
-        </div>
-
+            <span className="truncate">{packageName}</span>
+          </span>
+        </nav>
       </div>
-    </section>
+    </div>
   );
 }

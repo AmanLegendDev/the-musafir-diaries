@@ -1,5 +1,6 @@
 import {
-  CheckCircle2,
+  Check,
+  Compass,
   Sparkles,
 } from "lucide-react";
 
@@ -10,66 +11,91 @@ interface PackageHighlightsProps {
 export default function PackageHighlights({
   highlights,
 }: PackageHighlightsProps) {
-  if (!highlights?.length) return null;
+  if (!highlights?.length) {
+    return null;
+  }
 
   return (
-    <section className="py-20 bg-slate-50">
-      <div className="container mx-auto px-6">
+    <section
+      id="highlights"
+      className="scroll-mt-24 border-y border-[#071A33]/8 bg-white py-20 sm:py-24 lg:py-28"
+    >
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16 xl:px-20">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
+          {/* Heading */}
+          <div className="lg:col-span-4">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#1597C7]" />
 
-        {/* Heading */}
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#087E8B]">
+                What makes it special
+              </span>
+            </div>
 
-        <div className="mx-auto mb-14 max-w-3xl text-center">
+            <h2 className="mt-6 font-serif text-4xl font-medium leading-[1] tracking-[-0.04em] text-[#071A33] sm:text-5xl">
+              Moments worth travelling for.
+            </h2>
 
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <p className="mt-6 max-w-sm text-sm leading-7 text-[#071A33]/50">
+              A few of the experiences and details that shape
+              this particular journey.
+            </p>
 
-            <Sparkles className="h-4 w-4" />
+            <div className="mt-8 flex items-center gap-3 text-[#071A33]/30">
+              <Sparkles
+                className="h-4 w-4 text-[#F59E0B]"
+                strokeWidth={1.5}
+              />
 
-            Tour Highlights
-
+              <span className="text-[9px] font-semibold uppercase tracking-[0.2em]">
+                Thoughtfully curated
+              </span>
+            </div>
           </div>
 
-          <h2 className="mt-5 text-4xl font-bold text-slate-900">
-            Why You'll Love This Journey
-          </h2>
+          {/* Highlights */}
+          <div className="lg:col-span-8">
+            <div className="grid border-l border-t border-[#071A33]/8 sm:grid-cols-2">
+              {highlights.map((highlight, index) => (
+                <div
+                  key={`${highlight}-${index}`}
+                  className="group border-b border-r border-[#071A33]/8 p-6 transition-colors duration-300 hover:bg-[#FAF9F5] sm:p-8"
+                >
+                  <div className="flex items-start gap-5">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#087E8B]/20 bg-[#087E8B]/5">
+                      <Check
+                        className="h-4 w-4 text-[#087E8B]"
+                        strokeWidth={1.8}
+                      />
+                    </span>
 
-          <p className="mt-5 text-lg leading-8 text-slate-600">
-            Every package is thoughtfully designed to deliver
-            unforgettable experiences, breathtaking landscapes,
-            and hassle-free travel.
-          </p>
+                    <div>
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[#071A33]/25">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
 
-        </div>
-
-        {/* Highlights */}
-
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-
-          {highlights.map((highlight, index) => (
-            <div
-              key={index}
-              className="group rounded-3xl border border-slate-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl"
-            >
-
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 transition group-hover:bg-emerald-600">
-
-                <CheckCircle2 className="h-7 w-7 text-emerald-600 transition group-hover:text-white" />
-
-              </div>
-
-              <h3 className="mt-6 text-xl font-semibold text-slate-900">
-                {highlight}
-              </h3>
-
-              <p className="mt-3 leading-7 text-slate-600">
-                Carefully curated to enhance your travel experience
-                with comfort, safety, and unforgettable memories.
-              </p>
-
+                      <p className="mt-3 text-base font-medium leading-7 text-[#071A33] transition-colors group-hover:text-[#087E8B]">
+                        {highlight}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
 
+            <div className="mt-8 flex items-center gap-3">
+              <Compass
+                className="h-4 w-4 text-[#1597C7]"
+                strokeWidth={1.6}
+              />
+
+              <p className="text-[10px] leading-5 text-[#071A33]/35">
+                Experiences may vary slightly depending on weather,
+                season and local conditions.
+              </p>
+            </div>
+          </div>
         </div>
-
       </div>
     </section>
   );

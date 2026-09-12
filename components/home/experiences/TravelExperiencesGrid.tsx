@@ -1,10 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowUpRight,
   Compass,
   Mountain,
   UtensilsCrossed,
@@ -18,7 +16,6 @@ const EXPERIENCES = [
       "Feel the mountains beyond the viewpoint — through open roads, high valleys and moments that invite you to go a little further.",
     image: "/images/experiences/mountain-adventures.webp",
     icon: Mountain,
-    href: "/under-development",
     featured: true,
   },
   {
@@ -28,7 +25,6 @@ const EXPERIENCES = [
       "Quiet mornings, forest walks, peaceful viewpoints and the simple pleasure of having nowhere else to be.",
     image: "/images/experiences/slow-mountain-moments.webp",
     icon: Compass,
-    href: "/under-development",
     featured: false,
   },
   {
@@ -38,7 +34,6 @@ const EXPERIENCES = [
       "Discover the character of the mountains through local flavours, traditions, stories and places that feel wonderfully unhurried.",
     image: "/images/experiences/local-flavours-culture.webp",
     icon: UtensilsCrossed,
-    href: "/under-development",
     featured: false,
   },
 ] as const;
@@ -116,11 +111,7 @@ function ExperienceCard({
   const Icon = experience.icon;
 
   return (
-    <Link
-      href={experience.href}
-      aria-label={`Explore ${experience.title}`}
-      className="group block h-full"
-    >
+    <div className="group block h-full">
       <article
         className={[
           "relative isolate h-full min-h-[300px] overflow-hidden rounded-[28px] bg-[#0D2747]",
@@ -221,33 +212,6 @@ function ExperienceCard({
           >
             {experience.description}
           </p>
-
-          {/* Bottom action */}
-          <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-5">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45 transition-colors duration-300 group-hover:text-white/75">
-              Explore the experience
-            </span>
-
-            <span
-              aria-hidden="true"
-              className={[
-                "flex shrink-0 items-center justify-center rounded-full bg-[#FAF9F5] text-[#071A33]",
-                "transition-all duration-500",
-                "group-hover:rotate-45 group-hover:bg-[#087E8B] group-hover:text-white",
-                featured
-                  ? "h-12 w-12"
-                  : "h-10 w-10",
-              ].join(" ")}
-            >
-              <ArrowUpRight
-                className={
-                  featured
-                    ? "h-5 w-5"
-                    : "h-4 w-4"
-                }
-              />
-            </span>
-          </div>
         </div>
 
         {/* Hover border */}
@@ -256,6 +220,6 @@ function ExperienceCard({
           className="pointer-events-none absolute inset-0 rounded-[28px] border border-white/0 transition-colors duration-500 group-hover:border-white/20"
         />
       </article>
-    </Link>
+    </div>
   );
 }

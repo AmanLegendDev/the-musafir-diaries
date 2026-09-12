@@ -1,153 +1,131 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { ArrowRight, PhoneCall, MapPin, Mail } from "lucide-react";
 
 export default function ContactHero() {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative isolate min-h-[78vh] overflow-hidden bg-[#071A33] text-white">
+      {/* Atmospheric background */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute left-[-12%] top-[-18%] h-[420px] w-[420px] rounded-full bg-[#087E8B]/15 blur-3xl" />
+        <div className="absolute bottom-[-20%] right-[-10%] h-[500px] w-[500px] rounded-full bg-[#1597C7]/10 blur-3xl" />
 
-      {/* Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,26,51,0.72),rgba(7,26,51,0.96))]" />
 
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-900" />
-
-      <div className="absolute -left-40 top-0 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" />
-
-      <div className="absolute -right-40 bottom-0 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl px-6 py-28 lg:px-8">
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-4xl text-center"
-        >
-
-          {/* Badge */}
-
-          <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-500/10 px-5 py-2 text-sm font-semibold text-emerald-300">
-
-            Contact Altitude Escapes
-
-          </span>
-
-          {/* Heading */}
-
-          <h1 className="mt-8 text-5xl font-bold leading-tight text-white md:text-7xl">
-
-            Let's Plan Your
-
-            <span className="block text-emerald-400">
-
-              Perfect Journey
-
-            </span>
-
-          </h1>
-
-          {/* Description */}
-
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-slate-300">
-
-            Whether you're planning a luxury getaway, an adventurous
-            Himalayan road trip, or a customized holiday, our travel
-            experts are here to help you create unforgettable memories.
-
-          </p>
-
-          {/* Buttons */}
-
-          <div className="mt-12 flex flex-wrap justify-center gap-5">
-
-            <Link
-              href="/packages"
-              className="inline-flex items-center gap-3 rounded-2xl bg-emerald-600 px-8 py-4 font-semibold text-white transition hover:bg-emerald-700"
-            >
-              Explore Packages
-
-              <ArrowRight className="h-5 w-5" />
-
-            </Link>
-
-            <a
-              href="tel:+919999999999"
-              className="inline-flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition hover:bg-white/20"
-            >
-              <PhoneCall className="h-5 w-5" />
-
-              Call Us
-
-            </a>
-
-          </div>
-
-          {/* Quick Contact */}
-
-          <div className="mt-16 grid gap-6 md:grid-cols-3">
-
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-
-              <PhoneCall className="mx-auto h-8 w-8 text-emerald-400" />
-
-              <h3 className="mt-4 text-lg font-semibold text-white">
-
-                Call Anytime
-
-              </h3>
-
-              <p className="mt-2 text-slate-300">
-
-                +91 98765 43210
-
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-
-              <Mail className="mx-auto h-8 w-8 text-emerald-400" />
-
-              <h3 className="mt-4 text-lg font-semibold text-white">
-
-                Email Us
-
-              </h3>
-
-              <p className="mt-2 text-slate-300 break-all">
-
-                hello@altitudeescapes.com
-
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-
-              <MapPin className="mx-auto h-8 w-8 text-emerald-400" />
-
-              <h3 className="mt-4 text-lg font-semibold text-white">
-
-                Office
-
-              </h3>
-
-              <p className="mt-2 text-slate-300">
-
-                Shimla, Himachal Pradesh
-
-              </p>
-
-            </div>
-
-          </div>
-
-        </motion.div>
-
+        <div
+          className="absolute inset-0 opacity-[0.055]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
       </div>
 
+      {/* Top editorial line */}
+      <div className="absolute left-0 right-0 top-0 h-px bg-white/10" />
+
+      <div className="mx-auto flex min-h-[78vh] max-w-7xl items-end px-5 pb-14 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
+        <div className="grid w-full gap-14 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
+          {/* Main copy */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="mb-7 flex items-center gap-3"
+            >
+              <span className="h-px w-10 bg-[#F59E0B]" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/55">
+                Start a conversation
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.08 }}
+              className="max-w-4xl font-serif text-[3.35rem] leading-[0.96] tracking-[-0.045em] sm:text-6xl lg:text-[6.25rem]"
+            >
+              Let&apos;s talk about
+              <span className="block text-[#5CC6D0]">
+                where you&apos;re going.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.18 }}
+              className="mt-8 max-w-2xl text-sm leading-7 text-white/58 sm:text-base sm:leading-8"
+            >
+              Tell us what kind of journey you have in mind. Whether you already
+              know where you&apos;re headed or you&apos;re still figuring it out,
+              we&apos;ll help you shape the next step.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.26 }}
+              className="mt-9 flex flex-wrap gap-3"
+            >
+              <Link
+                href="#contact"
+                className="group inline-flex items-center gap-3 rounded-full bg-[#F59E0B] px-6 py-3.5 text-sm font-semibold text-[#071A33] transition-all duration-300 hover:bg-[#f8b83f]"
+              >
+                Plan your journey
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+
+              <Link
+                href="/destinations"
+                className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3.5 text-sm font-medium text-white/80 backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white"
+              >
+                Explore destinations
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Editorial side note */}
+          <motion.div
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="hidden justify-self-end lg:block"
+          >
+            <div className="max-w-[250px] border-l border-white/15 pl-6">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">
+                The Musafir Diaries
+              </p>
+
+              <p className="mt-5 font-serif text-2xl leading-tight tracking-[-0.025em] text-white/85">
+                Every memorable journey begins with a simple conversation.
+              </p>
+
+              <p className="mt-5 text-xs leading-6 text-white/40">
+                Destinations, ideas, questions — start wherever feels right.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Scroll cue */}
+      <motion.a
+        href="#contact"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.9, duration: 0.6 }}
+        className="absolute bottom-7 right-5 hidden items-center gap-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-white/70 sm:flex lg:right-12"
+      >
+        <span>Continue</span>
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10">
+          <ArrowDown className="h-3.5 w-3.5" />
+        </span>
+      </motion.a>
     </section>
   );
 }

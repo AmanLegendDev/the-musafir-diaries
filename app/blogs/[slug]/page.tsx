@@ -1,155 +1,300 @@
-import { notFound } from "next/navigation";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
-import connectDB from "@/lib/db";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/footer/Footer";
 
-import Blog from "@/models/blog.model";
+import BlogBreadcrumb from "@/components/blog/detail/BlogBreadcrumb";
+import BlogHero from "@/components/blog/detail/BlogHero";
+import BlogReadingProgress from "@/components/blog/detail/BlogReadingProgress";
+import BlogArticle from "@/components/blog/detail/BlogArticle";
+import BlogTags from "@/components/blog/detail/BlogTags";
+import RelatedBlogs from "@/components/blog/detail/RelatedBlogs";
+import BlogCTA from "@/components/blog/detail/BlogCTA";
+import BlogNotFound from "@/components/blog/detail/BlogNotFound";
 
-import ReadingProgress from "@/components/blog/details/ReadingProgress";
-import ArticleHero from "@/components/blog/details/ArticleHero";
-import ArticleContent from "@/components/blog/details/ArticleContent";
-import BlogSidebar from "@/components/blog/details/BlogSidebar";
-import PopularPosts from "@/components/blog/details/PopularPosts";
-import ShareButtons from "@/components/blog/details/ShareButtons";
-import TableOfContents from "@/components/blog/details/TableOfContents";
-import AuthorCard from "@/components/blog/details/AuthorCard";
-import RelatedArticles from "@/components/blog/details/RelatedArticles";
-import { Footer } from "@/components/footer";
+import {
+  getBlogBySlug,
+  getRelatedBlogs,
+} from "@/lib/queries/blog.queries";
 
-interface Props {
+type PageProps = {
   params: Promise<{
     slug: string;
   }>;
+};
+
+type BlogCategory = {
+  _id?: string;
+  name?: string;
+  slug?: string;
+};
+
+function getCategoryId(category: BlogCategory | null | undefined) {
+  if (!category?._id) return null;
+
+  return String(category._id);
+}
+
+function getAbsoluteUrl(path: string) {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://the-musafir-diaries.vercel.app";
+
+  return `${baseUrl.replace(/\/$/, "")}${path}`;
 }
 
 export async function generateMetadata({
   params,
-}: Props): Promise<Metadata> {
-  await connectDB();
-
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const article = await Blog.findOne({
-    slug,
-    status: "published",
-  }).lean();
+  const blog = await getBlogBySlug(slug);
 
-  if (!article) {
+  if (!blog) {
     return {
-      title: "Article Not Found",
+      title: "Story Not Found | The Musafir Diaries",
+      description:
+        "The travel story you're looking for could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
+  const title =
+    blog.seoTitle?.trim() ||
+    `${blog.title} | The Musafir Diaries`;
+
+  const description =
+    blog.seoDescription?.trim() ||
+    blog.excerpt;
+
+  const canonicalPath = `/blog/${blog.slug}`;
+
   return {
-    title: article.seoTitle || article.title,
-    description: article.seoDescription || article.excerpt,
+    title,
+    description,
+
+    keywords: [
+      blog.title,
+      ...(blog.tags || []),
+      blog.category?.name,
+      "Himachal Pradesh travel",
+      "Himalayan travel",
+      "The Musafir Diaries",
+    ].filter(Boolean),
+
+    alternates: {
+      canonical: canonicalPath,
+    },
+
     openGraph: {
-      title: article.title,
-      description: article.excerpt,
-      images: [article.featuredImage],
+      title,
+      description,
+      type: "article",
+      url: canonicalPath,
+
+      publishedTime: blog.publishedAt
+        ? new Date(blog.publishedAt).toISOString()
+        : undefined,
+
+      authors: blog.author
+        ? [blog.author]
+        : undefined,
+
+      tags: blog.tags?.length
+        ? blog.tags
+        : undefined,
+
+      images: blog.featuredImage
+        ? [
+            {
+              url: blog.featuredImage,
+              alt: blog.title,
+            },
+          ]
+        : undefined,
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+
+      images: blog.featuredImage
+        ? [blog.featuredImage]
+        : undefined,
     },
   };
 }
 
 export default async function BlogDetailPage({
   params,
-}: Props) {
-  await connectDB();
-
+}: PageProps) {
   const { slug } = await params;
 
-  const article = await Blog.findOne({
-    slug,
-    status: "published",
-  })
-    .populate("category", "name slug")
-    .lean();
+  const blog = await getBlogBySlug(slug);
 
-  if (!article) {
-    notFound();
+  if (!blog) {
+    return (
+      <>
+        <Navbar />
+        <BlogNotFound />
+        <Footer />
+      </>
+    );
   }
 
-  const relatedArticles = await Blog.find({
-    _id: {
-      $ne: article._id,
-    },
-    category: article.category._id,
-    status: "published",
-  })
-    .populate("category", "name slug")
-    .sort({
-      publishedAt: -1,
-    })
-    .limit(3)
-    .lean();
+  const category = blog.category as BlogCategory | null;
 
-  const popularPosts = await Blog.find({
-    _id: {
-      $ne: article._id,
-    },
-    status: "published",
-  })
-    .sort({
-      publishedAt: -1,
-    })
-    .limit(5)
-    .select(
-      "title slug featuredImage readTime publishedAt"
-    )
-    .lean();
+  const categoryId = getCategoryId(category);
 
-  const articleUrl = `https://altitude-escapes.vercel.app/blog/${article.slug}`;
+  const relatedBlogs = await getRelatedBlogs(
+    categoryId,
+    blog.slug,
+    3
+  );
+
+  const blogPath = `/blog/${blog.slug}`;
+  const blogUrl = getAbsoluteUrl(blogPath);
+
+  const publishedDate = blog.publishedAt
+    ? new Date(blog.publishedAt)
+    : null;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+
+    headline: blog.title,
+
+    description: blog.seoDescription?.trim() || blog.excerpt,
+
+    image: blog.featuredImage
+      ? [blog.featuredImage]
+      : undefined,
+
+    datePublished: publishedDate
+      ? publishedDate.toISOString()
+      : undefined,
+
+    dateModified: blog.updatedAt
+      ? new Date(blog.updatedAt).toISOString()
+      : publishedDate
+        ? publishedDate.toISOString()
+        : undefined,
+
+    author: {
+      "@type": "Person",
+      name: blog.author,
+    },
+
+    publisher: {
+      "@type": "Organization",
+      name: "The Musafir Diaries",
+    },
+
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": blogUrl,
+    },
+
+    url: blogUrl,
+
+    keywords: blog.tags?.length
+      ? blog.tags.join(", ")
+      : undefined,
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: getAbsoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Journal",
+        item: getAbsoluteUrl("/blog"),
+      },
+      ...(category?.name
+        ? [
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: category.name,
+              item: category.slug
+                ? getAbsoluteUrl(
+                    `/blog?category=${encodeURIComponent(
+                      category.slug
+                    )}`
+                  )
+                : getAbsoluteUrl("/blog"),
+            },
+          ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: category?.name ? 4 : 3,
+        name: blog.title,
+        item: blogUrl,
+      },
+    ],
+  };
 
   return (
     <>
-      <ReadingProgress />
+    
 
-      <ArticleHero
-        article={JSON.parse(JSON.stringify(article))}
+      <BlogReadingProgress />
+
+      <main>
+        <BlogBreadcrumb
+          blogTitle={blog.title}
+          categoryName={category?.name}
+          categorySlug={category?.slug}
+        />
+
+        <BlogHero blog={blog} />
+
+        <BlogArticle
+          content={blog.content}
+          blogUrl={blogUrl}
+          title={blog.title}
+        />
+
+        <BlogTags tags={blog.tags || []} />
+
+        <RelatedBlogs
+          blogs={relatedBlogs}
+          currentSlug={blog.slug}
+        />
+
+        <BlogCTA blogTitle={blog.title} />
+      </main>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema),
+        }}
       />
 
-      <section className="py-20">
-        <div className="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-3 lg:px-8">
-
-          {/* Left */}
-
-          <div className="lg:col-span-2 space-y-14">
-
-            <ArticleContent
-              content={article.content}
-            />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
 
      
-          </div>
-
-          {/* Sidebar */}
-
-          <BlogSidebar>
-
-            <TableOfContents />
-
-            <PopularPosts
-              posts={JSON.parse(
-                JSON.stringify(popularPosts)
-              )}
-            />
-
-            <ShareButtons
-              title={article.title}
-              url={articleUrl}
-            />
-
-          </BlogSidebar>
-
-        </div>
-      </section>
-
-      <RelatedArticles
-        articles={JSON.parse(
-          JSON.stringify(relatedArticles)
-        )}
-      />
-      <Footer/>
     </>
   );
 }

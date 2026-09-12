@@ -142,10 +142,10 @@ export default function Navbar() {
             opacity: 1,
             y: 0,
           }}
-          transition={{
-            duration: 0.65,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+        transition={{
+  duration: 0.4,
+  ease: [0.22, 1, 0.36, 1],
+}}
           className={[
             "relative mx-auto flex h-[68px] max-w-[1440px] items-center rounded-[23px] border px-3 transition-all duration-300 sm:h-[72px] sm:px-5 lg:h-[76px] lg:px-6",
             scrolled
@@ -179,7 +179,7 @@ export default function Navbar() {
 
           <div className="ml-auto flex items-center gap-2">
             <Link
-              href="/under-development"
+              href="/inquiry"
               className="group hidden items-center gap-2 rounded-full bg-[#071A33] px-5 py-3 text-[13px] font-semibold text-white shadow-[0_12px_30px_rgba(7,26,51,0.18)] transition-all hover:-translate-y-0.5 hover:bg-[#0D2747] lg:inline-flex"
             >
               Plan Your Journey

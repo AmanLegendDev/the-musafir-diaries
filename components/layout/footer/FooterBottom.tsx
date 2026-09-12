@@ -23,14 +23,14 @@ export default function FooterBottom() {
       {/* Legal */}
       <div className="flex flex-wrap items-center gap-5">
         <Link
-          href="/under-development"
+          href="/privacy-policy"
           className="text-[11px] text-white/35 transition-colors hover:text-white"
         >
           Privacy Policy
         </Link>
 
         <Link
-          href="/under-development"
+          href="/terms-and-conditions"
           className="text-[11px] text-white/35 transition-colors hover:text-white"
         >
           Terms & Conditions

@@ -1,70 +1,83 @@
-import BlogHero from "@/components/blog/BlogHero";
-import FeaturedArticle from "@/components/blog/FeaturedArticle";
-import BlogCategories from "@/components/blog/BlogCategories";
-import BlogGrid from "@/components/blog/BlogGrid";
-import Newsletter from "@/components/blog/Newsletter";
+import type { Metadata } from "next";
 
-import Blog from "@/models/blog.model";
-import Category from "@/models/category.model";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/footer/Footer";
 
-import connectDB from "@/lib/db";
+import BlogHero from "@/components/blog/listing/BlogHero";
+import BlogListing from "@/components/blog/listing/BlogListing";
+import BlogCTA from "@/components/blog/listing/BlogCTA";
+import { Suspense } from "react";
 
-import { Metadata } from "next";
+import {
+  getBlogCategories,
+  getFeaturedBlog,
+  getPublishedBlogs,
+} from "@/lib/queries/blog.queries";
 
 export const metadata: Metadata = {
-  title: "Travel Journal | Altitude Escapes",
+  title: "Travel Stories & Himalayan Guides | The Musafir Diaries",
   description:
-    "Discover destination guides, travel tips, luxury escapes and unforgettable Himalayan adventures.",
+    "Explore travel stories, Himalayan guides, destination inspiration and thoughtful journeys from The Musafir Diaries.",
+  keywords: [
+    "Himachal Pradesh travel blog",
+    "Himalayan travel stories",
+    "Himachal travel guides",
+    "Shimla travel guide",
+    "Manali travel guide",
+    "Spiti travel guide",
+    "The Musafir Diaries",
+  ],
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Travel Stories & Himalayan Guides | The Musafir Diaries",
+    description:
+      "Stories, guides and inspiration for your next Himalayan journey.",
+    type: "website",
+    url: "/blog",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Travel Stories & Himalayan Guides | The Musafir Diaries",
+    description:
+      "Stories, guides and inspiration for your next Himalayan journey.",
+  },
 };
 
 export default async function BlogPage() {
-  await connectDB();
-
-  const [featuredArticle, blogs, categories] = await Promise.all([
-    Blog.findOne({
-      featured: true,
-      status: "published",
-    })
-      .populate("category", "name slug")
-      .sort({ publishedAt: -1 })
-      .lean(),
-
-    Blog.find({
-      status: "published",
-    })
-      .populate("category", "name slug")
-      .sort({ publishedAt: -1 })
-      .lean(),
-
-    Category.find({
-      isActive: true,
-    })
-      .select("name slug")
-      .sort({ name: 1 })
-      .lean(),
+  const [blogs, featuredBlog, categories] = await Promise.all([
+    getPublishedBlogs(),
+    getFeaturedBlog(),
+    getBlogCategories(),
   ]);
 
+  const featuredId = featuredBlog?._id
+    ? String(featuredBlog._id)
+    : null;
+
+  const listingBlogs = featuredId
+    ? blogs.filter((blog: { _id: string }) => String(blog._id) !== featuredId)
+    : blogs;
+
   return (
-    <main className="bg-white">
+    <>
+     
 
-      <BlogHero />
+      <main>
+        <BlogHero />
+        <Suspense fallback={null}>
+          <BlogListing
+            blogs={listingBlogs}
+            featuredBlog={featuredBlog}
+            categories={categories}
+          />
+        </Suspense>
 
-      {featuredArticle && (
-        <FeaturedArticle
-          article={JSON.parse(JSON.stringify(featuredArticle))}
-        />
-      )}
+        <BlogCTA />
+      </main>
 
-      <BlogCategories
-        categories={JSON.parse(JSON.stringify(categories))}
-      />
-
-      <BlogGrid
-        blogs={JSON.parse(JSON.stringify(blogs))}
-      />
-
-      <Newsletter />
-
-    </main>
+     
+    </>
   );
 }

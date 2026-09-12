@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, Geist } from "next/font/google";
+import { Geist, Inter, Poppins } from "next/font/google";
+
 import "./globals.css";
-import Navbaar from "@/components/layout/Navbar";
+
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/footer/Footer";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,16 +27,48 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://www.themusafirdiaries.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://altitude-escapes.vercel.app"),
+  metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "Altitude Escapes",
-    template: "%s | Altitude Escapes",
+    default: "The Musafir Diaries",
+    template: "%s | The Musafir Diaries",
   },
 
   description:
-    "Premium travel experiences, luxury destinations, curated adventures and unforgettable journeys. Every Journey Begins With Trust.",
+    "The Musafir Diaries crafts thoughtful Himalayan journeys, curated stays, destination experiences and unforgettable travel stories from Himachal Pradesh.",
+
+  keywords: [
+    "The Musafir Diaries",
+    "Himachal Pradesh travel",
+    "Himalayan travel",
+    "Shimla travel",
+    "Manali travel",
+    "Spiti Valley travel",
+    "Himachal travel packages",
+    "Himalayan travel experiences",
+  ],
+
+  applicationName: "The Musafir Diaries",
+
+  authors: [
+    {
+      name: "The Musafir Diaries",
+    },
+  ],
+
+  creator: "The Musafir Diaries",
+  publisher: "The Musafir Diaries",
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 
   icons: {
     icon: "/favicon.ico",
@@ -38,32 +77,33 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Altitude Escapes",
+    title: "The Musafir Diaries",
     description:
-      "Premium travel experiences, luxury destinations, curated adventures and unforgettable journeys.",
+      "Thoughtful Himalayan journeys, curated stays and experiences designed to become part of your story.",
 
-    url: "https://altitude-escapes.vercel.app",
-
-    siteName: "Altitude Escapes",
+    url: SITE_URL,
+    siteName: "The Musafir Diaries",
 
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Altitude Escapes",
+        alt: "The Musafir Diaries",
       },
     ],
 
-    locale: "en_US",
+    locale: "en_IN",
     type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Altitude Escapes",
+
+    title: "The Musafir Diaries",
+
     description:
-      "Premium travel experiences, luxury destinations and unforgettable Himalayan journeys.",
+      "Thoughtful Himalayan journeys, curated stays and unforgettable travel experiences.",
 
     images: ["/og-image.jpg"],
   },
@@ -71,6 +111,14 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
@@ -83,12 +131,26 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(inter.variable, poppins.variable, "font-sans", geist.variable)}
+      className={cn(
+        inter.variable,
+        poppins.variable,
+        geist.variable,
+        "font-sans",
+      )}
     >
-    
-      <body>
-       
-        {children}   <Toaster richColors /> </body>
+      <body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
+        <Navbar />
+
+        {children}
+
+        <Footer />
+
+        <Toaster
+          richColors
+          position="top-right"
+          closeButton
+        />
+      </body>
     </html>
   );
 }

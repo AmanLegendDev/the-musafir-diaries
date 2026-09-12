@@ -41,12 +41,12 @@ export const HERO_CONTENT = {
 
  primaryCta: {
   label: "Plan Your Journey",
-  href: "/under-development",
+  href: "/inquiry",
 },
 
 secondaryCta: {
   label: "Book Your Trip",
-  href: "/under-development",
+  href: "/booking",
 },
 
   storyLabel: "More than travel",

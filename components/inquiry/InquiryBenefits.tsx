@@ -1,212 +1,70 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 import {
-  BadgeDollarSign,
-  Compass,
-  Headset,
-  Map,
+  FileText,
+  MapPinned,
+  MessageCircle,
+  Route,
 } from "lucide-react";
 
+import InquiryBenefitCard from "./InquiryBenefitCard";
 
-
-
-const benefits = [
+const BENEFITS = [
   {
-    title: "Customized Itineraries",
+    icon: MapPinned,
+    eyebrow: "01 · Destination",
+    title: "Start with where you want to go",
     description:
-      "Every trip is tailored to your interests and budget.",
-    icon: Compass,
+      "Choose the Himalayan destination that interests you and give us the dates you're considering.",
   },
   {
-    title: "Best Value Guaranteed",
+    icon: Route,
+    eyebrow: "02 · Preferences",
+    title: "Tell us what matters",
     description:
-      "Transparent pricing with no hidden costs.",
-    icon: BadgeDollarSign,
+      "Share your group size, budget range, pickup preference and the kind of experience you're looking for.",
   },
   {
-    title: "Local Experts",
+    icon: MessageCircle,
+    eyebrow: "03 · Conversation",
+    title: "Plan around your needs",
     description:
-      "Explore Himachal with experienced local guides.",
-    icon: Map,
+      "Your inquiry gives us the context to discuss the journey with you rather than starting from a generic template.",
   },
   {
-    title: "Dedicated Support",
+    icon: FileText,
+    eyebrow: "04 · Next step",
+    title: "Review the possibilities",
     description:
-      "We're with you before, during, and after your journey.",
-    icon: Headset,
+      "Once your requirements are understood, itinerary details, availability and pricing can be discussed with you.",
   },
 ];
 
 export default function InquiryBenefits() {
   return (
-    <section className="bg-white py-20 lg:py-28">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Section Header */}
+    <section className="bg-white px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24">
+      <div className="mx-auto w-full max-w-7xl">
+        <div className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#087E8B]">
+            How it works
+          </p>
 
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 30,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.6,
-          }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <span
-            className="
-              inline-flex
-              rounded-full
-              bg-[#3BAEA0]/10
-              px-4
-              py-2
-              text-sm
-              font-semibold
-              text-[#0F4C81]
-            "
-          >
-            Why Start With an Inquiry?
-          </span>
-
-          <h2
-            className="
-              mt-5
-              text-3xl
-              font-bold
-              text-[#081C2D]
-
-              md:text-5xl
-            "
-          >
-            Every Great Journey Begins
-            <br />
-            With the Right Plan
+          <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-[#071A33] sm:text-4xl lg:text-5xl">
+            A simple beginning to a more thoughtful journey.
           </h2>
 
-          <p
-            className="
-              mt-6
-              text-lg
-              leading-8
-              text-slate-600
-            "
-          >
-            Share your travel preferences with our local experts.
-            We'll design a personalized Himalayan experience
-            tailored to your budget, interests, and travel style.
+          <p className="mt-4 max-w-xl text-sm leading-7 text-[#071A33]/60 sm:text-base">
+            You don't need to have every detail figured out.
+            Give us the essentials and we can take the
+            conversation from there.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Cards */}
-
-        <div
-          className="
-            mt-16
-            grid
-            gap-8
-
-            md:grid-cols-2
-
-            xl:grid-cols-4
-          "
-        >
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-
-            return (
-              <motion.div
-                key={benefit.title}
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  duration: 0.6,
-                  delay: index * 0.1,
-                }}
-                className="
-                  group
-                  rounded-3xl
-                  border
-                  border-slate-200
-                  bg-white
-                  p-8
-                  shadow-sm
-                  transition-all
-                  duration-300
-
-                  hover:-translate-y-2
-                  hover:border-[#3BAEA0]/30
-                  hover:shadow-2xl
-                "
-              >
-                {/* Icon */}
-
-                <div
-                  className="
-                    flex
-                    h-16
-                    w-16
-                    items-center
-                    justify-center
-                    rounded-2xl
-                    bg-gradient-to-br
-                    from-[#0F4C81]
-                    to-[#3BAEA0]
-                    text-white
-                    shadow-lg
-                  "
-                >
-                  <Icon size={30} />
-                </div>
-
-                {/* Title */}
-
-                <h3
-                  className="
-                    mt-8
-                    text-xl
-                    font-bold
-                    text-[#081C2D]
-                  "
-                >
-                  {benefit.title}
-                </h3>
-
-                {/* Description */}
-
-                <p
-                  className="
-                    mt-4
-                    leading-7
-                    text-slate-600
-                  "
-                >
-                  {benefit.description}
-                </p>
-
-                {/* Link */}
-
-                
-              </motion.div>
-            );
-          })}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-14 lg:grid-cols-4">
+          {BENEFITS.map((benefit) => (
+            <InquiryBenefitCard
+              key={benefit.eyebrow}
+              {...benefit}
+            />
+          ))}
         </div>
       </div>
     </section>

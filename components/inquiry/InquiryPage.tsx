@@ -1,52 +1,47 @@
-
-
 import InquiryBenefits from "./InquiryBenefits";
 import InquiryFAQ from "./InquiryFAQ";
 import InquiryForm from "./InquiryForm";
 import InquiryHero from "./InquiryHero";
 import type { FAQItem } from "./types";
 
-
-
 const faqs: FAQItem[] = [
   {
-    question: "Is the inquiry free?",
+    question: "Is submitting an inquiry free?",
     answer:
-      "Yes. Submitting an inquiry is completely free.",
+      "Yes. You can submit an inquiry without making a payment. It simply gives us the details needed to understand your travel plans.",
   },
   {
-    question: "When will I receive a response?",
+    question: "Do I need to know my complete itinerary?",
     answer:
-      "Usually within 30 minutes during business hours.",
+      "No. You can share whatever you already know — destination, approximate dates, group size, budget and the experiences you're interested in. The rest can be discussed as your plan takes shape.",
   },
   {
-    question: "Can I customize my itinerary?",
+    question: "Can I request a customised trip?",
     answer:
-      "Absolutely. Every trip can be personalized.",
+      "You can share your preferences and requirements in the inquiry. The itinerary can then be discussed based on your destination, travel dates, group and requested experiences.",
   },
   {
-    question: "Do I need to pay now?",
+    question: "What happens after I submit the inquiry?",
     answer:
-      "No. Payment is only required after you approve the itinerary.",
+      "Your inquiry is saved for review. The next conversation can cover your requirements, itinerary possibilities, availability and pricing before any final travel arrangement is made.",
+  },
+  {
+    question: "Does submitting an inquiry confirm my trip?",
+    answer:
+      "No. An inquiry is a planning request, not a final booking confirmation. Any itinerary, availability, pricing and booking details will need to be discussed and confirmed separately.",
   },
 ];
 
 export default function InquiryPage() {
   return (
-    <>
-      <InquiryHero
-        title="Let's Plan Your Dream Himalayan Journey"
-        subtitle="Tell us your travel preferences and our experts will craft a personalized itinerary just for you."
-        backgroundImage="/images/inquiry/inquiry-hero.jpg"
-      />
+    <main className="bg-[#FAF9F5] text-[#071A33]">
+      <InquiryHero />
 
-     <InquiryBenefits />
+      <InquiryBenefits />
 
       <InquiryForm />
 
-      <InquiryFAQ
-        faqs={faqs}
-      />
-    </>
+      <InquiryFAQ faqs={faqs} />
+    </main>
   );
 }

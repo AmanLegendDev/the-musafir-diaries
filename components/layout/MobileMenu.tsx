@@ -9,6 +9,7 @@ import {
   Images,
   HelpCircle,
   Info,
+  Home,
   BookOpen,
   Mail,
   Package,
@@ -23,7 +24,7 @@ type Props = {
 };
 
 const ICONS = {
-  Home: Compass,
+  Home: Home,
   Destinations: Compass,
   Packages: Package,
   Hotels: Hotel,
@@ -150,10 +151,11 @@ export default function MobileMenu({
                         opacity: 1,
                         x: 0,
                       }}
-                      transition={{
-                        delay: index * 0.035,
-                        duration: 0.28,
-                      }}
+                     transition={{
+  delay: index * 0.015,
+  duration: 0.18,
+  ease: [0.22, 1, 0.36, 1],
+}}
                     >
                       <Link
                         href={item.href}
@@ -203,7 +205,7 @@ export default function MobileMenu({
 
             <div className="border-t border-[#071A33]/8 p-4">
               <Link
-                href="/under-development"
+                href="/inquiry"
                 onClick={onClose}
                 className="group flex items-center justify-between rounded-2xl bg-[#F59E0B] px-5 py-4 text-[#071A33] shadow-[0_14px_35px_rgba(245,158,11,0.20)]"
               >

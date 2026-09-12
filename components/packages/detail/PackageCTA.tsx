@@ -1,121 +1,101 @@
 import Link from "next/link";
-
 import {
-  ArrowRight,
-  Phone,
-  ShieldCheck,
-  Star,
+  ArrowUpRight,
+  Compass,
   MessageCircle,
 } from "lucide-react";
 
 interface PackageCTAProps {
   packageName: string;
+  packageSlug: string;
 }
 
 export default function PackageCTA({
   packageName,
+  packageSlug,
 }: PackageCTAProps) {
-  const whatsappMessage = encodeURIComponent(
-    `Hi Altitude Escapes, I'm interested in the "${packageName}" package. Please share more details.`
-  );
-
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 py-24 text-white">
+    <section className="bg-[#071A33]">
+      <div className="mx-auto max-w-[1600px] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28 xl:px-20">
+        <div className="relative overflow-hidden rounded-[36px] bg-[#0D2747] px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
+          <div
+            aria-hidden="true"
+            className="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-[#1597C7]/10"
+          />
 
-      {/* Background */}
+          <div
+            aria-hidden="true"
+            className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full border border-[#F59E0B]/10"
+          />
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_45%)]" />
+          <div className="relative grid gap-12 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-8">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-10 bg-[#F59E0B]" />
 
-      <div className="relative container mx-auto px-6">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#1597C7]">
+                  Your story starts here
+                </span>
+              </div>
 
-        <div className="mx-auto max-w-4xl text-center">
+              <h2 className="mt-6 max-w-4xl font-serif text-4xl font-medium leading-[0.98] tracking-[-0.04em] text-white sm:text-5xl lg:text-7xl">
+                Ready to make{" "}
+                <span className="text-[#1597C7]">
+                  {packageName}
+                </span>{" "}
+                yours?
+              </h2>
 
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
-
-            <Star className="h-4 w-4 fill-current" />
-
-            Start Your Next Adventure
-
-          </div>
-
-          <h2 className="mt-6 text-4xl font-bold md:text-5xl">
-            Ready To Explore The Himalayas?
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-emerald-50">
-            Secure your seat today and let our travel experts take
-            care of everything. From planning to unforgettable
-            experiences, we've got you covered.
-          </p>
-
-          {/* Buttons */}
-
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-
-            <Link
-              href={`/booking?package=${encodeURIComponent(packageName)}`}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-4 font-semibold text-emerald-700 transition hover:scale-105"
-            >
-              Book Now
-
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-
-            <Link
-              href={`https://wa.me/919999999999?text=${whatsappMessage}`}
-              target="_blank"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-8 py-4 font-semibold backdrop-blur transition hover:bg-white/20"
-            >
-              <MessageCircle className="h-5 w-5" />
-
-              WhatsApp Us
-            </Link>
-
-            <Link
-              href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-8 py-4 font-semibold backdrop-blur transition hover:bg-white/20"
-            >
-              <Phone className="h-5 w-5" />
-
-              Call Now
-            </Link>
-
-          </div>
-
-          {/* Trust Badges */}
-
-          <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-sm text-emerald-100">
-
-            <div className="flex items-center gap-2">
-
-              <ShieldCheck className="h-5 w-5" />
-
-              Secure Booking
-
+              <p className="mt-7 max-w-2xl text-sm leading-7 text-white/45 sm:text-base sm:leading-8">
+                Tell us your dates, group and preferences. We’ll
+                help shape the journey around you.
+              </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="lg:col-span-4 lg:flex lg:justify-end">
+              <div className="flex w-full max-w-[340px] flex-col gap-3">
+                <Link
+                  href={`/inquiry?package=${encodeURIComponent(
+                    packageSlug
+                  )}`}
+                  className="group flex items-center justify-between rounded-full bg-[#F59E0B] px-5 py-3.5 text-sm font-semibold text-[#071A33] transition-colors hover:bg-[#FAF9F5]"
+                >
+                  Plan this journey
 
-              <ShieldCheck className="h-5 w-5" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#071A33] text-white transition-transform duration-300 group-hover:rotate-45">
+                    <ArrowUpRight
+                      className="h-3.5 w-3.5"
+                      strokeWidth={1.8}
+                    />
+                  </span>
+                </Link>
 
-              Best Price Guarantee
-
+                <Link
+                  href="/inquiry"
+                  className="flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-medium text-white/75 transition-colors hover:border-white/30 hover:bg-white/10 hover:text-white"
+                >
+                  <MessageCircle
+                    className="h-4 w-4"
+                    strokeWidth={1.6}
+                  />
+                  Talk to our travel team
+                </Link>
+              </div>
             </div>
-
-            <div className="flex items-center gap-2">
-
-              <ShieldCheck className="h-5 w-5" />
-
-              24/7 Travel Support
-
-            </div>
-
           </div>
 
+          <div className="relative mt-12 flex items-center gap-3 border-t border-white/10 pt-5">
+            <Compass
+              className="h-4 w-4 text-[#1597C7]"
+              strokeWidth={1.6}
+            />
+
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/25">
+              Explore · Experience · Belong
+            </span>
+          </div>
         </div>
-
       </div>
-
     </section>
   );
 }

@@ -1,106 +1,103 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarDays, Loader2, Send } from "lucide-react";
-import { useForm } from "react-hook-form";
+import {
+  inquirySchema,
+  type InquiryInput,
+} from "@/lib/validations/inquiry";
 
-import { z } from "zod";
-import { inquirySchema } from "@/lib/validations/inquiry";
+import InquiryBudgetField from "./InquiryBudgetField";
+import InquiryDateField from "./InquiryDateField";
+import InquiryDestinationSelect from "./InquiryDestinationSelect";
+import InquiryField from "./InquiryField";
+import InquiryFormHeader from "./InquiryFormHeader";
+import InquiryMessageField from "./InquiryMessageField";
+import InquiryPrivacyNote from "./InquiryPrivacyNote";
+import InquirySubmit from "./InquirySubmit";
+import InquiryTravelerField from "./InquiryTravelerField";
 
-interface DestinationOption {
-  _id: string;
-  name: string;
-}
+const DEFAULT_VALUES: InquiryInput = {
+  fullName: "",
+  phone: "",
+  email: "",
+  destination: "",
+  travelDate: "",
+  travelers: 2,
+  budget: "",
+  pickupLocation: "",
+  message: "",
+};
+
+const inputClass =
+  "h-13 w-full rounded-2xl border border-[#071A33]/10 bg-white px-4 text-sm text-[#071A33] outline-none placeholder:text-[#071A33]/35 transition focus:border-[#087E8B] focus:ring-4 focus:ring-[#087E8B]/10 disabled:cursor-not-allowed disabled:opacity-60";
 
 export default function InquiryForm() {
   const router = useRouter();
 
-  const [destinations, setDestinations] = useState<
-    DestinationOption[]
-  >([]);
+  const [submitError, setSubmitError] = useState("");
 
-  const [loadingDestinations, setLoadingDestinations] =
-    useState(true);
+  const methods = useForm<InquiryInput>({
+    resolver: zodResolver(inquirySchema),
+    defaultValues: DEFAULT_VALUES,
+    mode: "onChange",
+  });
 
- const {
-  register,
-  handleSubmit,
-  formState: { errors, isSubmitting },
-} = useForm<
-  z.input<typeof inquirySchema>,
-  any,
-  z.output<typeof inquirySchema>
->({
-  resolver: zodResolver(inquirySchema),
-  defaultValues: {
-    fullName: "",
-    phone: "",
-    email: "",
-    destination: "",
-    travelDate: "",
-    travelers: 2,
-    budget: "",
-    pickupLocation: "",
-    message: "",
-  },
-});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = methods;
 
-  useEffect(() => {
-    async function fetchDestinations() {
-      try {
-        const res = await fetch("/api/destinations");
+  async function onSubmit(values: InquiryInput) {
+    setSubmitError("");
 
-        const data = await res.json();
-
-        if (data.success) {
-          setDestinations(data.destinations);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoadingDestinations(false);
-      }
-    }
-
-    fetchDestinations();
-  }, []);
-
- async function onSubmit(values: z.output<typeof inquirySchema>)  {
     try {
-      const response = await fetch(
-        "/api/inquiries",
-        {
-          method: "POST",
+      const response = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+      const data = await response.json().catch(() => null);
 
-          body: JSON.stringify(values),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message);
+      if (!response.ok || !data?.success) {
+        setSubmitError(
+          data?.message ||
+            "We couldn't submit your inquiry. Please try again.",
+        );
 
         return;
       }
 
-      router.push(
-        `/inquiry/success?id=${data.inquiryId}`
-      );
-    } catch (error) {
-      console.error(error);
+      if (!data.inquiryId) {
+        setSubmitError(
+          "Your inquiry could not be completed. Please try again.",
+        );
 
-      alert(
-        "Something went wrong. Please try again."
+        return;
+      }
+
+      const params = new URLSearchParams({
+        id: String(data.inquiryId),
+      });
+
+      if (data.inquiryNumber) {
+        params.set(
+          "reference",
+          String(data.inquiryNumber),
+        );
+      }
+
+      router.push(`/inquiry/success?${params.toString()}`);
+    } catch {
+      setSubmitError(
+        "Unable to connect right now. Please check your connection and try again.",
       );
     }
   }
@@ -108,500 +105,163 @@ export default function InquiryForm() {
   return (
     <section
       id="inquiry-form"
-      className="py-24"
+      aria-labelledby="inquiry-form-heading"
+      className="bg-[#FAF9F5] px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-24"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div
-          className="
-            overflow-hidden
-            rounded-[32px]
-            border
-            border-slate-200
-            bg-white
-            shadow-2xl
-          "
-        >
-          <div
-            className="
-              grid
-
-              lg:grid-cols-5
-            "
-          >
-            {/* LEFT */}
-
-            <div
-              className="
-                bg-gradient-to-br
-                from-[#081C2D]
-                via-[#0F4C81]
-                to-[#3BAEA0]
-
-                p-10
-
-                text-white
-
-                lg:col-span-2
-              "
-            >
-              <span
-                className="
-                  rounded-full
-                  bg-white/15
-
-                  px-4
-
-                  py-2
-
-                  text-sm
-                "
-              >
-                Start Planning
-              </span>
-
-              <h2
-                className="
-                  mt-6
-
-                  text-4xl
-
-                  font-bold
-
-                  leading-tight
-                "
-              >
-                Tell Us About
-                <br />
-                Your Dream Trip
-              </h2>
-
-              <p
-                className="
-                  mt-6
-
-                  leading-8
-
-                  text-white/80
-                "
-              >
-                Fill out the inquiry form and our
-                travel specialists will contact
-                you with a personalized itinerary
-                designed around your preferences.
-              </p>
-
-              <div className="mt-12 space-y-6">
-                {[
-                  "100% Personalized Planning",
-                  "Best Price Guarantee",
-                  "Trusted Local Experts",
-                  "Response Within 30 Minutes",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3"
-                  >
-                    <div
-                      className="
-                        h-2
-                        w-2
-                        rounded-full
-                        bg-white
-                      "
-                    />
-
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* RIGHT */}
-
-            <div
-              className="
-                p-10
-
-                lg:col-span-3
-              "
-            >
-              <form
-                onSubmit={handleSubmit(
-                  onSubmit
-                )}
-                className="space-y-6"
-              >
-                <div className="grid gap-6 md:grid-cols-2">
-
-                  {/* Full Name */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Full Name
-                    </label>
-
-                    <input
-                      {...register("fullName")}
-                      placeholder="John Doe"
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-
-                    {errors.fullName && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.fullName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Phone Number
-                    </label>
-
-                    <input
-                      {...register("phone")}
-                      placeholder="+91 XXXXX XXXXX"
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-
-                    {errors.phone && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Email */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Email Address
-                    </label>
-
-                    <input
-                      type="email"
-                      {...register("email")}
-                      placeholder="john@example.com"
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-
-                    {errors.email && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Destination */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Destination
-                    </label>
-
-                    <select
-                      {...register("destination")}
-                      disabled={
-                        loadingDestinations
-                      }
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-
-                        focus:border-[#3BAEA0]
-                      "
-                    >
-                      <option value="">
-                        Select Destination
-                      </option>
-
-                      {destinations.map(
-                        (destination) => (
-                          <option
-                            key={
-                              destination._id
-                            }
-                            value={
-                              destination._id
-                            }
-                          >
-                            {destination.name}
-                          </option>
-                        )
-                      )}
-                    </select>
-
-                    {errors.destination && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.destination.message}
-                      </p>
-                    )}
-                  </div>
-                                    {/* Travel Date */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Travel Date
-                    </label>
-
-                    <div className="relative">
-                      <CalendarDays
-                        size={18}
-                        className="
-                          pointer-events-none
-                          absolute
-                          left-4
-                          top-1/2
-                          -translate-y-1/2
-                          text-slate-400
-                        "
-                      />
-
-                      <input
-                        type="date"
-                        {...register("travelDate")}
-                        className="
-                          w-full
-                          rounded-xl
-                          border
-                          border-slate-300
-                          py-3
-                          pl-12
-                          pr-4
-                          outline-none
-                          transition
-                          focus:border-[#3BAEA0]
-                        "
-                      />
-                    </div>
-
-                    {errors.travelDate && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.travelDate.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Travelers */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Travelers
-                    </label>
-
-                    <input
-                      type="number"
-                      min={1}
-                      {...register("travelers", {
-                        valueAsNumber: true,
-                      })}
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-
-                    {errors.travelers && (
-                      <p className="mt-2 text-sm text-red-500">
-                        {errors.travelers.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Budget */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Budget (Optional)
-                    </label>
-
-                    <input
-                      {...register("budget")}
-                      placeholder="₹50,000"
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-                  </div>
-
-                  {/* Pickup */}
-
-                  <div>
-                    <label className="mb-2 block font-medium text-slate-700">
-                      Pickup Location
-                    </label>
-
-                    <input
-                      {...register("pickupLocation")}
-                      placeholder="Delhi, Chandigarh..."
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-slate-300
-                        px-4
-                        py-3
-                        outline-none
-                        transition
-                        focus:border-[#3BAEA0]
-                      "
-                    />
-                  </div>
-                </div>
-
-                {/* Message */}
-
-                <div>
-                  <label className="mb-2 block font-medium text-slate-700">
-                    Tell Us About Your Trip
-                  </label>
-
-                  <textarea
-                    rows={6}
-                    {...register("message")}
-                    placeholder="Share your travel plans, hotel preferences, sightseeing interests, or any special requests..."
-                    className="
-                      w-full
-                      rounded-xl
-                      border
-                      border-slate-300
-                      px-4
-                      py-3
-                      outline-none
-                      transition
-                      resize-none
-                      focus:border-[#3BAEA0]
-                    "
-                  />
-
-                  {errors.message && (
-                    <p className="mt-2 text-sm text-red-500">
-                      {errors.message.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* Privacy */}
-
-                <div
-                  className="
-                    rounded-2xl
-                    border
-                    border-[#3BAEA0]/20
-                    bg-[#3BAEA0]/5
-                    p-5
-                  "
-                >
-                  <p className="text-sm leading-7 text-slate-600">
-                    🔒 Your information is secure and will only be
-                    used by our travel experts to prepare your
-                    personalized itinerary. We never share your
-                    details with third parties.
-                  </p>
-                </div>
-
-                {/* Button */}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="
-                    flex
-                    w-full
-                    items-center
-                    justify-center
-                    gap-3
-                    rounded-xl
-                    bg-gradient-to-r
-                    from-[#0F4C81]
-                    to-[#3BAEA0]
-                    px-6
-                    py-4
-                    font-semibold
-                    text-white
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:shadow-xl
-                    disabled:cursor-not-allowed
-                    disabled:opacity-70
-                  "
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2
-                        size={20}
-                        className="animate-spin"
-                      />
-
-                      Submitting Inquiry...
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-
-                      Get My Personalized Travel Plan
-                    </>
-                  )}
-                </button>
-              </form>
-            </div>
+      <div className="mx-auto grid w-full max-w-7xl gap-10 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:gap-16">
+        {/* Intro */}
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <InquiryFormHeader />
+
+          <div className="hidden rounded-3xl border border-[#071A33]/8 bg-white p-6 lg:block">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#087E8B]">
+              A little goes a long way
+            </p>
+
+            <p className="mt-3 text-sm leading-7 text-[#071A33]/65">
+              Destination, dates and group size give us the
+              essentials. Your message lets us understand the
+              experience you actually want.
+            </p>
           </div>
+        </div>
+
+        {/* Form */}
+        <div className="min-w-0">
+          <FormProvider {...methods}>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+              className="rounded-[2rem] border border-[#071A33]/8 bg-white p-5 shadow-[0_18px_60px_rgba(7,26,51,0.07)] sm:p-7 lg:p-9"
+            >
+              <div className="grid gap-6 sm:grid-cols-2">
+                <InquiryField
+                  label="Full name"
+                  htmlFor="fullName"
+                  required
+                  error={errors.fullName?.message}
+                >
+                  <input
+                    id="fullName"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Your full name"
+                    aria-invalid={Boolean(errors.fullName)}
+                    aria-describedby={
+                      errors.fullName
+                        ? "fullName-error"
+                        : undefined
+                    }
+                    className={inputClass}
+                    {...register("fullName")}
+                  />
+                </InquiryField>
+
+                <InquiryField
+                  label="Mobile number"
+                  htmlFor="phone"
+                  required
+                  hint="10 digits"
+                  error={errors.phone?.message}
+                >
+                  <input
+                    id="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    maxLength={10}
+                    placeholder="10-digit mobile number"
+                    aria-invalid={Boolean(errors.phone)}
+                    aria-describedby={
+                      errors.phone
+                        ? "phone-error"
+                        : undefined
+                    }
+                    className={inputClass}
+                    {...register("phone")}
+                  />
+                </InquiryField>
+
+                <InquiryField
+                  label="Email address"
+                  htmlFor="email"
+                  required
+                  error={errors.email?.message}
+                >
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={
+                      errors.email
+                        ? "email-error"
+                        : undefined
+                    }
+                    className={inputClass}
+                    {...register("email")}
+                  />
+                </InquiryField>
+
+                <InquiryDestinationSelect
+                  error={errors.destination?.message}
+                />
+
+                <InquiryDateField
+                  error={errors.travelDate?.message}
+                />
+
+                <InquiryTravelerField
+                  error={errors.travelers?.message}
+                />
+
+                <InquiryBudgetField
+                  error={errors.budget?.message}
+                />
+
+                <InquiryField
+                  label="Preferred pickup location"
+                  htmlFor="pickupLocation"
+                  hint="Optional"
+                  error={errors.pickupLocation?.message}
+                >
+                  <input
+                    id="pickupLocation"
+                    type="text"
+                    autoComplete="street-address"
+                    placeholder="e.g. Chandigarh, Shimla, Delhi"
+                    aria-invalid={Boolean(
+                      errors.pickupLocation,
+                    )}
+                    aria-describedby={
+                      errors.pickupLocation
+                        ? "pickupLocation-error"
+                        : undefined
+                    }
+                    className={inputClass}
+                    {...register("pickupLocation")}
+                  />
+                </InquiryField>
+
+                <div className="sm:col-span-2">
+                  <InquiryMessageField
+                    error={errors.message?.message}
+                  />
+                </div>
+              </div>
+
+              <div className="my-7 h-px bg-[#071A33]/8" />
+
+              <div className="space-y-5">
+                <InquiryPrivacyNote />
+
+                <InquirySubmit
+                  errorMessage={submitError}
+                />
+              </div>
+            </form>
+          </FormProvider>
         </div>
       </div>
     </section>

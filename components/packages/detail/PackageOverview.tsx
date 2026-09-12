@@ -1,134 +1,166 @@
-import PackageBookingCard from "./PackageBookingCard";
-
 import {
-  CheckCircle2,
-  Sparkles,
+  CalendarDays,
+  Clock3,
+  MapPin,
+  Mountain,
+  Users,
 } from "lucide-react";
 
-interface PackageOverviewProps {
-  packageName: string;
-  shortDescription: string;
-  description: string;
+import type { IPackage } from "@/models/package.model";
 
-  duration: string;
-  groupSize: string;
-
-  originalPrice: number;
-  discountedPrice: number;
+interface RelatedEntity {
+  _id?: string;
+  name?: string;
+  slug?: string;
+  state?: string;
 }
 
+interface PackageOverviewProps {
+  packageData: IPackage;
+  destination: RelatedEntity | null;
+  category: RelatedEntity | null;
+}
+
+const FACTS = [
+  {
+    key: "duration",
+    label: "Duration",
+    icon: Clock3,
+  },
+  {
+    key: "groupSize",
+    label: "Group size",
+    icon: Users,
+  },
+];
+
 export default function PackageOverview({
-  packageName,
-  shortDescription,
-  description,
-  duration,
-  groupSize,
-  originalPrice,
-  discountedPrice,
+  packageData,
+  destination,
+  category,
 }: PackageOverviewProps) {
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-6">
+    <section
+      id="overview"
+      className="scroll-mt-24 bg-[#FAF9F5] py-20 sm:py-24 lg:py-28"
+    >
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16 xl:px-20">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-20">
+          {/* Intro */}
+          <div className="lg:col-span-7">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#F59E0B]" />
 
-        <div className="grid gap-12 lg:grid-cols-3">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#087E8B]">
+                About the journey
+              </span>
+            </div>
 
-          {/* Left */}
+            <h2 className="mt-6 max-w-4xl font-serif text-4xl font-medium leading-[1] tracking-[-0.04em] text-[#071A33] sm:text-5xl lg:text-6xl">
+              A journey designed around the way you want to travel.
+            </h2>
 
-          <div className="space-y-12 lg:col-span-2">
-
-            {/* About */}
-
-            <div>
-
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
-
-                <Sparkles className="h-4 w-4" />
-
-                Overview
-
+            {packageData.description ? (
+              <div className="mt-7 max-w-3xl whitespace-pre-line text-sm leading-7 text-[#071A33]/60 sm:text-base sm:leading-8">
+                {packageData.description}
               </div>
-
-              <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                About This Package
-              </h2>
-
-              <p className="mt-6 text-lg leading-8 text-slate-600">
-                {shortDescription}
+            ) : packageData.shortDescription ? (
+              <p className="mt-7 max-w-3xl text-sm leading-7 text-[#071A33]/60 sm:text-base sm:leading-8">
+                {packageData.shortDescription}
               </p>
+            ) : null}
+          </div>
 
-            </div>
-
-            {/* Description */}
-
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-
-              <h3 className="text-2xl font-bold text-slate-900">
-                Experience
-              </h3>
-
-              <div className="prose mt-6 max-w-none text-slate-600">
-
-                <p className="leading-8 whitespace-pre-line">
-                  {description}
+          {/* Facts */}
+          <div className="lg:col-span-5">
+            <div className="overflow-hidden rounded-[28px] border border-[#071A33]/8 bg-white">
+              <div className="border-b border-[#071A33]/8 px-6 py-5">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#071A33]/35">
+                  Journey details
                 </p>
-
               </div>
 
-            </div>
+              <div className="grid grid-cols-2">
+                {FACTS.map((fact) => {
+                  const Icon = fact.icon;
+                  const value =
+                    fact.key === "duration"
+                      ? packageData.duration
+                      : packageData.groupSize;
 
-            {/* Perfect For */}
+                  return (
+                    <div
+                      key={fact.key}
+                      className="border-b border-r border-[#071A33]/8 p-6 last:border-r-0"
+                    >
+                      <Icon
+                        className="h-5 w-5 text-[#087E8B]"
+                        strokeWidth={1.5}
+                      />
 
-            <div className="rounded-3xl bg-slate-50 p-8">
+                      <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#071A33]/35">
+                        {fact.label}
+                      </p>
 
-              <h3 className="text-2xl font-bold text-slate-900">
-                Perfect For
-              </h3>
+                      <p className="mt-2 text-sm font-medium text-[#071A33]">
+                        {value || "Flexible"}
+                      </p>
+                    </div>
+                  );
+                })}
 
-              <div className="mt-8 grid gap-5 sm:grid-cols-2">
+                <div className="border-r border-[#071A33]/8 p-6">
+                  <Mountain
+                    className="h-5 w-5 text-[#087E8B]"
+                    strokeWidth={1.5}
+                  />
 
-                {[
-                  "Families",
-                  "Couples",
-                  "Solo Travelers",
-                  "Adventure Lovers",
-                  "Nature Enthusiasts",
-                  "Photography Trips",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm"
-                  >
-                    <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                  <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#071A33]/35">
+                    Difficulty
+                  </p>
 
-                    <span className="font-medium text-slate-700">
-                      {item}
+                  <p className="mt-2 text-sm font-medium capitalize text-[#071A33]">
+                    {packageData.difficulty || "Easy"}
+                  </p>
+                </div>
+
+                <div className="p-6">
+                  <MapPin
+                    className="h-5 w-5 text-[#087E8B]"
+                    strokeWidth={1.5}
+                  />
+
+                  <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#071A33]/35">
+                    Destination
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium text-[#071A33]">
+                    {destination?.name || "Himalayas"}
+                  </p>
+                </div>
+              </div>
+
+              {(category?.name || packageData.duration) && (
+                <div className="flex items-center justify-between border-t border-[#071A33]/8 px-6 py-5">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays
+                      className="h-4 w-4 text-[#F59E0B]"
+                      strokeWidth={1.6}
+                    />
+
+                    <span className="text-[10px] font-medium text-[#071A33]/50">
+                      {category?.name || "Curated journey"}
                     </span>
-
                   </div>
-                ))}
 
-              </div>
-
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#071A33]/30">
+                    {packageData.difficulty}
+                  </span>
+                </div>
+              )}
             </div>
-
           </div>
-
-          {/* Right */}
-
-          <div>
-
-            <PackageBookingCard
-              packageName={packageName}
-              duration={duration}
-              groupSize={groupSize}
-              originalPrice={originalPrice}
-              discountedPrice={discountedPrice}
-            />
-
-          </div>
-
         </div>
-
       </div>
     </section>
   );

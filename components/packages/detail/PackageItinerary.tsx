@@ -1,9 +1,7 @@
-"use client";
-
-import { motion } from "framer-motion";
 import {
+  ArrowDown,
   CalendarDays,
-  MapPinned,
+  Check,
 } from "lucide-react";
 
 interface ItineraryDay {
@@ -22,107 +20,97 @@ export default function PackageItinerary({
   if (!itinerary?.length) return null;
 
   return (
-    <section className="py-20 bg-slate-50">
-      <div className="container mx-auto px-6">
+    <section
+      id="itinerary"
+      className="scroll-mt-24 bg-[#FAF9F5] py-20 sm:py-24 lg:py-28"
+    >
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16 xl:px-20">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-20">
+          <div className="lg:col-span-4">
+            <div className="flex items-center gap-3">
+              <span className="h-px w-10 bg-[#F59E0B]" />
 
-        {/* Heading */}
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#087E8B]">
+                The journey
+              </span>
+            </div>
 
-        <div className="mx-auto mb-16 max-w-3xl text-center">
+            <h2 className="mt-6 font-serif text-4xl font-medium leading-[1] tracking-[-0.04em] text-[#071A33] sm:text-5xl lg:text-6xl">
+              One day at a time.
+            </h2>
 
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <p className="mt-6 max-w-sm text-sm leading-7 text-[#071A33]/50 sm:text-base sm:leading-8">
+              A thoughtfully paced itinerary that leaves room
+              for both discovery and simply being there.
+            </p>
 
-            <CalendarDays className="h-4 w-4" />
+            <div className="mt-8 flex items-center gap-3">
+              <CalendarDays
+                className="h-4 w-4 text-[#F59E0B]"
+                strokeWidth={1.6}
+              />
 
-            Day Wise Journey
-
+              <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[#071A33]/35">
+                {itinerary.length} days planned
+              </span>
+            </div>
           </div>
 
-          <h2 className="mt-5 text-4xl font-bold text-slate-900">
-            Travel Itinerary
-          </h2>
+          <div className="lg:col-span-8">
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute bottom-5 left-[20px] top-5 w-px bg-[#071A33]/10 sm:left-[24px]"
+              />
 
-          <p className="mt-5 text-lg leading-8 text-slate-600">
-            Every day is carefully planned to give you the perfect
-            balance of sightseeing, adventure and relaxation.
-          </p>
+              <div className="space-y-0">
+                {itinerary.map((item, index) => (
+                  <article
+                    key={`${item.day}-${item.title}-${index}`}
+                    className="group relative flex gap-5 border-b border-[#071A33]/8 py-7 first:pt-0 sm:gap-7 sm:py-9"
+                  >
+                    <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#087E8B]/20 bg-[#FAF9F5] sm:h-12 sm:w-12">
+                      <span className="font-serif text-sm text-[#087E8B]">
+                        {String(item.day).padStart(2, "0")}
+                      </span>
+                    </div>
 
-        </div>
+                    <div className="min-w-0 flex-1 pt-1">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <h3 className="font-serif text-2xl font-medium leading-tight tracking-[-0.02em] text-[#071A33] sm:text-3xl">
+                          {item.title}
+                        </h3>
 
-        {/* Timeline */}
+                        <ArrowDown
+                          className="mt-1 h-4 w-4 shrink-0 text-[#071A33]/20 transition-transform duration-300 group-hover:translate-y-1 group-hover:text-[#087E8B]"
+                          strokeWidth={1.5}
+                        />
+                      </div>
 
-        <div className="relative mx-auto max-w-5xl">
+                      {item.description && (
+                        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#071A33]/55 sm:text-base sm:leading-8">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
 
-          {/* Vertical Line */}
+            <div className="mt-7 flex items-start gap-3">
+              <Check
+                className="mt-0.5 h-4 w-4 shrink-0 text-[#087E8B]"
+                strokeWidth={1.7}
+              />
 
-          <div className="absolute left-7 top-0 hidden h-full w-1 rounded-full bg-emerald-100 md:block" />
-
-          <div className="space-y-10">
-
-            {itinerary.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{
-                  opacity: 0,
-                  y: 40,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                viewport={{
-                  once: true,
-                }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.08,
-                }}
-                className="relative flex flex-col gap-6 md:flex-row"
-              >
-                {/* Day Badge */}
-
-                <div className="relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-center text-white shadow-xl">
-
-                  <div>
-
-                    <p className="text-xs uppercase tracking-wide">
-                      Day
-                    </p>
-
-                    <p className="text-xl font-bold">
-                      {item.day}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                {/* Card */}
-
-                <div className="flex-1 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-xl">
-
-                  <div className="flex items-center gap-3">
-
-                    <MapPinned className="h-6 w-6 text-emerald-600" />
-
-                    <h3 className="text-2xl font-bold text-slate-900">
-                      {item.title}
-                    </h3>
-
-                  </div>
-
-                  <p className="mt-5 leading-8 text-slate-600 whitespace-pre-line">
-                    {item.description}
-                  </p>
-
-                </div>
-
-              </motion.div>
-            ))}
-
+              <p className="text-[10px] leading-5 text-[#071A33]/35">
+                Itinerary details can be customised according to
+                your travel dates, interests and local conditions.
+              </p>
+            </div>
           </div>
-
         </div>
-
       </div>
     </section>
   );

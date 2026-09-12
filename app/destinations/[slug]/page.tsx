@@ -202,9 +202,9 @@ export default async function DestinationPage({
 
   return (
     <>
-      <Navbar />
+     
 
-      <main className="min-h-screen bg-[#FAF9F5] pt-[100px]">
+      <main className="min-h-screen bg-[#FAF9F5]">
    <div className="relative">
   <div className="absolute inset-x-0 top-0 z-30">
     <Breadcrumb
@@ -264,7 +264,6 @@ export default async function DestinationPage({
         />
       </main>
 
-      <Footer />
     </>
   );
 }

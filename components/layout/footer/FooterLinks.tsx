@@ -7,15 +7,14 @@ const EXPLORE_LINKS = [
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
   { label: "Hotels & Stays", href: "/hotels" },
-  { label: "Travel Experiences", href: "/under-development" },
-  { label: "The Musafir Journal", href: "/blog" },
+  { label: "The Musafir Journal", href: "/blogs" },
 ];
 
 const COMPANY_LINKS = [
-  { label: "Our Story", href: "/under-development" },
-  { label: "Why Musafir Diaries", href: "/under-development" },
-  { label: "FAQs", href: "/#faq" },
-  { label: "Contact Us", href: "/inquiry" },
+  { label: "Our Story", href: "/about" },
+  { label: "Why Musafir Diaries", href: "/about#why-musafir" },
+  { label: "FAQs", href: "/faq" },
+  { label: "Contact Us", href: "/contact" },
   { label: "Plan Your Journey", href: "/inquiry" },
 ];
 
@@ -37,11 +36,14 @@ function LinkColumn({
           <li key={link.label}>
             <Link
               href={link.href}
-              className="group inline-flex items-center gap-2 text-sm text-white/55 transition-colors duration-300 hover:text-white"
+              className="group inline-flex items-center gap-2 text-sm text-white/55 transition-colors duration-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#1597C7]/40"
             >
               <span>{link.label}</span>
 
-              <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 -translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100" />
+              <ArrowUpRight
+                aria-hidden="true"
+                className="h-3.5 w-3.5 -translate-x-1 -translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+              />
             </Link>
           </li>
         ))}
@@ -53,9 +55,15 @@ function LinkColumn({
 export default function FooterLinks() {
   return (
     <div className="grid grid-cols-2 gap-10">
-      <LinkColumn title="Explore" links={EXPLORE_LINKS} />
+      <LinkColumn
+        title="Explore"
+        links={EXPLORE_LINKS}
+      />
 
-      <LinkColumn title="The Journey" links={COMPANY_LINKS} />
+      <LinkColumn
+        title="The Journey"
+        links={COMPANY_LINKS}
+      />
     </div>
   );
 }

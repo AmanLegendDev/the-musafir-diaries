@@ -98,7 +98,7 @@ function FeaturedJournalCard({
       className="group relative min-h-[500px] overflow-hidden bg-[#071A33] sm:min-h-[560px] lg:min-h-[620px]"
     >
       <Link
-        href={`/blog/${post.slug}`}
+        href={`/blogs/${post.slug}`}
         className="absolute inset-0"
         aria-label={`Read ${post.title}`}
       >
@@ -215,7 +215,7 @@ function SecondaryJournalCard({
       className="group overflow-hidden border border-[#071A33]/10 bg-white"
     >
       <Link
-        href={`/blog/${post.slug}`}
+        href={`/blogs/${post.slug}`}
         className="block"
         aria-label={`Read ${post.title}`}
       >

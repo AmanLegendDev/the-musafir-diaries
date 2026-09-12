@@ -1,106 +1,115 @@
 import type { Metadata } from "next";
 
-import connectDB from "@/lib/db";
 
-import Testimonial from "@/models/testimonial.model";
+import Footer from "@/components/layout/footer/Footer";
+import AboutPage from "@/components/about/AboutPage";
 
-import AboutHero from "@/components/about/AboutHero";
-import OurStory from "@/components/about/OurStory";
-import MissionVision from "@/components/about/MissionVision";
-import WhyChooseUs from "@/components/about/WhyChooseUs";
-import JourneyTimeline from "@/components/about/JourneyTimeline";
-import StatsSection from "@/components/about/StatsSection";
-import CoreValues from "@/components/about/CoreValues";
-import TeamSection from "@/components/about/TeamSection";
-import TestimonialsPreview from "@/components/about/TestimonialsPreview";
-import FAQSection from "@/components/about/FAQSection";
-import CTASection from "@/components/about/CTASection";
+import { getAboutFAQs } from "@/lib/queries/about.queries";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://the-musafir-diaries.vercel.app";
 
 export const metadata: Metadata = {
-  title: "About Us | Altitude Escapes",
+  title: "About The Musafir Diaries | Shimla & Himachal Travel",
+
   description:
-    "Discover the story behind Altitude Escapes. Learn about our mission, vision, experienced travel experts, and our passion for creating unforgettable Himalayan journeys.",
+    "Learn about The Musafir Diaries, a Shimla-based travel business built around meaningful journeys, real travel experiences, and thoughtful exploration across Himachal Pradesh.",
 
   keywords: [
-    "About Altitude Escapes",
-    "Luxury Travel Company",
-    "Himachal Tours",
-    "Himalayan Travel Experts",
-    "Travel Agency",
-    "Custom Tour Packages",
-    "Adventure Travel",
-    "Luxury Holidays",
+    "About The Musafir Diaries",
+    "Shimla Travel Company",
+    "Shimla Travel Agency",
+    "Himachal Travel",
+    "Himachal Travel Company",
+    "Himachal Trip Planning",
+    "Himachal Pradesh Travel",
+    "Spiti Valley Travel",
+    "Manali Travel",
+    "Shimla Travel",
   ],
 
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
+
   openGraph: {
-    title: "About Altitude Escapes",
+    title: "About The Musafir Diaries | Shimla & Himachal Travel",
+
     description:
-      "Meet the passionate team behind unforgettable Himalayan travel experiences.",
+      "A travel business from Shimla, built around meaningful journeys and real experiences across Himachal Pradesh.",
+
+    url: `${SITE_URL}/about`,
+
+    siteName: "The Musafir Diaries",
+
+    type: "website",
 
     images: [
       {
-        url: "/images/about/about-hero.jpg",
+        url: `${SITE_URL}/images/home/hero/himalayan-hero.webp`,
         width: 1200,
         height: 630,
-        alt: "Altitude Escapes",
+        alt: "The Musafir Diaries — Himalayan travel",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "About Altitude Escapes",
+
+    title: "About The Musafir Diaries | Shimla & Himachal Travel",
+
     description:
-      "Luxury Himalayan travel experiences designed with passion and expertise.",
-    images: ["/images/about/about-hero.jpg"],
+      "Discover the story, values and vision behind The Musafir Diaries.",
+
+    images: [
+      `${SITE_URL}/images/home/hero/himalayan-hero.webp`,
+    ],
   },
 };
 
-export default async function AboutPage() {
-  await connectDB();
+export default async function AboutRoute() {
+  const faqs = await getAboutFAQs(5);
 
-  const testimonials = await Testimonial.find({
-    active: true,
-    featured: true,
-  })
-    .sort({
-      order: 1,
-      createdAt: -1,
-    })
-    .limit(3)
-    .lean();
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
 
-  const serializedTestimonials = JSON.parse(
-    JSON.stringify(testimonials)
-  );
+    name: "About The Musafir Diaries",
+
+    description:
+      "Learn about The Musafir Diaries, a Shimla-based travel business built around meaningful journeys and real travel experiences across Himachal Pradesh.",
+
+    url: `${SITE_URL}/about`,
+
+    isPartOf: {
+      "@type": "WebSite",
+      name: "The Musafir Diaries",
+      url: SITE_URL,
+    },
+
+    mainEntity: {
+      "@type": "Organization",
+      name: "The Musafir Diaries",
+      url: SITE_URL,
+    },
+  };
 
   return (
-    <main className="overflow-x-hidden bg-white">
-
-      <AboutHero />
-
-      <OurStory />
-
-      <MissionVision />
-
-      <WhyChooseUs />
-
-      <JourneyTimeline />
-
-      <StatsSection />
-
-      <CoreValues />
-
-      <TeamSection />
-
-      <TestimonialsPreview
-        testimonials={serializedTestimonials}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
       />
 
-      <FAQSection />
+      
 
-      <CTASection />
+      <AboutPage faqs={faqs} />
 
-    </main>
+     
+    </>
   );
 }
