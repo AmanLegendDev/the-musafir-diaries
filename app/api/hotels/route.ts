@@ -62,13 +62,17 @@ export async function GET(request: NextRequest) {
        FETCH HOTELS
     ===================================================== */
 
-    const hotels = await Hotel.find(filter)
-      .select("-__v")
-      .sort({
-        displayOrder: 1,
-        createdAt: -1,
-      })
-      .lean();
+   const hotels = await Hotel.find(filter)
+  .select("-__v")
+  .populate(
+    "destination",
+    "_id name slug status"
+  )
+  .sort({
+    displayOrder: 1,
+    createdAt: -1,
+  })
+  .lean();
 
     return NextResponse.json(
       {

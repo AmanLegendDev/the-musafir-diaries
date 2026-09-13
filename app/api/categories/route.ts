@@ -29,10 +29,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const existing =
-      await Category.findOne({
-        slug: body.slug,
-      });
+   const existing = await Category.findOne({
+  slug: parsed.data.slug,
+});
 
     if (existing) {
       return NextResponse.json(
@@ -46,8 +45,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const category =
-      await Category.create(body);
+  const category = await Category.create(
+  parsed.data
+);
 
     return NextResponse.json({
       success: true,

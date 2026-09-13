@@ -3,14 +3,94 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { X } from "lucide-react";
-
-import { adminNavigation } from "@/constants/admin-navigation";
+import {
+  X,
+  LayoutDashboard,
+  Map,
+  Package,
+  Hotel,
+  Tags,
+  FileText,
+  HelpCircle,
+  MessageSquareQuote,
+  ClipboardList,
+  CalendarCheck,
+} from "lucide-react";
 
 interface SidebarProps {
   mobileOpen: boolean;
   onClose: () => void;
 }
+
+const adminNavigation = [
+  {
+    title: "Main",
+    items: [
+      {
+        label: "Dashboard",
+        href: "/admin/dashboard",
+        icon: LayoutDashboard,
+      },
+    ],
+  },
+
+   {
+    title: "Business",
+    items: [
+      {
+        label: "Inquiries",
+        href: "/admin/inquiries",
+        icon: ClipboardList,
+      },
+      {
+        label: "Bookings",
+        href: "/admin/bookings",
+        icon: CalendarCheck,
+      },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      {
+        label: "Destinations",
+        href: "/admin/destinations",
+        icon: Map,
+      },
+      {
+        label: "Packages",
+        href: "/admin/packages",
+        icon: Package,
+      },
+      {
+        label: "Hotels",
+        href: "/admin/hotels",
+        icon: Hotel,
+      },
+      {
+        label: "Categories",
+        href: "/admin/categories",
+        icon: Tags,
+      },
+      {
+        label: "Blogs",
+        href: "/admin/blogs",
+        icon: FileText,
+      },
+      {
+        label: "FAQs",
+        href: "/admin/faqs",
+        icon: HelpCircle,
+      },
+      {
+        label: "Testimonials",
+        href: "/admin/testimonials",
+        icon: MessageSquareQuote,
+      },
+    ],
+  },
+ 
+];
 
 export default function Sidebar({
   mobileOpen,
@@ -20,9 +100,9 @@ export default function Sidebar({
 
   return (
     <>
-      {/* ═══════════════════════════════════════
-          MOBILE OVERLAY
-      ═══════════════════════════════════════ */}
+      {/* ================================================================ */
+      /* MOBILE OVERLAY                                                    */
+      /* ================================================================ */}
 
       <div
         aria-hidden="true"
@@ -33,6 +113,7 @@ export default function Sidebar({
           backdrop-blur-[2px]
           transition-opacity duration-300
           lg:hidden
+
           ${
             mobileOpen
               ? "pointer-events-auto opacity-100"
@@ -41,43 +122,43 @@ export default function Sidebar({
         `}
       />
 
-      {/* ═══════════════════════════════════════
-          SIDEBAR
-      ═══════════════════════════════════════ */}
+      {/* ================================================================ */
+      /* SIDEBAR                                                           */
+      /* ================================================================ */}
 
-     <aside
-  id="admin-sidebar"
-  className={`
-    fixed inset-y-0 left-0 z-50
-    flex w-[290px] flex-col
-    border-r border-slate-200
-    bg-white
-    shadow-2xl shadow-slate-900/10
-    transition-transform duration-300 ease-out
+      <aside
+        id="admin-sidebar"
+        className={`
+          fixed inset-y-0 left-0 z-50
+          flex w-[290px] flex-col
+          border-r border-slate-200
+          bg-white
+          shadow-2xl shadow-slate-900/10
+          transition-transform duration-300 ease-out
 
-    lg:fixed
-    lg:inset-y-0
-    lg:left-0
-    lg:z-30
-    lg:h-screen
-    lg:w-72
-    lg:translate-x-0
-    lg:shadow-none
+          lg:fixed
+          lg:inset-y-0
+          lg:left-0
+          lg:z-30
+          lg:h-screen
+          lg:w-72
+          lg:translate-x-0
+          lg:shadow-none
 
-    ${
-      mobileOpen
-        ? "translate-x-0"
-        : "-translate-x-full"
-    }
-  `}
->
-        {/* ═══════════════════════════════════════
-            BRAND HEADER
-        ═══════════════════════════════════════ */}
+          ${
+            mobileOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
+        `}
+      >
+        {/* ============================================================ */
+        /* BRAND HEADER                                                   */
+        /* ============================================================ */}
 
         <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-200 px-5">
           <Link
-            href="/admin"
+            href="/admin/dashboard"
             onClick={onClose}
             className="group flex min-w-0 items-center gap-3"
           >
@@ -111,8 +192,9 @@ export default function Sidebar({
             onClick={onClose}
             aria-label="Close sidebar"
             className="
-              flex h-9 w-9 shrink-0 items-center
-              justify-center rounded-xl
+              flex h-9 w-9 shrink-0
+              items-center justify-center
+              rounded-xl
               text-slate-500
               transition-all duration-200
               hover:bg-slate-100
@@ -128,9 +210,9 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* ═══════════════════════════════════════
-            NAVIGATION
-        ═══════════════════════════════════════ */}
+        {/* ============================================================ */
+        /* NAVIGATION                                                      */
+        /* ============================================================ */}
 
         <nav
           aria-label="Admin navigation"
@@ -154,15 +236,16 @@ export default function Sidebar({
                   const active =
                     pathname === item.href ||
                     (item.href !== "/admin" &&
-                      pathname.startsWith(
-                        `${item.href}/`
-                      ));
+                      pathname.startsWith(`${item.href}/`));
 
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={onClose}
+                      aria-current={
+                        active ? "page" : undefined
+                      }
                       className={`
                         group flex items-center gap-3
                         rounded-xl
@@ -210,9 +293,9 @@ export default function Sidebar({
           ))}
         </nav>
 
-        {/* ═══════════════════════════════════════
-            ADMIN PROFILE
-        ═══════════════════════════════════════ */}
+        {/* ============================================================ */
+        /* ADMIN PROFILE                                                   */
+        /* ============================================================ */}
 
         <div className="shrink-0 border-t border-slate-200 p-4">
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">

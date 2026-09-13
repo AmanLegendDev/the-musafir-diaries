@@ -1,4 +1,11 @@
-import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import connectDB from "@/lib/db";
+import Inquiry from "@/models/Inquiry";
+
+import InquiryDetails from "@/components/admin/inquiries/InquiryDetails";
+
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{
@@ -11,32 +18,28 @@ export default async function InquiryDetailsPage({
 }: Props) {
   const { id } = await params;
 
+  await connectDB();
+
+  const inquiry = await Inquiry.findById(id)
+    .populate({
+      path: "destination",
+      select:
+        "_id name slug city state country status",
+    })
+    .select("-__v")
+    .lean();
+
+  if (!inquiry) {
+    notFound();
+  }
+
+  const serialized = JSON.parse(
+    JSON.stringify(inquiry),
+  );
+
   return (
-    <div className="mx-auto max-w-5xl">
-
-      <Link
-        href="/admin/inquiries"
-        className="text-[#0F4C81]"
-      >
-        ← Back to Inquiries
-      </Link>
-
-      <div className="mt-6 rounded-2xl bg-white p-8 shadow-sm">
-
-        <h1 className="text-3xl font-bold">
-          Inquiry Details
-        </h1>
-
-        <p className="mt-3 text-slate-500">
-          Inquiry ID : {id}
-        </p>
-
-        <div className="mt-8 rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
-          Inquiry details will appear here.
-        </div>
-
-      </div>
-
-    </div>
+    <InquiryDetails
+      inquiry={serialized}
+    />
   );
 }

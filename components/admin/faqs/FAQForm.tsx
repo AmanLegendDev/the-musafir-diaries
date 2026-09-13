@@ -115,15 +115,42 @@ function getId(value: unknown): string | null {
    PAGE
    ========================================================= */
 
-export default function FAQForm() {
+export interface FAQFormProps {
+  mode?: "create" | "edit";
+  initialData?: Partial<FormState> & {
+    _id?: string;
+  };
+}
+
+export default function FAQForm({
+  mode = "create",
+  initialData,
+}: FAQFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [form, setForm] =
-    useState<FormState>(INITIAL_FORM);
+    useState<FormState>(() => ({
+      ...INITIAL_FORM,
+      ...initialData,
+      destination: initialData?.destination ?? null,
+      package: initialData?.package ?? null,
+      hotel: initialData?.hotel ?? null,
+      category: initialData?.category ?? "",
+      featured: initialData?.featured ?? false,
+      displayOrder: initialData?.displayOrder ?? 0,
+      status: initialData?.status ?? "draft",
+      seoTitle: initialData?.seoTitle ?? "",
+      seoDescription: initialData?.seoDescription ?? "",
+    }));
 
   const [scope, setScope] =
-    useState<ScopeType>("global");
+    useState<ScopeType>(() => {
+      if (initialData?.destination) return "destination";
+      if (initialData?.package) return "package";
+      if (initialData?.hotel) return "hotel";
+      return "global";
+    });
 
   const [destinations, setDestinations] =
     useState<Destination[]>([]);
@@ -618,9 +645,17 @@ export default function FAQForm() {
           form.seoDescription.trim(),
       };
 
+      const isEdit =
+        mode === "edit" &&
+        Boolean(initialData?._id);
+
+      const url = isEdit
+        ? `/api/faqs/${initialData?._id}`
+        : "/api/faqs";
+
       const response =
-        await fetch("/api/faqs", {
-          method: "POST",
+        await fetch(url, {
+          method: isEdit ? "PATCH" : "POST",
           headers: {
             "Content-Type":
               "application/json",
@@ -633,7 +668,9 @@ export default function FAQForm() {
 
       if (!response.ok) {
         console.error(
-          "FAQ_CREATE_ERROR:",
+          isEdit
+            ? "FAQ_UPDATE_ERROR:"
+            : "FAQ_CREATE_ERROR:",
           data,
         );
 
@@ -657,12 +694,16 @@ export default function FAQForm() {
           [data.error, fieldErrors]
             .filter(Boolean)
             .join("\n") ||
-            "Unable to create FAQ.",
+            (isEdit
+              ? "Unable to update FAQ."
+              : "Unable to create FAQ."),
         );
       }
 
       toast.success(
-        "FAQ created successfully.",
+        isEdit
+          ? "FAQ updated successfully."
+          : "FAQ created successfully.",
       );
 
       router.push("/admin/faqs");
@@ -676,7 +717,9 @@ export default function FAQForm() {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Unable to create FAQ.",
+          : mode === "edit"
+            ? "Unable to update FAQ."
+            : "Unable to create FAQ.",
       );
     } finally {
       setSubmitting(false);
@@ -1502,12 +1545,12 @@ export default function FAQForm() {
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating FAQ...
+                    {mode === "edit" ? "Saving changes..." : "Creating FAQ..."}
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    Create FAQ
+                    {mode === "edit" ? "Save Changes" : "Create FAQ"}
                   </>
                 )}
               </button>

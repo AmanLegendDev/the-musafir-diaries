@@ -1,26 +1,27 @@
-import PageHeader from "@/components/admin/shared/PageHeader";
+import connectDB from "@/lib/db";
+import Category from "@/models/category.model";
 
-export default function CategoriesPage() {
+import CategoryListing from "@/components/admin/categories/CategoryListing";
+
+export const dynamic = "force-dynamic";
+
+async function getCategories() {
+  await connectDB();
+
+  const categories = await Category.find({})
+    .sort({
+      displayOrder: 1,
+      createdAt: -1,
+    })
+    .lean();
+
+  return JSON.parse(JSON.stringify(categories));
+}
+
+export default async function CategoriesPage() {
+  const categories = await getCategories();
+
   return (
-    <>
-      <PageHeader
-        title="Categories"
-        description="Manage all travel categories."
-        buttonText="Add Category"
-        buttonHref="/admin/categories/new"
-      />
-
-      <div className="rounded-2xl bg-white p-16 text-center shadow-sm">
-
-        <h2 className="text-2xl font-semibold">
-          No Categories Found
-        </h2>
-
-        <p className="mt-3 text-slate-500">
-          Create your first category to organize travel packages.
-        </p>
-
-      </div>
-    </>
+    <CategoryListing initialCategories={categories} />
   );
 }

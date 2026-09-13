@@ -6,13 +6,13 @@ export default function NewHotelPage() {
     <Suspense
       fallback={
         <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="rounded-xl border border-black/10 bg-white px-5 py-3 text-sm text-black/50 shadow-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm text-slate-500 shadow-sm">
             Loading hotel form...
           </div>
         </div>
       }
     >
-      <HotelForm />
+      <HotelForm mode="create" />
     </Suspense>
   );
 }

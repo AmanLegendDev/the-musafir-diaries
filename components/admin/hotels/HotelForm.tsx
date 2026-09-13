@@ -131,15 +131,47 @@ const initialForm: HotelFormData = {
   seoDescription: "",
 };
 
-export default function NewHotelPage() {
+export interface HotelFormProps {
+  mode?: "create" | "edit";
+  initialData?: Partial<HotelFormData> & {
+    _id?: string;
+  };
+}
+
+export default function HotelForm({
+  mode = "create",
+  initialData,
+}: HotelFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const destinationFromQuery =
     searchParams.get("destination") || "";
-
-  const [form, setForm] =
-    useState<HotelFormData>(initialForm);
+const [form, setForm] =
+  useState<HotelFormData>(() => ({
+    ...initialForm,
+    ...initialData,
+    destination:
+      initialData?.destination
+        ? String(initialData.destination)
+        : "",
+    guestRating:
+      initialData?.guestRating ?? null,
+    gallery:
+      initialData?.gallery ?? [],
+    roomTypes:
+      initialData?.roomTypes?.length
+        ? initialData.roomTypes
+        : initialForm.roomTypes,
+    amenities:
+      initialData?.amenities?.length
+        ? initialData.amenities
+        : initialForm.amenities,
+    policies: {
+      ...initialForm.policies,
+      ...(initialData?.policies || {}),
+    },
+  }));
 
   const [destinations, setDestinations] =
     useState<Destination[]>([]);
@@ -160,29 +192,46 @@ useEffect(() => {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/destinations");
+      const response =
+        await fetch("/api/destinations", {
+          cache: "no-store",
+        });
 
       if (!response.ok) {
-        throw new Error("Failed to load destinations.");
+        throw new Error(
+          "Failed to load destinations."
+        );
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       const destinationList =
-        data.destinations || [];
+        data.destinations ||
+        data.data ||
+        [];
 
-      setDestinations(destinationList);
+      setDestinations(
+        destinationList
+      );
 
-      if (destinationFromQuery) {
-        const exists = destinationList.some(
-          (destination: Destination) =>
-            destination._id === destinationFromQuery
-        );
+      if (
+        mode === "create" &&
+        destinationFromQuery &&
+        !initialData?.destination
+      ) {
+        const exists =
+          destinationList.some(
+            (destination: Destination) =>
+              destination._id ===
+              destinationFromQuery
+          );
 
         if (exists) {
           setForm((prev) => ({
             ...prev,
-            destination: destinationFromQuery,
+            destination:
+              destinationFromQuery,
           }));
         }
       }
@@ -198,14 +247,21 @@ useEffect(() => {
   }
 
   fetchInitialData();
-}, [destinationFromQuery]);
+}, [
+  destinationFromQuery,
+  mode,
+  initialData?.destination,
+]);
 
 function updateField<K extends keyof HotelFormData>(
   key: K,
   value: HotelFormData[K]
 ) {
   setForm((prev) => {
-    if (key === "name") {
+    if (
+      key === "name" &&
+      mode === "create"
+    ) {
       const name = value as string;
 
       const generatedSlug = name
@@ -419,86 +475,109 @@ function updateField<K extends keyof HotelFormData>(
     return true;
   }
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
-    e.preventDefault();
+ async function handleSubmit(
+  e: React.FormEvent<HTMLFormElement>
+) {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      setSaving(true);
-      setError("");
-
-      const payload = {
-        ...form,
-
-        roomTypes:
-          form.roomTypes.filter(
-            (room) =>
-              room.name.trim()
-          ),
-
-        amenities:
-          form.amenities.filter(
-            (amenity) =>
-              amenity.trim()
-          ),
-      };
-
-      const response =
-        await fetch("/api/hotels", {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-
-      const data =
-        await response.json();
-
-     if (!response.ok) {
-  console.error("HOTEL_CREATE_ERROR:", data);
-
-  const fieldErrors = data.fieldErrors
-    ? Object.entries(data.fieldErrors)
-        .map(
-          ([field, errors]) =>
-            `${field}: ${(errors as string[]).join(", ")}`
-        )
-        .join("\n")
-    : "";
-
-  throw new Error(
-    [data.error, fieldErrors]
-      .filter(Boolean)
-      .join("\n") ||
-      "Unable to create hotel."
-  );
-}
-
-      alert(
-        "Hotel created successfully!"
-      );
-
-      router.push("/admin/hotels");
-      router.refresh();
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong."
-      );
-    } finally {
-      setSaving(false);
-    }
+  if (!validateForm()) {
+    return;
   }
+
+  try {
+    setSaving(true);
+    setError("");
+
+    const payload = {
+      ...form,
+
+      roomTypes:
+        form.roomTypes.filter(
+          (room) =>
+            room.name.trim()
+        ),
+
+      amenities:
+        form.amenities.filter(
+          (amenity) =>
+            amenity.trim()
+        ),
+    };
+
+    const isEdit =
+      mode === "edit" &&
+      Boolean(initialData?._id);
+
+    const url = isEdit
+      ? `/api/hotels/${initialData?._id}`
+      : "/api/hotels";
+
+    const response =
+      await fetch(url, {
+        method: isEdit
+          ? "PATCH"
+          : "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      const fieldErrors =
+        data.fieldErrors
+          ? Object.entries(
+              data.fieldErrors
+            )
+              .map(
+                ([field, errors]) =>
+                  `${field}: ${(errors as string[]).join(", ")}`
+              )
+              .join("\n")
+          : "";
+
+      throw new Error(
+        [data.error, fieldErrors]
+          .filter(Boolean)
+          .join("\n") ||
+          `Unable to ${
+            isEdit
+              ? "update"
+              : "create"
+          } hotel.`
+      );
+    }
+
+    alert(
+      isEdit
+        ? "Hotel updated successfully!"
+        : "Hotel created successfully!"
+    );
+
+    router.push(
+      "/admin/hotels"
+    );
+
+    router.refresh();
+  } catch (err) {
+    console.error(
+      "HOTEL_SAVE_ERROR:",
+      err
+    );
+
+    setError(
+      err instanceof Error
+        ? err.message
+        : "Something went wrong."
+    );
+  } finally {
+    setSaving(false);
+  }
+}
 
   const selectedDestination =
     destinations.find(
@@ -528,14 +607,17 @@ function updateField<K extends keyof HotelFormData>(
         </Link>
 
         <div className="mt-4">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">
-            Add New Hotel
-          </h1>
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+  {mode === "edit"
+    ? "Edit Hotel"
+    : "Add New Hotel"}
+</h1>
 
-          <p className="mt-2 text-slate-500">
-            Create a hotel and connect it
-            to the correct destination.
-          </p>
+         <p className="mt-2 text-slate-500">
+  {mode === "edit"
+    ? "Update hotel information, rooms, images, policies and SEO settings."
+    : "Create a hotel and connect it to the correct destination."}
+</p>
         </div>
       </div>
 
@@ -1600,17 +1682,21 @@ function updateField<K extends keyof HotelFormData>(
               disabled={saving}
               className="inline-flex items-center gap-2 rounded-xl bg-sky-700 px-7 py-3 font-semibold text-white transition hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Creating Hotel...
-                </>
-              ) : (
-                <>
-                  <Save className="h-5 w-5" />
-                  Create Hotel
-                </>
-              )}
+             {saving ? (
+  <>
+    <Loader2 className="h-5 w-5 animate-spin" />
+    {mode === "edit"
+      ? "Saving Changes..."
+      : "Creating Hotel..."}
+  </>
+) : (
+  <>
+    <Save className="h-5 w-5" />
+    {mode === "edit"
+      ? "Save Changes"
+      : "Create Hotel"}
+  </>
+)}
             </button>
           </div>
         </div>

@@ -129,13 +129,25 @@ export async function GET(request: NextRequest) {
        Fetch
     --------------------------------------------------------- */
 
-    const faqs = await FAQ.find(filter)
-      .select("-__v")
-      .sort({
-        displayOrder: 1,
-        createdAt: -1,
-      })
-      .lean();
+   const faqs = await FAQ.find(filter)
+  .populate(
+    "destination",
+    "_id name slug status",
+  )
+  .populate(
+    "package",
+    "_id name slug status",
+  )
+  .populate(
+    "hotel",
+    "_id name slug status",
+  )
+  .select("-__v")
+  .sort({
+    displayOrder: 1,
+    createdAt: -1,
+  })
+  .lean();
 
     return NextResponse.json(
       {

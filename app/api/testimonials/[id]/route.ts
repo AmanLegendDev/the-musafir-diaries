@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
 import connectDB from "@/lib/db";
 import Testimonial from "@/models/testimonial.model";
@@ -10,10 +11,24 @@ interface Params {
   }>;
 }
 
-/* -------------------- GET -------------------- */
+function invalidIdResponse() {
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Invalid testimonial ID.",
+    },
+    {
+      status: 400,
+    }
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* GET                                                                        */
+/* -------------------------------------------------------------------------- */
 
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: Params
 ) {
   try {
@@ -21,7 +36,13 @@ export async function GET(
 
     const { id } = await params;
 
-    const testimonial = await Testimonial.findById(id);
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return invalidIdResponse();
+    }
+
+    const testimonial = await Testimonial.findById(id)
+      .select("-__v")
+      .lean();
 
     if (!testimonial) {
       return NextResponse.json(
@@ -50,7 +71,7 @@ export async function GET(
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error.",
+        message: "Failed to fetch testimonial.",
       },
       {
         status: 500,
@@ -59,7 +80,9 @@ export async function GET(
   }
 }
 
-/* -------------------- PATCH -------------------- */
+/* -------------------------------------------------------------------------- */
+/* PATCH                                                                      */
+/* -------------------------------------------------------------------------- */
 
 export async function PATCH(
   req: Request,
@@ -69,6 +92,10 @@ export async function PATCH(
     await connectDB();
 
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return invalidIdResponse();
+    }
 
     const body = await req.json();
 
@@ -94,7 +121,9 @@ export async function PATCH(
         new: true,
         runValidators: true,
       }
-    );
+    )
+      .select("-__v")
+      .lean();
 
     if (!testimonial) {
       return NextResponse.json(
@@ -124,7 +153,7 @@ export async function PATCH(
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error.",
+        message: "Failed to update testimonial.",
       },
       {
         status: 500,
@@ -133,16 +162,22 @@ export async function PATCH(
   }
 }
 
-/* -------------------- DELETE -------------------- */
+/* -------------------------------------------------------------------------- */
+/* DELETE                                                                     */
+/* -------------------------------------------------------------------------- */
 
 export async function DELETE(
-  req: Request,
+  _req: Request,
   { params }: Params
 ) {
   try {
     await connectDB();
 
     const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return invalidIdResponse();
+    }
 
     const testimonial = await Testimonial.findByIdAndDelete(id);
 
@@ -173,7 +208,7 @@ export async function DELETE(
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error.",
+        message: "Failed to delete testimonial.",
       },
       {
         status: 500,

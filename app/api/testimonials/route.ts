@@ -4,13 +4,16 @@ import connectDB from "@/lib/db";
 import Testimonial from "@/models/testimonial.model";
 import { testimonialSchema } from "@/lib/validations/testimonial";
 
-/* -------------------- GET -------------------- */
+/* -------------------------------------------------------------------------- */
+/* GET                                                                        */
+/* -------------------------------------------------------------------------- */
 
 export async function GET() {
   try {
     await connectDB();
 
     const testimonials = await Testimonial.find({})
+      .select("-__v")
       .sort({
         featured: -1,
         order: 1,
@@ -42,7 +45,9 @@ export async function GET() {
   }
 }
 
-/* -------------------- POST -------------------- */
+/* -------------------------------------------------------------------------- */
+/* POST                                                                       */
+/* -------------------------------------------------------------------------- */
 
 export async function POST(req: Request) {
   try {
@@ -83,7 +88,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Internal Server Error.",
+        message: "Failed to create testimonial.",
       },
       {
         status: 500,

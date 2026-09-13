@@ -60,10 +60,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const existing =
-      await Package.findOne({
-        slug: body.slug,
-      });
+const existing = await Package.findOne({
+  slug: parsed.data.slug,
+});
 
     if (existing) {
       return NextResponse.json(
@@ -77,8 +76,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const pkg =
-      await Package.create(body);
+  const pkg = await Package.create(parsed.data);
 
     return NextResponse.json({
       success: true,

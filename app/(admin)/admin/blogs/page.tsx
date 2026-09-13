@@ -1,27 +1,27 @@
-import PageHeader from "@/components/admin/shared/PageHeader";
+import connectDB from "@/lib/db";
+import Blog from "@/models/blog.model";
 
-export default function BlogsPage() {
+import BlogListing from "@/components/admin/blogs/BlogListing";
+
+export const dynamic = "force-dynamic";
+
+async function getBlogs() {
+  await connectDB();
+
+  const blogs = await Blog.find({})
+    .populate("category", "name")
+    .sort({
+      createdAt: -1,
+    })
+    .lean();
+
+  return JSON.parse(JSON.stringify(blogs));
+}
+
+export default async function BlogsPage() {
+  const blogs = await getBlogs();
+
   return (
-    <>
-      <PageHeader
-        title="Blogs"
-        description="Manage all blog posts."
-        buttonText="Add Blog"
-        buttonHref="/admin/blogs/new"
-      />
-
-      <div className="rounded-2xl bg-white p-16 text-center shadow-sm">
-
-        <h2 className="text-2xl font-semibold">
-          No Blogs Found
-        </h2>
-
-        <p className="mt-3 text-slate-500">
-          Publish your first travel blog.
-        </p>
-
-      </div>
-
-    </>
+    <BlogListing initialBlogs={blogs} />
   );
 }
