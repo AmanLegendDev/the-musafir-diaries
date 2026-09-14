@@ -78,7 +78,7 @@ export default function InquirySuccessContent({
         }
 
         if (!cancelled) {
-          setInquiry(data.inquiry);
+          setInquiry(data.data);
         }
       } catch (err) {
         if (!cancelled) {
