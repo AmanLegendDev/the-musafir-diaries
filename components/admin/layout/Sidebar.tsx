@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
   X,
   LayoutDashboard,
@@ -33,8 +34,7 @@ const adminNavigation = [
       },
     ],
   },
-
-   {
+  {
     title: "Business",
     items: [
       {
@@ -89,7 +89,6 @@ const adminNavigation = [
       },
     ],
   },
- 
 ];
 
 export default function Sidebar({
@@ -100,9 +99,9 @@ export default function Sidebar({
 
   return (
     <>
-      {/* ================================================================ */
-      /* MOBILE OVERLAY                                                    */
-      /* ================================================================ */}
+      {/* ============================================================ */}
+      {/* MOBILE OVERLAY                                               */}
+      {/* ============================================================ */}
 
       <div
         aria-hidden="true"
@@ -113,7 +112,6 @@ export default function Sidebar({
           backdrop-blur-[2px]
           transition-opacity duration-300
           lg:hidden
-
           ${
             mobileOpen
               ? "pointer-events-auto opacity-100"
@@ -122,9 +120,9 @@ export default function Sidebar({
         `}
       />
 
-      {/* ================================================================ */
-      /* SIDEBAR                                                           */
-      /* ================================================================ */}
+      {/* ============================================================ */}
+      {/* SIDEBAR                                                       */}
+      {/* ============================================================ */}
 
       <aside
         id="admin-sidebar"
@@ -152,25 +150,26 @@ export default function Sidebar({
           }
         `}
       >
-        {/* ============================================================ */
-        /* BRAND HEADER                                                   */
-        /* ============================================================ */}
+        {/* ======================================================== */}
+        {/* BRAND HEADER                                               */}
+        {/* ======================================================== */}
 
         <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-200 px-5">
           <Link
             href="/admin/dashboard"
             onClick={onClose}
             className="group flex min-w-0 items-center gap-3"
+            aria-label="Go to admin dashboard"
           >
             {/* Logo */}
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#071A33] p-1.5 shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center">
               <Image
                 src="/logo.png"
                 alt="The Musafir Diaries"
-                width={44}
-                height={44}
+                width={50}
+                height={50}
                 priority
-                className="object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
 
@@ -180,8 +179,8 @@ export default function Sidebar({
                 The Musafir Diaries
               </h2>
 
-              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-                Admin Dashboard
+              <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                Admin Panel
               </p>
             </div>
           </Link>
@@ -210,9 +209,9 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* ============================================================ */
-        /* NAVIGATION                                                      */
-        /* ============================================================ */}
+        {/* ======================================================== */}
+        {/* NAVIGATION                                                 */}
+        {/* ======================================================== */}
 
         <nav
           aria-label="Admin navigation"
@@ -235,8 +234,7 @@ export default function Sidebar({
 
                   const active =
                     pathname === item.href ||
-                    (item.href !== "/admin" &&
-                      pathname.startsWith(`${item.href}/`));
+                    pathname.startsWith(`${item.href}/`);
 
                   return (
                     <Link
@@ -260,7 +258,7 @@ export default function Sidebar({
                         }
                       `}
                     >
-                      {/* Icon Box */}
+                      {/* Icon */}
                       <span
                         className={`
                           flex h-9 w-9 shrink-0
@@ -293,14 +291,23 @@ export default function Sidebar({
           ))}
         </nav>
 
-        {/* ============================================================ */
-        /* ADMIN PROFILE                                                   */
-        /* ============================================================ */}
+        {/* ======================================================== */}
+        {/* ADMIN PROFILE                                               */}
+        {/* ======================================================== */}
 
         <div className="shrink-0 border-t border-slate-200 p-4">
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
             {/* Avatar */}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#071A33] text-sm font-bold text-white">
+            <div
+              className="
+                flex h-10 w-10 shrink-0
+                items-center justify-center
+                rounded-full
+                bg-[#071A33]
+                text-sm font-bold
+                text-white
+              "
+            >
               A
             </div>
 

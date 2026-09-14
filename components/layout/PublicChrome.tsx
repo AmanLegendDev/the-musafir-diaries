@@ -15,14 +15,15 @@ export default function PublicChrome({
 }: Props) {
   const pathname = usePathname();
 
-  const isAdminRoute =
-    pathname === "/admin" ||
-    pathname.startsWith("/admin/");
+ const isAdminRoute =
+  pathname === "/admin" ||
+  pathname.startsWith("/admin/");
 
-  // Admin has its own complete layout.
-  if (isAdminRoute) {
-    return <>{children}</>;
-  }
+const isAuthRoute = pathname === "/login";
+
+if (isAdminRoute || isAuthRoute) {
+  return <>{children}</>;
+}
 
   return (
     <>

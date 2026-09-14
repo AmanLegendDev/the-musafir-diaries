@@ -225,9 +225,9 @@ function DestinationCard({
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/view:translate-x-0.5" />
           </Link>
 
-          <Link
-            href={`/admin/destinations/${destination._id}`}
-            aria-label={`Edit ${destination.name}`}
+       <Link
+  href={`/admin/destinations/${destination._id}/edit`}
+  aria-label={`Edit ${destination.name}`}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-[#087E8B]/30 hover:bg-[#087E8B]/5 hover:text-[#087E8B]"
           >
             <Edit3 className="h-4 w-4" />

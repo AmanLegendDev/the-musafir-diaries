@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  type KeyboardEvent,
+} from "react";
 import { useRouter } from "next/navigation";
+
 import CloudinaryUploader from "@/components/admin/shared/CloudinaryUploader";
 import Editor from "@/components/editor/Editor";
+
 /* ------------------------------------------------------------------ */
-/*  Types                                                              */
+/* Types                                                              */
 /* ------------------------------------------------------------------ */
 
 interface Category {
@@ -31,7 +38,7 @@ interface BlogFormState {
 type FieldErrors = Partial<Record<keyof BlogFormState, string>>;
 
 /* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
+/* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
 function slugify(value: string) {
@@ -44,7 +51,11 @@ function slugify(value: string) {
 }
 
 function estimateReadTime(text: string) {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const words = text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+
   return Math.max(1, Math.round(words / 200));
 }
 
@@ -55,7 +66,7 @@ const initialForm: BlogFormState = {
   content: "",
   featuredImage: "",
   category: "",
-  author: "Altitude Escapes",
+  author: "The Musafir Diaries",
   tags: [],
   readTime: "",
   seoTitle: "",
@@ -64,7 +75,7 @@ const initialForm: BlogFormState = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Page                                                               */
+/* Page                                                               */
 /* ------------------------------------------------------------------ */
 
 export default function CreateBlogPage() {
@@ -78,27 +89,49 @@ export default function CreateBlogPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesFailed, setCategoriesFailed] = useState(false);
-  const [saving, setSaving] = useState<"draft" | "published" | null>(null);
-  const [banner, setBanner] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const [saving, setSaving] = useState<
+    "draft" | "published" | null
+  >(null);
+
+  const [banner, setBanner] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   /* -------------------------- load categories -------------------------- */
 
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       try {
         const res = await fetch("/api/categories");
-        if (!res.ok) throw new Error("failed");
+
+        if (!res.ok) {
+          throw new Error("Failed to load categories");
+        }
+
         const data = await res.json();
-        const list: Category[] = Array.isArray(data) ? data : data.categories ?? [];
-        if (!cancelled) setCategories(list);
+
+        const list: Category[] = Array.isArray(data)
+          ? data
+          : data.categories ?? [];
+
+        if (!cancelled) {
+          setCategories(list);
+        }
       } catch {
-        if (!cancelled) setCategoriesFailed(true);
+        if (!cancelled) {
+          setCategoriesFailed(true);
+        }
       } finally {
-        if (!cancelled) setCategoriesLoading(false);
+        if (!cancelled) {
+          setCategoriesLoading(false);
+        }
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -107,15 +140,26 @@ export default function CreateBlogPage() {
   /* -------------------------- field updates -------------------------- */
 
   const updateField = useCallback(
-    <K extends keyof BlogFormState>(key: K, value: BlogFormState[K]) => {
-      setForm((prev) => ({ ...prev, [key]: value }));
-      setErrors((prev) => ({ ...prev, [key]: undefined }));
+    <K extends keyof BlogFormState>(
+      key: K,
+      value: BlogFormState[K],
+    ) => {
+      setForm((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        [key]: undefined,
+      }));
     },
-    []
+    [],
   );
 
   const handleTitleChange = (value: string) => {
     updateField("title", value);
+
     if (!slugTouched) {
       updateField("slug", slugify(value));
     }
@@ -126,81 +170,129 @@ export default function CreateBlogPage() {
     updateField("slug", slugify(value));
   };
 
-const handleAutoReadTime = () => {
+  /* -------------------------- read time -------------------------- */
 
-  const plainText =
-    form.content.replace(
-      /<[^>]*>/g,
-      " "
+  const handleAutoReadTime = () => {
+    const plainText = form.content
+      .replace(/<[^>]*>/g, " ")
+      .trim();
+
+    updateField(
+      "readTime",
+      estimateReadTime(plainText),
     );
-
-  updateField(
-    "readTime",
-    estimateReadTime(
-      plainText
-    )
-  );
-};
+  };
 
   /* -------------------------- tags -------------------------- */
 
   const addTag = () => {
     const value = tagInput.trim().replace(/,$/, "");
-    if (!value) return;
-    if (!form.tags.includes(value)) {
-      updateField("tags", [...form.tags, value]);
+
+    if (!value) {
+      return;
     }
+
+    if (!form.tags.includes(value)) {
+      updateField("tags", [
+        ...form.tags,
+        value,
+      ]);
+    }
+
     setTagInput("");
   };
 
   const removeTag = (tag: string) => {
     updateField(
       "tags",
-      form.tags.filter((t) => t !== tag)
+      form.tags.filter((item) => item !== tag),
     );
   };
 
-  const onTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onTagKeyDown = (
+    e: KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addTag();
-    } else if (e.key === "Backspace" && !tagInput && form.tags.length) {
-      removeTag(form.tags[form.tags.length - 1]);
+      return;
+    }
+
+    if (
+      e.key === "Backspace" &&
+      !tagInput &&
+      form.tags.length
+    ) {
+      removeTag(
+        form.tags[form.tags.length - 1],
+      );
     }
   };
 
   /* -------------------------- image upload -------------------------- */
 
- 
+  /* CloudinaryUploader handles image uploads. */
 
   /* -------------------------- validation -------------------------- */
 
   const validate = (): FieldErrors => {
     const next: FieldErrors = {};
-    if (!form.title.trim()) next.title = "Title zaroori hai";
-    if (!form.slug.trim()) next.slug = "Slug zaroori hai";
-    if (!form.excerpt.trim()) next.excerpt = "Excerpt zaroori hai";
-const cleanContent =
-  form.content
-    .replace(/<[^>]*>/g, "")
-    .trim();
 
-if (!cleanContent) {
-  next.content =
-    "Content khali nahi ho sakta";
-}    if (!form.featuredImage.trim()) next.featuredImage = "Featured image lagana zaroori hai";
-    if (!form.category) next.category = "Category select kar";
-    if (!form.readTime || Number(form.readTime) < 1) next.readTime = "Read time kam se kam 1 min ho";
+    if (!form.title.trim()) {
+      next.title = "Title is required";
+    }
+
+    if (!form.slug.trim()) {
+      next.slug = "Slug is required";
+    }
+
+    if (!form.excerpt.trim()) {
+      next.excerpt = "Excerpt is required";
+    }
+
+    const cleanContent = form.content
+      .replace(/<[^>]*>/g, "")
+      .trim();
+
+    if (!cleanContent) {
+      next.content = "Content cannot be empty";
+    }
+
+    if (!form.featuredImage.trim()) {
+      next.featuredImage =
+        "Featured image is required";
+    }
+
+    if (!form.category) {
+      next.category = "Please select a category";
+    }
+
+    if (
+      !form.readTime ||
+      Number(form.readTime) < 1
+    ) {
+      next.readTime =
+        "Read time must be at least 1 minute";
+    }
+
     return next;
   };
 
   /* -------------------------- submit -------------------------- */
 
-  const handleSubmit = async (status: "draft" | "published") => {
+  const handleSubmit = async (
+    status: "draft" | "published",
+  ) => {
     const validation = validate();
+
     setErrors(validation);
+
     if (Object.keys(validation).length > 0) {
-      setBanner({ type: "error", text: "Kuch fields missing hain — neeche highlighted dekh le." });
+      setBanner({
+        type: "error",
+        text: "Some required fields are missing. Please review the highlighted fields.",
+      });
+
       return;
     }
 
@@ -210,48 +302,68 @@ if (!cleanContent) {
     try {
       const res = await fetch("/api/blogs", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           ...form,
           readTime: Number(form.readTime),
           status,
-          publishedAt: status === "published" ? new Date().toISOString() : null,
+          publishedAt:
+            status === "published"
+              ? new Date().toISOString()
+              : null,
         }),
       });
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || "Save failed");
+        const errData = await res
+          .json()
+          .catch(() => ({}));
+
+        throw new Error(
+          errData.message || "Failed to save the blog",
+        );
       }
 
       setBanner({
         type: "success",
-        text: status === "published" ? "Blog publish ho gaya! 🎉" : "Draft save ho gaya.",
+        text:
+          status === "published"
+            ? "Blog published successfully!"
+            : "Draft saved successfully.",
       });
 
-      setTimeout(() => router.push("/admin/blogs"), 900);
+      setTimeout(() => {
+        router.push("/admin/blogs");
+        router.refresh();
+      }, 900);
     } catch (err) {
       setBanner({
         type: "error",
-        text: err instanceof Error ? err.message : "Kuch galat ho gaya, dobara try kar.",
+        text:
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. Please try again.",
       });
     } finally {
       setSaving(null);
     }
   };
 
+
   /* ------------------------------------------------------------------ */
   /*  Render                                                             */
   /* ------------------------------------------------------------------ */
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-['Inter']">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F8FAFC]">
       {/* ---------- Sticky header ---------- */}
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6">
           <div className="min-w-0">
-            <p className="text-xs font-medium text-[#64748B]">Altitude Escapes · Admin</p>
-            <h1 className="truncate font-['Poppins'] text-lg font-semibold text-[#0F172A] sm:text-xl">
+            <p className="text-xs font-medium text-[#64748B]">The Musafir Diaries · Admin</p>
+            <h1 className="truncate text-base font-bold tracking-tight text-[#071A33] sm:text-xl">
               New Story
             </h1>
           </div>
@@ -261,7 +373,7 @@ if (!cleanContent) {
               type="button"
               onClick={() => handleSubmit("draft")}
               disabled={saving !== null}
-              className="rounded-xl border border-[#0F4C81]/20 bg-white px-3 py-2 text-sm font-medium text-[#0F4C81] transition hover:bg-[#0F4C81]/5 disabled:opacity-50 sm:px-4"
+              className="min-h-10 rounded-xl border border-[#087E8B]/20 bg-white px-3 text-xs font-bold text-[#087E8B] transition hover:bg-[#087E8B]/5 disabled:opacity-50 sm:px-4 sm:text-sm"
             >
               {saving === "draft" ? "Saving…" : "Save Draft"}
             </button>
@@ -269,7 +381,7 @@ if (!cleanContent) {
               type="button"
               onClick={() => handleSubmit("published")}
               disabled={saving !== null}
-              className="rounded-xl bg-[#F97316] px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-orange-200 transition hover:bg-[#ea6a0d] disabled:opacity-50 sm:px-4"
+              className="min-h-10 rounded-xl bg-[#F59E0B] px-3 text-xs font-bold text-[#071A33] shadow-sm transition hover:bg-[#d98b05] disabled:opacity-50 sm:px-4 sm:text-sm"
             >
               {saving === "published" ? "Publishing…" : "Publish"}
             </button>
@@ -293,11 +405,11 @@ if (!cleanContent) {
       )}
 
       {/* ---------- Body ---------- */}
-      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[1fr_340px] lg:py-8">
+      <main className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-5 px-3 py-5 sm:gap-6 sm:px-6 sm:py-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:py-8">
         {/* ============ MAIN COLUMN ============ */}
         <section className="space-y-6">
           {/* Title */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#64748B]">
               Title
             </label>
@@ -306,8 +418,8 @@ if (!cleanContent) {
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="e.g. 5 Hidden Trails Around Shimla You Haven't Explored Yet"
               rows={2}
-              className={`w-full resize-none border-0 border-b-2 bg-transparent font-['Poppins'] text-2xl font-semibold text-[#0F172A] outline-none placeholder:text-slate-300 sm:text-3xl ${
-                errors.title ? "border-red-400" : "border-slate-100 focus:border-[#38BDF8]"
+              className={`w-full resize-none overflow-hidden border-0 border-b-2 bg-transparent text-xl font-bold leading-tight text-[#071A33] outline-none placeholder:text-slate-300 sm:text-3xl ${
+                errors.title ? "border-red-400" : "border-slate-100 focus:border-[#087E8B]"
               }`}
             />
             {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title}</p>}
@@ -318,7 +430,7 @@ if (!cleanContent) {
                 value={form.slug}
                 onChange={(e) => handleSlugChange(e.target.value)}
                 placeholder="auto-generated-from-title"
-                className={`flex-1 rounded-lg border bg-slate-50 px-3 py-1.5 text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40 ${
+                className={`flex-1 rounded-lg border bg-slate-50 px-3 py-1.5 text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30 ${
                   errors.slug ? "border-red-400" : "border-slate-200"
                 }`}
               />
@@ -327,7 +439,7 @@ if (!cleanContent) {
           </div>
 
           {/* Excerpt */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <label className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[#64748B]">
               <span>Excerpt</span>
               <span className="font-normal normal-case text-slate-400">
@@ -339,7 +451,7 @@ if (!cleanContent) {
               onChange={(e) => updateField("excerpt", e.target.value.slice(0, 200))}
               placeholder="Ek do line mein — listing card aur SEO preview mein yahi dikhega."
               rows={3}
-              className={`w-full resize-none rounded-xl border bg-slate-50 p-3 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40 ${
+              className={`w-full resize-none rounded-xl border bg-slate-50 p-3 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30 ${
                 errors.excerpt ? "border-red-400" : "border-slate-200"
               }`}
             />
@@ -347,11 +459,12 @@ if (!cleanContent) {
           </div>
 
           {/* Content */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#64748B]">
               Content
             </label>
-            <Editor
+            <div className="min-w-0 overflow-hidden rounded-xl">
+              <Editor
   value={form.content}
   onChange={(html) =>
     updateField(
@@ -360,6 +473,7 @@ if (!cleanContent) {
     )
   }
 />
+              </div>
 
 {errors.content && (
   <p className="mt-2 text-xs text-red-500">
@@ -370,15 +484,15 @@ if (!cleanContent) {
           </div>
 
           {/* Tags */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
             <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#64748B]">
               Tags
             </label>
-            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2 focus-within:ring-2 focus-within:ring-[#38BDF8]/40">
+            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2 focus-within:ring-2 focus-within:ring-[#087E8B]/30">
               {form.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="flex items-center gap-1 rounded-full bg-[#0F4C81]/10 px-3 py-1 text-xs font-medium text-[#0F4C81]"
+                  className="flex items-center gap-1 rounded-full bg-[#087E8B]/10 px-3 py-1 text-xs font-semibold text-[#087E8B]"
                 >
                   {tag}
                   <button
@@ -400,18 +514,12 @@ if (!cleanContent) {
                 className="min-w-[120px] flex-1 bg-transparent px-1 py-1 text-sm text-[#0F172A] outline-none placeholder:text-slate-400"
               />
             </div>
-            <p className="mt-1.5 text-xs text-slate-400">Click Enter </p>
+            <p className="mt-1.5 text-xs text-slate-400">Press Enter or comma to add a tag.</p>
           </div>
         </section>
 
         {/* ============ SIDEBAR ============ */}
-        <aside className="space-y-6">
-          {/* Featured image */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#64748B]">
-              Featured Image
-            </label>
-
+        <aside className="min-w-0 space-y-5 lg:space-y-6">
            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 
   <label className="mb-3 block text-xs font-semibold uppercase tracking-wide text-[#64748B]">
@@ -431,7 +539,7 @@ if (!cleanContent) {
   )}
 
 </div>
-          </div>
+          
 
           {/* Category */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -441,7 +549,7 @@ if (!cleanContent) {
             <select
               value={form.category}
               onChange={(e) => updateField("category", e.target.value)}
-              className={`w-full rounded-lg border bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40 ${
+              className={`w-full rounded-lg border bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30 ${
                 errors.category ? "border-red-400" : "border-slate-200"
               }`}
             >
@@ -471,7 +579,7 @@ if (!cleanContent) {
               <input
                 value={form.author}
                 onChange={(e) => updateField("author", e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30"
               />
             </div>
 
@@ -481,7 +589,7 @@ if (!cleanContent) {
                 <button
                   type="button"
                   onClick={handleAutoReadTime}
-                  className="font-medium normal-case text-[#38BDF8] hover:underline"
+                  className="font-medium normal-case text-[#087E8B] hover:underline"
                 >
                   Auto-calc
                 </button>
@@ -493,7 +601,7 @@ if (!cleanContent) {
                 onChange={(e) =>
                   updateField("readTime", e.target.value === "" ? "" : Number(e.target.value))
                 }
-                className={`w-full rounded-lg border bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40 ${
+                className={`w-full rounded-lg border bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30 ${
                   errors.readTime ? "border-red-400" : "border-slate-200"
                 }`}
               />
@@ -506,7 +614,7 @@ if (!cleanContent) {
                 type="checkbox"
                 checked={form.featured}
                 onChange={(e) => updateField("featured", e.target.checked)}
-                className="h-5 w-5 accent-[#F97316]"
+                className="h-5 w-5 accent-[#F59E0B]"
               />
             </label>
           </div>
@@ -527,7 +635,7 @@ if (!cleanContent) {
                   value={form.seoTitle}
                   onChange={(e) => updateField("seoTitle", e.target.value)}
                   placeholder={form.title || "Falls back to title"}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30"
                 />
               </div>
               <div>
@@ -537,7 +645,7 @@ if (!cleanContent) {
                   onChange={(e) => updateField("seoDescription", e.target.value.slice(0, 160))}
                   rows={3}
                   placeholder={form.excerpt || "Falls back to excerpt"}
-                  className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#38BDF8]/40"
+                  className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-[#0F172A] outline-none focus:bg-white focus:ring-2 focus:ring-[#087E8B]/30"
                 />
                 <p className="mt-1 text-right text-xs text-slate-400">
                   {form.seoDescription.length}/160
@@ -549,12 +657,12 @@ if (!cleanContent) {
       </main>
 
       {/* mobile bottom action bar */}
-      <div className="sticky bottom-0 z-20 flex gap-3 border-t border-slate-200 bg-white/95 p-3 backdrop-blur lg:hidden">
+      <div className="sticky bottom-0 z-30 flex gap-2 border-t border-slate-200 bg-white/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_25px_rgba(15,23,42,0.08)] backdrop-blur-md lg:hidden">
         <button
           type="button"
           onClick={() => handleSubmit("draft")}
           disabled={saving !== null}
-          className="flex-1 rounded-xl border border-[#0F4C81]/20 bg-white py-2.5 text-sm font-medium text-[#0F4C81] disabled:opacity-50"
+          className="min-w-0 flex-1 rounded-xl border border-[#087E8B]/20 bg-white py-2.5 text-xs font-bold text-[#087E8B] disabled:opacity-50 sm:text-sm"
         >
           {saving === "draft" ? "Saving…" : "Save Draft"}
         </button>
@@ -562,7 +670,7 @@ if (!cleanContent) {
           type="button"
           onClick={() => handleSubmit("published")}
           disabled={saving !== null}
-          className="flex-1 rounded-xl bg-[#F97316] py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="min-w-0 flex-1 rounded-xl bg-[#F59E0B] py-2.5 text-xs font-bold text-[#071A33] disabled:opacity-50 sm:text-sm"
         >
           {saving === "published" ? "Publishing…" : "Publish"}
         </button>
