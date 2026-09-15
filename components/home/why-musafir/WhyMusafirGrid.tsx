@@ -12,30 +12,30 @@ const REASONS = [
   {
     number: "01",
     icon: Compass,
-    title: "Thoughtfully Curated",
+    title: "Local Expertise",
     description:
-      "Journeys built around the places, pace and experiences that make the Himalayas worth discovering.",
+      "Our local Himalayan knowledge helps you discover the right places, experiences and routes with confidence.",
   },
   {
     number: "02",
     icon: Map,
-    title: "Beyond the Obvious",
+    title: "Customised Trips",
     description:
-      "Go beyond a list of attractions and discover the quieter corners, viewpoints and experiences along the way.",
+      "Every journey can be shaped around your interests, travel style, pace and the moments you want to experience.",
   },
   {
     number: "03",
     icon: Heart,
-    title: "Made for Your Journey",
+    title: "Transparent Pricing",
     description:
-      "Travel should have room for your interests, your pace and the moments you want to remember.",
+      "Clear, upfront pricing with thoughtfully planned inclusions, so you know what your journey covers before you travel.",
   },
   {
     number: "04",
     icon: Sparkles,
-    title: "Details That Matter",
+    title: "Verified Stays & 24×7 Support",
     description:
-      "From where you stay to how your days unfold, every detail contributes to a more considered journey.",
+      "Stay with carefully selected properties and have our support available throughout your journey whenever you need us.",
   },
 ] as const;
 

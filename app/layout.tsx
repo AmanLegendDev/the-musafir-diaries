@@ -3,6 +3,9 @@ import { Geist, Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
 
+import FloatingWhatsApp from "@/components/common/whatsapp/FloatingWhatsApp";
+
+
 import PublicChrome from "@/components/layout/PublicChrome";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
@@ -147,7 +150,10 @@ export default function RootLayout({
     position="top-right"
     closeButton
   />
+  
+  
 </body>
+
     </html>
   );
 }

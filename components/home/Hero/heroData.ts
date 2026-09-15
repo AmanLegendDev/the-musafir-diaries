@@ -31,23 +31,23 @@ export const HERO_CONTENT = {
   eyebrow: "Explore · Experience · Belong",
 
   title: {
-    lineOne: "Journeys",
-    lineTwo: "That Stay",
-    highlight: "Forever",
+    lineOne: "Himalayan",
+    lineTwo: "Trips,",
+    highlight: "Made for You",
   },
 
   description:
-    "Discover the Himalayas with The Musafir Diaries — thoughtfully crafted journeys, beautiful stays, and experiences that become part of your story.",
+    "Discover thoughtfully curated travel packages and customised Himalayan journeys, with handpicked stays, local experiences and support from planning to travel.",
 
- primaryCta: {
-  label: "Plan Your Journey",
-  href: "/inquiry",
-},
+  primaryCta: {
+    label: "Plan Your Journey",
+    href: "/inquiry",
+  },
 
-secondaryCta: {
-  label: "Book Your Trip",
-  href: "/booking",
-},
+  secondaryCta: {
+    label: "Explore Packages",
+    href: "/packages",
+  },
 
   storyLabel: "More than travel",
 } as const;

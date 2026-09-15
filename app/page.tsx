@@ -37,6 +37,10 @@ import FAQ from "@/models/faq.model";
 
 import FinalCTASection from "@/components/home/final-cta/FinalCTASection";
 
+import FloatingWhatsApp from "@/components/common/whatsapp/FloatingWhatsApp";
+
+import HowItWorksSection from "@/components/home/how-it-works/HowItWorksSection";
+
 
 
 const SITE_URL =
@@ -225,6 +229,8 @@ const faqs = JSON.parse(
 
       <WhyMusafirSection />
 
+      <HowItWorksSection />
+
       <TestimonialsSection
         testimonials={testimonials}
       />
@@ -232,8 +238,8 @@ const faqs = JSON.parse(
 
 <FAQSection faqs={faqs} />
 
-<FinalCTASection />
-
+  <FinalCTASection />
+<FloatingWhatsApp/>
 
       {/* Journal will be added after Blog model is finalized */}
     </>
