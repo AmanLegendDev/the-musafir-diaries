@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import CloudinaryUploader from "@/components/admin/shared/CloudinaryUploader";
 import {
   Check,
   ChevronDown,
@@ -99,6 +100,7 @@ export default function PackageForm({
   const [categories, setCategories] = useState<Option[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [saving, setSaving] = useState(false);
+  
 
   const form = useForm<FormValues>({
     resolver: zodResolver(packageSchema),
@@ -109,14 +111,15 @@ export default function PackageForm({
     mode: "onBlur",
   });
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors, isDirty },
-  } = form;
+const {
+  register,
+  control,
+  handleSubmit,
+  reset,
+  watch,
+  setValue,
+  formState: { errors, isDirty },
+} = form;
 
   const [gallery, setGallery] = useState<string[]>(
     defaultValues?.gallery ?? emptyValues.gallery,
@@ -553,96 +556,58 @@ export default function PackageForm({
       </FormSection>
 
       {/* IMAGES */}
-      <FormSection
-        number="05"
-        title="Images"
-        description="Manage the hero image and gallery used throughout the package."
-      >
-        <Field
-          label="Hero Image URL"
-          error={errors.heroImage?.message}
-        >
-          <input
-            {...register("heroImage")}
-            placeholder="https://res.cloudinary.com/..."
-            className={inputClass(
-              Boolean(errors.heroImage)
-            )}
-          />
-        </Field>
+    {/* IMAGES */}
+<FormSection
+  number="05"
+  title="Images"
+  description="Manage the hero image and gallery used throughout the package."
+>
+  {/* HERO IMAGE */}
+  <div>
+    <Field
+      label="Hero Image"
+      error={errors.heroImage?.message}
+    >
+      <CloudinaryUploader
+        multiple={false}
+        value={heroImage}
+        onChange={(url) => {
+          setValue("heroImage", url, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+        }}
+      />
+    </Field>
+  </div>
 
-        {heroImage && (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-            <img
-              src={heroImage}
-              alt="Hero preview"
-              className="h-64 w-full object-cover"
-              onError={(event) => {
-                event.currentTarget.style.display =
-                  "none";
-              }}
-            />
-          </div>
-        )}
+  {/* GALLERY */}
+  <div className="border-t border-slate-100 pt-6">
+    <div className="mb-4">
+      <h3 className="text-sm font-semibold text-slate-800">
+        Gallery Images
+      </h3>
 
-        <div>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-semibold text-slate-800">
-                Gallery Images
-              </h3>
+      <p className="mt-1 text-xs leading-5 text-slate-400">
+        Upload multiple images to showcase the package and destination.
+      </p>
+    </div>
 
-              <p className="mt-1 text-xs text-slate-400">
-                Add image URLs for the package gallery.
-              </p>
-            </div>
+    <CloudinaryUploader
+      multiple
+      value={gallery}
+      onChange={(urls) => {
+        setGallery(urls);
+      }}
+    />
 
-            <button
-              type="button"
-              onClick={() => appendGallery()}
-              className={secondaryButton}
-            >
-              <Plus className="h-4 w-4" />
-              Add Image
-            </button>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {gallery.map((image, index) => (
-              <div
-                key={`gallery-${index}`}
-                className="flex gap-2"
-              >
-                <input
-                  value={image}
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setGallery((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? value : item,
-                      ),
-                    );
-                  }}
-                  placeholder="https://res.cloudinary.com/..."
-                  className={inputClass(false)}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => removeGallery(index)}
-                  className={iconDangerButton}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-
-            {gallery.length === 0 && (
-              <EmptyArray text="No gallery images added yet." />
-            )}
-          </div>
-        </div>
-      </FormSection>
+    {gallery.length === 0 && (
+      <div className="mt-4 rounded-xl border border-dashed border-slate-200 py-6 text-center text-xs text-slate-400">
+        No gallery images added yet.
+      </div>
+    )}
+  </div>
+</FormSection>
 
       {/* HIGHLIGHTS */}
       <FormSection

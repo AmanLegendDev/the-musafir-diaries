@@ -40,13 +40,13 @@ export const HERO_CONTENT = {
     "Discover thoughtfully curated travel packages and customised Himalayan journeys, with handpicked stays, local experiences and support from planning to travel.",
 
   primaryCta: {
-    label: "Plan Your Journey",
+    label: "inquir Your Journey",
     href: "/inquiry",
   },
 
   secondaryCta: {
-    label: "Explore Packages",
-    href: "/packages",
+    label: "Book Journey",
+    href: "/booking",
   },
 
   storyLabel: "More than travel",

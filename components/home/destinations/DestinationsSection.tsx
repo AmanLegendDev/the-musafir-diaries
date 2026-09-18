@@ -39,7 +39,7 @@ export default function DestinationsSection({
     .filter((destination) => destination.status === "active")
     .sort(
       (a, b) => a.featuredOrder - b.featuredOrder
-    );
+    ).slice(0, 4);
 
   if (visibleDestinations.length === 0) {
     return null;
