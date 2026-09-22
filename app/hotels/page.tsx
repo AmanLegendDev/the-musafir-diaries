@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/footer/Footer";
+export const dynamic = "force-dynamic";
 import { Suspense } from "react";
 
 import HotelHero from "@/components/hotels/listing/HotelHero";
