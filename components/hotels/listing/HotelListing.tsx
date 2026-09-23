@@ -1,92 +1,83 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 import HotelSearch from "./HotelSearch";
-import HotelFilters, {
-  type HotelSort,
-  type HotelType,
-} from "./HotelFilters";
-import HotelActiveFilters from "./HotelActiveFilters";
+import HotelDestinationSelector, {
+  type HotelDestinationOption,
+} from "./HotelDestinationSelector";
 import HotelResultsHeader from "./HotelResultsHeader";
-import HotelGrid, { type HotelListItem } from "./HotelGrid";
+import HotelGrid, {
+  type HotelListItem,
+} from "./HotelGrid";
 import HotelEmpty from "./HotelEmpty";
-
-import {
-  filterHotels,
-  type HotelFilterState,
-} from "@/lib/utils/hotel-filter";
 
 type Props = {
   hotels: HotelListItem[];
-  destinationName?: string;
+  destinations: HotelDestinationOption[];
 };
 
 type ViewMode = "grid" | "list";
 
-function getParam(
-  searchParams: URLSearchParams,
-  key: string,
-  fallback: string
+type HotelWithDestination = HotelListItem & {
+  destination?:
+    | {
+        _id?: string;
+        name?: string;
+        slug?: string;
+        state?: string;
+      }
+    | string
+    | null;
+};
+
+function getDestinationSlug(
+  hotel: HotelWithDestination
 ) {
-  return searchParams.get(key) || fallback;
+  if (!hotel.destination) {
+    return "";
+  }
+
+  if (typeof hotel.destination === "string") {
+    return hotel.destination;
+  }
+
+  return hotel.destination.slug || "";
 }
 
 export default function HotelListing({
   hotels,
-  destinationName,
+  destinations,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  /*
-   * Initial state comes from the URL.
-   * This keeps the page shareable and refresh-safe.
-   */
-  const initialSearch = searchParams.get("search") || "";
+  const initialSearch =
+    searchParams.get("search") || "";
 
-  const initialHotelType = getParam(
-    searchParams,
-    "type",
-    "all"
-  ) as HotelType;
-
-  const initialStarRating = getParam(
-    searchParams,
-    "stars",
-    "all"
-  );
-
-  const initialFeatured =
-    searchParams.get("featured") === "true";
-
-  const initialSort = getParam(
-    searchParams,
-    "sort",
-    "featured"
-  ) as HotelSort;
+  const initialDestination =
+    searchParams.get("destination") || "all";
 
   const initialView =
-    searchParams.get("view") === "list" ? "list" : "grid";
+    searchParams.get("view") === "list"
+      ? "list"
+      : "grid";
 
-  const [search, setSearch] = useState(initialSearch);
-  const [hotelType, setHotelType] =
-    useState<HotelType>(initialHotelType);
-  const [starRating, setStarRating] =
-    useState(initialStarRating);
-  const [featured, setFeatured] =
-    useState(initialFeatured);
-  const [sort, setSort] =
-    useState<HotelSort>(initialSort);
+  const [search, setSearch] =
+    useState(initialSearch);
+
+  const [selectedDestination, setSelectedDestination] =
+    useState(initialDestination);
+
   const [view, setView] =
     useState<ViewMode>(initialView);
 
-  /*
-   * Keep URL synchronized with filters.
-   * Search is debounced to avoid unnecessary URL updates.
-   */
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       const params = new URLSearchParams();
@@ -95,20 +86,14 @@ export default function HotelListing({
         params.set("search", search.trim());
       }
 
-      if (hotelType !== "all") {
-        params.set("type", hotelType);
-      }
-
-      if (starRating !== "all") {
-        params.set("stars", starRating);
-      }
-
-      if (featured) {
-        params.set("featured", "true");
-      }
-
-      if (sort !== "featured") {
-        params.set("sort", sort);
+      if (
+        selectedDestination &&
+        selectedDestination !== "all"
+      ) {
+        params.set(
+          "destination",
+          selectedDestination
+        );
       }
 
       if (view !== "grid") {
@@ -121,52 +106,109 @@ export default function HotelListing({
         queryString
           ? `${pathname}?${queryString}`
           : pathname,
-        { scroll: false }
+        {
+          scroll: false,
+        }
       );
     }, 300);
 
-    return () => window.clearTimeout(timeout);
+    return () =>
+      window.clearTimeout(timeout);
   }, [
     search,
-    hotelType,
-    starRating,
-    featured,
-    sort,
+    selectedDestination,
     view,
     pathname,
     router,
   ]);
 
-  const filterState: HotelFilterState = useMemo(
-    () => ({
-      search,
-      hotelType,
-      starRating,
-      featured,
-      sort,
-    }),
-    [
-      search,
-      hotelType,
-      starRating,
-      featured,
-      sort,
-    ]
-  );
+  const filteredHotels = useMemo(() => {
+    const normalizedSearch =
+      search.trim().toLowerCase();
 
-  const filteredHotels = useMemo(
-    () => filterHotels(hotels, filterState),
-    [hotels, filterState]
-  );
+    return hotels.filter((hotel) => {
+      const hotelWithDestination =
+        hotel as HotelWithDestination;
 
-  const hasActiveSearch = search.trim().length > 0;
+      const destinationSlug =
+        getDestinationSlug(
+          hotelWithDestination
+        );
+
+      const matchesDestination =
+        selectedDestination === "all" ||
+        destinationSlug ===
+          selectedDestination;
+
+      if (!matchesDestination) {
+        return false;
+      }
+
+      if (!normalizedSearch) {
+        return true;
+      }
+
+      const destination =
+        hotelWithDestination.destination;
+
+      const destinationName =
+        typeof destination === "object" &&
+        destination
+          ? destination.name || ""
+          : "";
+
+      const searchableText = [
+        hotel.name,
+        hotel.city,
+        hotel.state,
+        hotel.area,
+        destinationName,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return searchableText.includes(
+        normalizedSearch
+      );
+    });
+  }, [
+    hotels,
+    search,
+    selectedDestination,
+  ]);
+
+  const selectedDestinationData =
+    destinations.find(
+      (destination) =>
+        destination.slug ===
+        selectedDestination
+    );
+
+  const selectedDestinationName =
+    selectedDestinationData?.name;
+
+  const hasActiveSearch =
+    search.trim().length > 0;
 
   const clearAll = () => {
     setSearch("");
-    setHotelType("all");
-    setStarRating("all");
-    setFeatured(false);
-    setSort("featured");
+    setSelectedDestination("all");
+  };
+
+  const handleDestinationChange = (
+    slug: string
+  ) => {
+    setSelectedDestination(slug);
+
+    window.setTimeout(() => {
+      document
+        .getElementById("hotel-results")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    }, 50);
   };
 
   return (
@@ -175,6 +217,7 @@ export default function HotelListing({
       className="bg-[#FAF9F5]"
     >
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12 lg:py-20">
+
         {/* Search */}
         <div className="mx-auto max-w-3xl">
           <HotelSearch
@@ -183,60 +226,50 @@ export default function HotelListing({
           />
         </div>
 
-        {/* Filters */}
+        {/* Destination Selector */}
         {!hasActiveSearch && (
-          <div className="mt-6">
-            <HotelFilters
-              hotelType={hotelType}
-              starRating={starRating}
-              featured={featured}
-              sort={sort}
-              onHotelTypeChange={setHotelType}
-              onStarRatingChange={setStarRating}
-              onFeaturedChange={setFeatured}
-              onSortChange={setSort}
+          <div className="mt-10">
+            <HotelDestinationSelector
+              destinations={destinations}
+              selectedDestination={
+                selectedDestination
+              }
+              onDestinationChange={
+                handleDestinationChange
+              }
             />
           </div>
         )}
 
-        {/* Active filters */}
-        <HotelActiveFilters
-          search={search}
-          hotelType={hotelType}
-          starRating={starRating}
-          featured={featured}
-          sort={sort}
-          onSearchClear={() => setSearch("")}
-          onHotelTypeClear={() => setHotelType("all")}
-          onStarRatingClear={() => setStarRating("all")}
-          onFeaturedClear={() => setFeatured(false)}
-          onSortClear={() => setSort("featured")}
-          onClearAll={clearAll}
-        />
-
-        {/* Results header */}
-        <div className="mt-12">
-          <HotelResultsHeader
-            count={filteredHotels.length}
-            destinationName={destinationName}
-            view={view}
-            onViewChange={setView}
-          />
-        </div>
-
         {/* Results */}
-        <div className="mt-8">
-          {filteredHotels.length > 0 ? (
-            <HotelGrid
-              hotels={filteredHotels}
+        <div
+          id="hotel-results"
+          className="scroll-mt-24"
+        >
+          <div className="mt-12">
+            <HotelResultsHeader
+              count={filteredHotels.length}
+              destinationName={
+                selectedDestinationName
+              }
               view={view}
+              onViewChange={setView}
             />
-          ) : (
-            <HotelEmpty
-              searching={hasActiveSearch}
-              onClear={clearAll}
-            />
-          )}
+          </div>
+
+          <div className="mt-8">
+            {filteredHotels.length > 0 ? (
+              <HotelGrid
+                hotels={filteredHotels}
+                view={view}
+              />
+            ) : (
+              <HotelEmpty
+                searching={hasActiveSearch}
+                onClear={clearAll}
+              />
+            )}
+          </div>
         </div>
       </div>
     </section>

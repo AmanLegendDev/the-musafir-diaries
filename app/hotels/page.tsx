@@ -1,8 +1,4 @@
 import type { Metadata } from "next";
-
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/footer/Footer";
-export const dynamic = "force-dynamic";
 import { Suspense } from "react";
 
 import HotelHero from "@/components/hotels/listing/HotelHero";
@@ -11,64 +7,77 @@ import HotelCTA from "@/components/hotels/listing/HotelCTA";
 
 import connectDB from "@/lib/db";
 import Hotel from "@/models/hotel.model";
-import "@/models/destination.model";
+import Destination from "@/models/destination.model";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Hotels & Stays in Himachal Pradesh | The Musafir Diaries",
+  title: "Hotels & Stays | The Musafir Diaries",
   description:
-    "Discover thoughtfully selected hotels, resorts, boutique stays, homestays and mountain retreats across Himachal Pradesh with The Musafir Diaries.",
+    "Discover thoughtfully selected hotels, resorts, boutique stays, homestays and mountain retreats across destinations with The Musafir Diaries.",
   keywords: [
+    "India hotels",
     "Himachal Pradesh hotels",
     "Shimla hotels",
     "Manali hotels",
     "Spiti hotels",
-    "Himachal stays",
+    "Kerala hotels",
+    "Meghalaya hotels",
+    "Ladakh hotels",
     "mountain resorts",
-    "boutique stays Himachal",
+    "boutique stays",
     "The Musafir Diaries",
   ],
   alternates: {
     canonical: "/hotels",
   },
   openGraph: {
-    title: "Hotels & Stays in Himachal Pradesh | The Musafir Diaries",
+    title: "Hotels & Stays | The Musafir Diaries",
     description:
-      "Find beautiful stays across the Himalayas, thoughtfully selected for your journey.",
+      "Find beautiful stays across India, thoughtfully selected for your journey.",
     type: "website",
   },
 };
 
-async function getHotels() {
+async function getHotelPageData() {
   await connectDB();
 
-  const hotels = await Hotel.find({
-    status: "active",
-  })
-    .populate(
-      "destination",
-      "name slug state"
-    )
-    .sort({
-      featured: -1,
-      displayOrder: 1,
-      createdAt: -1,
+  const [hotels, destinations] = await Promise.all([
+    Hotel.find({
+      status: "active",
     })
-    .lean();
+      .populate("destination", "name slug state")
+      .sort({
+        featured: -1,
+        displayOrder: 1,
+        createdAt: -1,
+      })
+      .lean(),
 
-  return JSON.parse(
-    JSON.stringify(hotels)
-  );
+    Destination.find({
+      status: "active",
+    })
+      .select("name slug state featured featuredOrder")
+      .sort({
+        featuredOrder: 1,
+        name: 1,
+      })
+      .lean(),
+  ]);
+
+  return {
+    hotels: JSON.parse(JSON.stringify(hotels)),
+    destinations: JSON.parse(JSON.stringify(destinations)),
+  };
 }
 
 export default async function HotelsPage() {
-  const hotels = await getHotels();
+  const { hotels, destinations } =
+    await getHotelPageData();
 
   /*
-   * Use the first featured/ordered hotel image
+   * Use the first featured hotel with an image
    * for the cinematic listing hero.
-   *
-   * If no hotel has an image yet, HotelHero
-   * automatically falls back to the brand Himalayan hero.
    */
   const heroHotel = hotels.find(
     (hotel: {
@@ -83,23 +92,20 @@ export default async function HotelsPage() {
     heroHotel?.heroImage || undefined;
 
   return (
-    <>
-     
+    <main>
+      {/* Cinematic stay introduction */}
+      <HotelHero heroImage={heroImage} />
 
-      <main>
-        {/* Cinematic stay introduction */}
-        <HotelHero heroImage={heroImage} />
+      {/* Search + destination collection + hotels */}
+      <Suspense fallback={null}>
+        <HotelListing
+          hotels={hotels}
+          destinations={destinations}
+        />
+      </Suspense>
 
-        {/* Search + filters + hotel collection */}
-        <Suspense fallback={null}>
-  <HotelListing hotels={hotels} />
-</Suspense>
-
-        {/* Conversion section */}
-        <HotelCTA />
-      </main>
-
-      
-    </>
+      {/* Conversion section */}
+      <HotelCTA />
+    </main>
   );
 }
