@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Inter, Poppins } from "next/font/google";
 
 import "./globals.css";
 
 import FloatingWhatsApp from "@/components/common/whatsapp/FloatingWhatsApp";
-
-
 import PublicChrome from "@/components/layout/PublicChrome";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
+
+/* =========================================================
+   FONTS
+========================================================= */
 
 const geist = Geist({
   subsets: ["latin"],
@@ -29,20 +31,51 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const SITE_URL =
+/* =========================================================
+   SITE CONFIG
+========================================================= */
+
+const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://www.themusafirdiaries.com";
+  "https://www.themusafirdiaries.com"
+).replace(/\/+$/, "");
+
+const SITE_NAME = "The Musafir Diaries";
+
+const DEFAULT_DESCRIPTION =
+  "The Musafir Diaries crafts thoughtful Himalayan journeys, curated stays, destination experiences and unforgettable travel stories from Shimla, Himachal Pradesh.";
+
+const DEFAULT_OG_IMAGE = "/og-image.jpg";
+
+/* =========================================================
+   GLOBAL METADATA
+========================================================= */
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
+  /* =======================================================
+     SITE IDENTITY
+  ======================================================== */
+
   title: {
-    default: "The Musafir Diaries",
-    template: "%s | The Musafir Diaries",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
 
-  description:
-    "The Musafir Diaries crafts thoughtful Himalayan journeys, curated stays, destination experiences and unforgettable travel stories from Himachal Pradesh.",
+  description: DEFAULT_DESCRIPTION,
+
+  applicationName: SITE_NAME,
+
+  authors: [
+    {
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+  ],
+
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
 
   keywords: [
     "The Musafir Diaries",
@@ -55,16 +88,9 @@ export const metadata: Metadata = {
     "Himalayan travel experiences",
   ],
 
-  applicationName: "The Musafir Diaries",
-
-  authors: [
-    {
-      name: "The Musafir Diaries",
-    },
-  ],
-
-  creator: "The Musafir Diaries",
-  publisher: "The Musafir Diaries",
+  /* =======================================================
+     FORMAT DETECTION
+  ======================================================== */
 
   formatDetection: {
     email: false,
@@ -72,43 +98,106 @@ export const metadata: Metadata = {
     telephone: false,
   },
 
+  /* =======================================================
+     ICONS
+  ======================================================== */
+
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
-
-  openGraph: {
-    title: "The Musafir Diaries",
-    description:
-      "Thoughtful Himalayan journeys, curated stays and experiences designed to become part of your story.",
-
-    url: SITE_URL,
-    siteName: "The Musafir Diaries",
-
-    images: [
+    icon: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "The Musafir Diaries",
+        url: "/favicon.ico",
+        sizes: "any",
+      },
+      {
+        url: "/favicon-32.png",
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        url: "/favicon-48.png",
+        type: "image/png",
+        sizes: "48x48",
+      },
+      {
+        url: "/icon-192.png",
+        type: "image/png",
+        sizes: "192x192",
+      },
+      {
+        url: "/icon-512.png",
+        type: "image/png",
+        sizes: "512x512",
       },
     ],
 
-    locale: "en_IN",
-    type: "website",
+    shortcut: [
+      {
+        url: "/favicon.ico",
+        type: "image/x-icon",
+      },
+    ],
+
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        type: "image/png",
+        sizes: "180x180",
+      },
+    ],
   },
+
+  /* =======================================================
+     OPEN GRAPH
+  ======================================================== */
+
+  openGraph: {
+    type: "website",
+
+    locale: "en_IN",
+
+    siteName: SITE_NAME,
+
+    title: SITE_NAME,
+
+    description: DEFAULT_DESCRIPTION,
+
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt:
+          "The Musafir Diaries — Himalayan Travel Experiences",
+      },
+    ],
+  },
+
+  /* =======================================================
+     TWITTER / X
+  ======================================================== */
 
   twitter: {
     card: "summary_large_image",
 
-    title: "The Musafir Diaries",
+    title: SITE_NAME,
 
     description:
-      "Thoughtful Himalayan journeys, curated stays and unforgettable travel experiences.",
+      "Thoughtful Himalayan journeys, curated stays and unforgettable travel experiences from The Musafir Diaries.",
 
-    images: ["/og-image.jpg"],
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt:
+          "The Musafir Diaries — Himalayan Travel Experiences",
+      },
+    ],
   },
+
+  /* =======================================================
+     ROBOTS
+  ======================================================== */
 
   robots: {
     index: true,
@@ -123,6 +212,21 @@ export const metadata: Metadata = {
     },
   },
 };
+
+/* =========================================================
+   VIEWPORT
+========================================================= */
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "light",
+  themeColor: "#071A33",
+};
+
+/* =========================================================
+   ROOT LAYOUT
+========================================================= */
 
 export default function RootLayout({
   children,
@@ -140,20 +244,17 @@ export default function RootLayout({
         "font-sans",
       )}
     >
-<body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
-  <PublicChrome>
-    {children}
-  </PublicChrome>
+      <body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
+        <PublicChrome>{children}</PublicChrome>
 
-  <Toaster
-    richColors
-    position="top-right"
-    closeButton
-  />
-  
-  
-</body>
+        <FloatingWhatsApp />
 
+        <Toaster
+          richColors
+          position="top-right"
+          closeButton
+        />
+      </body>
     </html>
   );
 }

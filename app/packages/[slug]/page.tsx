@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import Navbar from "@/components/layout/Navbar";
-import  Footer  from "@/components/layout/footer/Footer";
-
 import PackageBreadcrumb from "@/components/packages/detail/PackageBreadcrumb";
 import PackageHero from "@/components/packages/detail/PackageHero";
 import PackageSectionNav from "@/components/packages/detail/PackageSectionNav";
@@ -30,28 +27,75 @@ import FAQ from "@/models/faq.model";
 import "@/models/destination.model";
 import "@/models/category.model";
 
+/* =========================================================
+   TYPES
+========================================================= */
+
 interface PackagePageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                   METADATA                                  */
-/* -------------------------------------------------------------------------- */
+/* =========================================================
+   SITE CONFIG
+========================================================= */
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://www.themusafirdiaries.com";
+
+const SITE_NAME = "The Musafir Diaries";
+
+const SITE_LOGO = `${SITE_URL.replace(
+  /\/$/,
+  "",
+)}/icon-512.png`;
+
+function getAbsoluteUrl(path: string) {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://")
+  ) {
+    return path;
+  }
+
+  return `${SITE_URL.replace(
+    /\/$/,
+    "",
+  )}/${path.replace(/^\//, "")}`;
+}
+
+/* =========================================================
+   METADATA
+========================================================= */
 
 export async function generateMetadata({
   params,
 }: PackagePageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const packageData = await getPackageBySlug(slug);
+  const packageData =
+    await getPackageBySlug(slug);
+
+  /*
+   * -------------------------------------------------------
+   * Invalid package
+   * -------------------------------------------------------
+   */
 
   if (!packageData) {
     return {
-      title: "Journey Not Found | The Musafir Diaries",
+      title:
+        "Journey Not Found | The Musafir Diaries",
+
       description:
         "The requested Himalayan journey could not be found.",
+
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -64,91 +108,198 @@ export async function generateMetadata({
     packageData.shortDescription?.trim() ||
     `Explore ${packageData.name} with The Musafir Diaries.`;
 
+  const canonicalUrl =
+    getAbsoluteUrl(
+      `/packages/${packageData.slug}`,
+    );
+
+  const packageImage =
+    packageData.heroImage
+      ? getAbsoluteUrl(
+          packageData.heroImage,
+        )
+      : getAbsoluteUrl(
+          "/og-image.jpg",
+        );
+
   return {
+    metadataBase: new URL(SITE_URL),
+
     title,
+
     description,
 
+    keywords: [
+      packageData.name,
+
+      ...(packageData.destination?.name
+        ? [
+            `${packageData.destination.name} tour`,
+            `${packageData.destination.name} travel package`,
+            `${packageData.destination.name} holiday package`,
+          ]
+        : []),
+
+      ...(packageData.category?.name
+        ? [
+            packageData.category.name,
+          ]
+        : []),
+
+      "Himalayan travel packages",
+      "Himachal travel packages",
+      "Himalayan tours",
+      SITE_NAME,
+    ],
+
     alternates: {
-      canonical: `/packages/${packageData.slug}`,
+      canonical: canonicalUrl,
     },
 
     openGraph: {
       title,
+
       description,
+
       type: "website",
-      url: `/packages/${packageData.slug}`,
-      siteName: "The Musafir Diaries",
-      images: packageData.heroImage
-        ? [
-            {
-              url: packageData.heroImage,
-              alt: packageData.name,
-            },
-          ]
-        : undefined,
+
+      url: canonicalUrl,
+
+      siteName: SITE_NAME,
+
+      locale: "en_IN",
+
+      images: [
+        {
+          url: packageImage,
+
+          width: 1200,
+
+          height: 630,
+
+          alt: `${packageData.name} | ${SITE_NAME}`,
+        },
+      ],
     },
 
     twitter: {
       card: "summary_large_image",
+
       title,
+
       description,
-      images: packageData.heroImage
-        ? [packageData.heroImage]
-        : undefined,
+
+      images: [packageImage],
+    },
+
+    robots: {
+      index: true,
+
+      follow: true,
+
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                     PAGE                                   */
-/* -------------------------------------------------------------------------- */
+/* =========================================================
+   PAGE
+========================================================= */
 
 export default async function PackageDetailPage({
   params,
 }: PackagePageProps) {
   const { slug } = await params;
 
-  /* ------------------------------------------------------------------------ */
-  /*                              PACKAGE                                     */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * PACKAGE
+   * -------------------------------------------------------
+   */
 
-  const packageData = await getPackageBySlug(slug);
+  const packageData =
+    await getPackageBySlug(slug);
 
   if (!packageData) {
     notFound();
   }
 
-  /* ------------------------------------------------------------------------ */
-  /*                         POPULATED ENTITIES                               */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * POPULATED ENTITIES
+   * -------------------------------------------------------
+   */
 
   const destination =
     packageData.destination &&
-    typeof packageData.destination === "object"
+    typeof packageData.destination ===
+      "object"
       ? packageData.destination
       : null;
 
   const category =
     packageData.category &&
-    typeof packageData.category === "object"
+    typeof packageData.category ===
+      "object"
       ? packageData.category
       : null;
 
-  /* ------------------------------------------------------------------------ */
-  /*                              EXTRA DATA                                  */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * EXTRA DATA
+   * -------------------------------------------------------
+   */
 
   await connectDB();
 
-  /* ------------------------------------------------------------------------ */
-  /*                               HOTELS                                     */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * HOTELS
+   * -------------------------------------------------------
+   */
 
   let hotels: unknown[] = [];
 
   if (destination?._id) {
-    const hotelDocuments = await Hotel.find({
-      destination: destination._id,
+    const hotelDocuments =
+      await Hotel.find({
+        destination:
+          destination._id,
+
+        status: "active",
+      })
+        .sort({
+          featured: -1,
+          displayOrder: 1,
+          createdAt: -1,
+        })
+        .limit(6)
+        .lean();
+
+    hotels = JSON.parse(
+      JSON.stringify(
+        hotelDocuments,
+      ),
+    );
+  }
+
+  /*
+   * -------------------------------------------------------
+   * FAQS
+   * -------------------------------------------------------
+   */
+
+  const faqDocuments =
+    await FAQ.find({
+      package:
+        packageData._id,
+
       status: "active",
     })
       .sort({
@@ -156,191 +307,607 @@ export default async function PackageDetailPage({
         displayOrder: 1,
         createdAt: -1,
       })
-      .limit(6)
+      .limit(8)
       .lean();
 
-    hotels = JSON.parse(
-      JSON.stringify(hotelDocuments)
-    );
-  }
-
-  /* ------------------------------------------------------------------------ */
-  /*                                  FAQS                                    */
-  /* ------------------------------------------------------------------------ */
-
-  const faqDocuments = await FAQ.find({
-    package: packageData._id,
-    status: "active",
-  })
-    .sort({
-      featured: -1,
-      displayOrder: 1,
-      createdAt: -1,
-    })
-    .limit(8)
-    .lean();
-
   const faqs = JSON.parse(
-    JSON.stringify(faqDocuments)
+    JSON.stringify(
+      faqDocuments,
+    ),
   );
 
-  /* ------------------------------------------------------------------------ */
-  /*                           RELATED PACKAGES                               */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * RELATED PACKAGES
+   * -------------------------------------------------------
+   */
 
   let relatedPackages = [];
 
   if (destination?._id) {
-    relatedPackages = await getRelatedPackages(
-      destination._id.toString(),
-      packageData.slug,
-      3
-    );
+    relatedPackages =
+      await getRelatedPackages(
+        destination._id.toString(),
+        packageData.slug,
+        3,
+      );
   }
 
-  /* ------------------------------------------------------------------------ */
-  /*                                  RENDER                                  */
-  /* ------------------------------------------------------------------------ */
+  /*
+   * -------------------------------------------------------
+   * URLS
+   * -------------------------------------------------------
+   */
+
+  const packageUrl =
+    getAbsoluteUrl(
+      `/packages/${packageData.slug}`,
+    );
+
+  const packageImage =
+    packageData.heroImage
+      ? getAbsoluteUrl(
+          packageData.heroImage,
+        )
+      : getAbsoluteUrl(
+          "/og-image.jpg",
+        );
+
+  /*
+   * -------------------------------------------------------
+   * BREADCRUMB SCHEMA
+   * -------------------------------------------------------
+   */
+
+  const breadcrumbItems = [
+    {
+      "@type": "ListItem",
+
+      position: 1,
+
+      name: "Home",
+
+      item: SITE_URL,
+    },
+
+    {
+      "@type": "ListItem",
+
+      position: 2,
+
+      name: "Packages",
+
+      item: getAbsoluteUrl(
+        "/packages",
+      ),
+    },
+  ];
+
+  if (
+    destination?.name &&
+    destination?.slug
+  ) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+
+      position: 3,
+
+      name: destination.name,
+
+      item: getAbsoluteUrl(
+        `/destinations/${destination.slug}`,
+      ),
+    });
+  }
+
+  breadcrumbItems.push({
+    "@type": "ListItem",
+
+    position:
+      destination?.name &&
+      destination?.slug
+        ? 4
+        : 3,
+
+    name: packageData.name,
+
+    item: packageUrl,
+  });
+
+  const breadcrumbSchema = {
+    "@type":
+      "BreadcrumbList",
+
+    "@id": `${packageUrl}#breadcrumb`,
+
+    itemListElement:
+      breadcrumbItems,
+  };
+
+  /*
+   * -------------------------------------------------------
+   * TOURIST TRIP / PACKAGE SCHEMA
+   * -------------------------------------------------------
+   */
+
+  const packageSchema: Record<
+    string,
+    unknown
+  > = {
+    "@type": "TouristTrip",
+
+    "@id": `${packageUrl}#tour`,
+
+    name: packageData.name,
+
+    url: packageUrl,
+
+    description:
+      packageData.seoDescription?.trim() ||
+      packageData.shortDescription?.trim() ||
+      undefined,
+
+    image: [
+      packageImage,
+
+      ...(packageData.gallery || [])
+        .filter(Boolean)
+        .map((image: string) =>
+          getAbsoluteUrl(image),
+        ),
+    ],
+
+    ...(packageData.duration
+      ? {
+          duration:
+            packageData.duration,
+        }
+      : {}),
+
+    ...(destination?.name
+      ? {
+          touristType:
+            destination.name,
+        }
+      : {}),
+
+    provider: {
+      "@type":
+        "Organization",
+
+      "@id":
+        `${SITE_URL}/#organization`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
+
+      logo: {
+        "@type":
+          "ImageObject",
+
+        url: SITE_LOGO,
+
+        width: 512,
+
+        height: 512,
+      },
+    },
+
+    ...(destination?.name
+      ? {
+          itinerary: {
+            "@type":
+              "ItemList",
+
+            name:
+              `${packageData.name} itinerary`,
+
+            itemListElement: (
+              packageData.itinerary ||
+              []
+            ).map(
+              (
+                item: {
+                  day?: number;
+                  title?: string;
+                  description?: string;
+                },
+                index: number,
+              ) => ({
+                "@type":
+                  "ListItem",
+
+                position:
+                  index + 1,
+
+                name:
+                  item.title ||
+                  `Day ${
+                    item.day ||
+                    index + 1
+                  }`,
+
+                ...(item.description
+                  ? {
+                      description:
+                        item.description,
+                    }
+                  : {}),
+              }),
+            ),
+          },
+        }
+      : {}),
+  };
+
+  /*
+   * -------------------------------------------------------
+   * WEBPAGE SCHEMA
+   * -------------------------------------------------------
+   */
+
+  const webPageSchema = {
+    "@type": "WebPage",
+
+    "@id": `${packageUrl}#webpage`,
+
+    url: packageUrl,
+
+    name: packageData.name,
+
+    description:
+      packageData.seoDescription?.trim() ||
+      packageData.shortDescription?.trim() ||
+      `Explore ${packageData.name} with ${SITE_NAME}.`,
+
+    isPartOf: {
+      "@type": "WebSite",
+
+      "@id":
+        `${SITE_URL}/#website`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
+    },
+
+    primaryImageOfPage: {
+      "@type":
+        "ImageObject",
+
+      url: packageImage,
+    },
+
+    mainEntity: {
+      "@id": `${packageUrl}#tour`,
+    },
+
+    breadcrumb: {
+      "@id": `${packageUrl}#breadcrumb`,
+    },
+
+    inLanguage: "en-IN",
+  };
+
+  /*
+   * -------------------------------------------------------
+   * WEBSITE SCHEMA
+   * -------------------------------------------------------
+   */
+
+  const websiteSchema = {
+    "@type": "WebSite",
+
+    "@id":
+      `${SITE_URL}/#website`,
+
+    name: SITE_NAME,
+
+    url: SITE_URL,
+
+    publisher: {
+      "@type":
+        "Organization",
+
+      "@id":
+        `${SITE_URL}/#organization`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
+
+      logo: {
+        "@type":
+          "ImageObject",
+
+        url: SITE_LOGO,
+
+        width: 512,
+
+        height: 512,
+      },
+    },
+
+    inLanguage: "en-IN",
+  };
+
+  /*
+   * -------------------------------------------------------
+   * FAQ SCHEMA
+   * -------------------------------------------------------
+   *
+   * Only FAQs actually attached to this package are included.
+   */
+
+  const validFAQs = faqs.filter(
+    (faq: {
+      question?: string;
+      answer?: string;
+    }) =>
+      faq.question?.trim() &&
+      faq.answer?.trim(),
+  );
+
+  const faqSchema =
+    validFAQs.length > 0
+      ? {
+          "@type":
+            "FAQPage",
+
+          "@id": `${packageUrl}#faq`,
+
+          mainEntity:
+            validFAQs.map(
+              (faq: {
+                question: string;
+                answer: string;
+              }) => ({
+                "@type":
+                  "Question",
+
+                name:
+                  faq.question.trim(),
+
+                acceptedAnswer: {
+                  "@type":
+                    "Answer",
+
+                  text:
+                    faq.answer.trim(),
+                },
+              }),
+            ),
+        }
+      : null;
+
+  /*
+   * -------------------------------------------------------
+   * COMBINED STRUCTURED DATA
+   * -------------------------------------------------------
+   */
+
+  const structuredData = {
+    "@context":
+      "https://schema.org",
+
+    "@graph": [
+      websiteSchema,
+      packageSchema,
+      webPageSchema,
+      breadcrumbSchema,
+
+      ...(faqSchema
+        ? [faqSchema]
+        : []),
+    ],
+  };
+
+  /*
+   * -------------------------------------------------------
+   * RENDER
+   * -------------------------------------------------------
+   */
 
   return (
     <>
-      {/* ================================================================== */}
-      {/* NAVBAR                                                             */}
-      {/* ================================================================== */}
+      {/* =====================================================
+          STRUCTURED DATA
+      ====================================================== */}
 
-      
-<main className="min-h-screen bg-[#FAF9F5]">
-  <div className="relative">
-    {/* Breadcrumb over hero — same treatment as destination detail */}
-    <div className="absolute inset-x-0 top-0 z-30">
-      <PackageBreadcrumb
-        packageName={packageData.name}
-        destinationName={destination?.name || ""}
-        destinationSlug={
-          destination?.slug
-            ? String(destination.slug)
-            : undefined
-        }
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html:
+            JSON.stringify(
+              structuredData,
+            ),
+        }}
       />
-    </div>
 
-    <PackageHero
-      packageData={packageData}
-      destinationName={destination?.name || ""}
-    />
-  </div>
+      <main className="min-h-screen bg-[#FAF9F5]">
+        {/* ===================================================
+            HERO + BREADCRUMB
+        ==================================================== */}
 
-        {/* ================================================================ */}
-        {/* PACKAGE LOCAL NAV                                                 */}
-        {/* ================================================================ */}
+        <div className="relative">
+          <div className="absolute inset-x-0 top-0 z-30">
+            <PackageBreadcrumb
+              packageName={
+                packageData.name
+              }
+              destinationName={
+                destination?.name ||
+                ""
+              }
+              destinationSlug={
+                destination?.slug
+                  ? String(
+                      destination.slug,
+                    )
+                  : undefined
+              }
+            />
+          </div>
+
+          <PackageHero
+            packageData={
+              packageData
+            }
+            destinationName={
+              destination?.name ||
+              ""
+            }
+          />
+        </div>
+
+        {/* ===================================================
+            PACKAGE LOCAL NAVIGATION
+        ==================================================== */}
 
         <PackageSectionNav
-          packageSlug={packageData.slug}
+          packageSlug={
+            packageData.slug
+          }
         />
 
-
-          <PackageItinerary
-          itinerary={packageData.itinerary || []}
-        />
-
-
-         <PackageInclusions
-          included={packageData.included || []}
-          excluded={packageData.excluded || []}
-          childPolicy={packageData.childPolicy}
-        />
-
-        {/* ================================================================ */}
-        {/* OVERVIEW                                                          */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            OVERVIEW
+        ==================================================== */}
 
         <PackageOverview
-          packageData={packageData}
-          destination={destination}
-          category={category}
+          packageData={
+            packageData
+          }
+          destination={
+            destination
+          }
+          category={
+            category
+          }
         />
 
-        {/* ================================================================ */}
-        {/* HIGHLIGHTS                                                        */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            HIGHLIGHTS
+        ==================================================== */}
 
         <PackageHighlights
-          highlights={packageData.highlights || []}
+          highlights={
+            packageData.highlights ||
+            []
+          }
         />
 
-        {/* ================================================================ */}
-        {/* ITINERARY                                                         */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            ITINERARY
+        ==================================================== */}
 
-      
+        <PackageItinerary
+          itinerary={
+            packageData.itinerary ||
+            []
+          }
+        />
 
-        {/* ================================================================ */}
-        {/* PRICING                                                           */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            PRICING
+        ==================================================== */}
 
         <PackagePricing
-          packageData={packageData}
+          packageData={
+            packageData
+          }
         />
 
-        {/* ================================================================ */}
-        {/* INCLUDED / EXCLUDED / CHILD POLICY                                */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            INCLUSIONS / EXCLUSIONS / CHILD POLICY
+        ==================================================== */}
 
-       
+        <PackageInclusions
+          included={
+            packageData.included ||
+            []
+          }
+          excluded={
+            packageData.excluded ||
+            []
+          }
+          childPolicy={
+            packageData.childPolicy
+          }
+        />
 
-        {/* ================================================================ */}
-        {/* STAY OPTIONS                                                      */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            STAY OPTIONS
+        ==================================================== */}
 
         <PackageStayOptions
           hotels={hotels}
-          destinationName={destination?.name || ""}
+          destinationName={
+            destination?.name ||
+            ""
+          }
         />
 
-        {/* ================================================================ */}
-        {/* GALLERY                                                           */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            GALLERY
+        ==================================================== */}
 
         <PackageGallery
-          gallery={packageData.gallery || []}
-          heroImage={packageData.heroImage || ""}
-          packageName={packageData.name}
+          gallery={
+            packageData.gallery ||
+            []
+          }
+          heroImage={
+            packageData.heroImage ||
+            ""
+          }
+          packageName={
+            packageData.name
+          }
         />
 
-        {/* ================================================================ */}
-        {/* FAQ                                                               */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            FAQ
+        ==================================================== */}
 
         <PackageFAQs
-          packageId={packageData._id.toString()}
-          packageName={packageData.name}
+          packageId={
+            packageData._id.toString()
+          }
+          packageName={
+            packageData.name
+          }
           faqs={faqs}
         />
 
-        {/* ================================================================ */}
-        {/* RELATED JOURNEYS                                                  */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            RELATED JOURNEYS
+        ==================================================== */}
 
         <RelatedPackages
-          packages={relatedPackages}
-          destinationName={destination?.name || ""}
+          packages={
+            relatedPackages
+          }
+          destinationName={
+            destination?.name ||
+            ""
+          }
         />
 
-        {/* ================================================================ */}
-        {/* FINAL CTA                                                         */}
-        {/* ================================================================ */}
+        {/* ===================================================
+            FINAL CTA
+        ==================================================== */}
 
         <PackageCTA
-          packageName={packageData.name}
-          packageSlug={packageData.slug}
+          packageName={
+            packageData.name
+          }
+          packageSlug={
+            packageData.slug
+          }
         />
       </main>
-
-      {/* ================================================================== */}
-      {/* FOOTER                                                             */}
-      {/* ================================================================== */}
-
-      
     </>
   );
 }

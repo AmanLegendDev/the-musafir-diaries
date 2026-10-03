@@ -3,9 +3,6 @@ import type { Metadata } from "next";
 import connectDB from "@/lib/db";
 import Destination from "@/models/destination.model";
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/footer/Footer";
-
 import DestinationHero from "@/components/destinations/listing/DestinationHero";
 import DestinationListing from "./DestinationListing";
 import DestinationCTA from "@/components/destinations/listing/DestinationCTA";
@@ -14,26 +11,32 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://www.themusafirdiaries.com";
 
+const PAGE_URL = `${SITE_URL}/destinations`;
+
 export const metadata: Metadata = {
-  title: "Explore Himalayan Destinations | The Musafir Diaries",
+  metadataBase: new URL(SITE_URL),
+
+  title: "Himalayan Destinations & Travel Guide | The Musafir Diaries",
 
   description:
-    "Explore thoughtfully chosen Himalayan destinations, from Shimla and Manali to the remote landscapes of Spiti Valley. Discover places, journeys and experiences worth remembering.",
+    "Explore Himalayan destinations including Shimla, Manali, Spiti Valley, Dharamshala, Dalhousie and more with The Musafir Diaries. Discover places, travel experiences and thoughtfully planned journeys.",
 
   alternates: {
-    canonical: `${SITE_URL}/destinations`,
+    canonical: PAGE_URL,
   },
 
   openGraph: {
     title:
-      "Explore Himalayan Destinations | The Musafir Diaries",
+      "Himalayan Destinations & Travel Guide | The Musafir Diaries",
 
     description:
-      "Discover thoughtfully chosen destinations across the Himalayas with The Musafir Diaries.",
+      "Explore Himalayan destinations, mountain landscapes and memorable travel experiences with The Musafir Diaries.",
 
-    url: `${SITE_URL}/destinations`,
+    url: PAGE_URL,
 
     siteName: "The Musafir Diaries",
+
+    locale: "en_IN",
 
     type: "website",
   },
@@ -42,15 +45,23 @@ export const metadata: Metadata = {
     card: "summary_large_image",
 
     title:
-      "Explore Himalayan Destinations | The Musafir Diaries",
+      "Himalayan Destinations & Travel Guide | The Musafir Diaries",
 
     description:
-      "Discover thoughtfully chosen destinations across the Himalayas with The Musafir Diaries.",
+      "Explore Himalayan destinations, mountain landscapes and thoughtfully planned journeys with The Musafir Diaries.",
   },
 
   robots: {
     index: true,
     follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
@@ -67,9 +78,7 @@ async function getDestinations() {
     })
     .lean();
 
-  return JSON.parse(
-    JSON.stringify(destinations)
-  );
+  return JSON.parse(JSON.stringify(destinations));
 }
 
 interface DestinationsPageProps {
@@ -88,15 +97,103 @@ export default async function DestinationsPage({
 
   const destinations = await getDestinations();
 
+  const destinationItems = destinations.map(
+    (destination: {
+      _id: string;
+      name: string;
+      slug: string;
+      shortDescription?: string;
+      heroImage?: string;
+      state?: string;
+      city?: string;
+    }, index: number) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: destination.name,
+      url: `${PAGE_URL}/${destination.slug}`,
+    }),
+  );
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${PAGE_URL}#webpage`,
+        url: PAGE_URL,
+        name:
+          "Himalayan Destinations & Travel Guide | The Musafir Diaries",
+        description:
+          "Explore Himalayan destinations, mountain landscapes and thoughtfully planned travel experiences with The Musafir Diaries.",
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": `${SITE_URL}#website`,
+          url: SITE_URL,
+          name: "The Musafir Diaries",
+        },
+        breadcrumb: {
+          "@id": `${PAGE_URL}#breadcrumb`,
+        },
+        mainEntity: {
+          "@id": `${PAGE_URL}#destination-list`,
+        },
+      },
+
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${PAGE_URL}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: SITE_URL,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Destinations",
+            item: PAGE_URL,
+          },
+        ],
+      },
+
+      {
+        "@type": "ItemList",
+        "@id": `${PAGE_URL}#destination-list`,
+        name: "The Musafir Diaries Destinations",
+        description:
+          "Destinations available to explore through The Musafir Diaries.",
+        numberOfItems: destinationItems.length,
+        itemListOrder: "https://schema.org/ItemListOrderAscending",
+        itemListElement: destinationItems,
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-[#FAF9F5]">
-      {/* Navbar */}
-    
+      {/* =====================================================
+          SEO STRUCTURED DATA
+      ====================================================== */}
 
-      {/* Cinematic destination introduction */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+
+      {/* =====================================================
+          DESTINATION INTRO
+      ====================================================== */}
+
       <DestinationHero />
 
-      {/* Search + filtering + results */}
+      {/* =====================================================
+          DESTINATION SEARCH / FILTER / LISTING
+      ====================================================== */}
+
       <DestinationListing
         destinations={destinations}
         initialSearch={params.search ?? ""}
@@ -105,11 +202,11 @@ export default async function DestinationsPage({
         initialSort={params.sort ?? "featured"}
       />
 
-      {/* Final journey CTA */}
-      <DestinationCTA />
+      {/* =====================================================
+          FINAL JOURNEY CTA
+      ====================================================== */}
 
-      {/* Global footer */}
- 
+      <DestinationCTA />
     </main>
   );
 }

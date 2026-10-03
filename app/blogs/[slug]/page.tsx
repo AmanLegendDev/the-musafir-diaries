@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/footer/Footer";
-
 import BlogBreadcrumb from "@/components/blog/detail/BlogBreadcrumb";
 import BlogHero from "@/components/blog/detail/BlogHero";
 import BlogReadingProgress from "@/components/blog/detail/BlogReadingProgress";
@@ -29,19 +26,41 @@ type BlogCategory = {
   slug?: string;
 };
 
-function getCategoryId(category: BlogCategory | null | undefined) {
-  if (!category?._id) return null;
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://www.themusafirdiaries.com";
+
+const SITE_NAME = "The Musafir Diaries";
+
+const SITE_LOGO = `${SITE_URL}/icon-512.png`;
+
+function getCategoryId(
+  category: BlogCategory | null | undefined,
+) {
+  if (!category?._id) {
+    return null;
+  }
 
   return String(category._id);
 }
 
 function getAbsoluteUrl(path: string) {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://the-musafir-diaries.vercel.app";
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://")
+  ) {
+    return path;
+  }
 
-  return `${baseUrl.replace(/\/$/, "")}${path}`;
+  return `${SITE_URL.replace(/\/$/, "")}/${path.replace(
+    /^\//,
+    "",
+  )}`;
 }
+
+/* =========================================================
+   DYNAMIC METADATA
+========================================================= */
 
 export async function generateMetadata({
   params,
@@ -50,11 +69,18 @@ export async function generateMetadata({
 
   const blog = await getBlogBySlug(slug);
 
+  /*
+   * Invalid blog:
+   * Do not allow a soft 404 to be indexed.
+   */
+
   if (!blog) {
     return {
       title: "Story Not Found | The Musafir Diaries",
+
       description:
-        "The travel story you're looking for could not be found.",
+        "The travel story you are looking for could not be found.",
+
       robots: {
         index: false,
         follow: false,
@@ -70,10 +96,18 @@ export async function generateMetadata({
     blog.seoDescription?.trim() ||
     blog.excerpt;
 
-  const canonicalPath = `/blog/${blog.slug}`;
+  const canonicalUrl =
+    getAbsoluteUrl(`/blog/${blog.slug}`);
+
+  const featuredImage = blog.featuredImage
+    ? getAbsoluteUrl(blog.featuredImage)
+    : getAbsoluteUrl("/og-image.jpg");
 
   return {
+    metadataBase: new URL(SITE_URL),
+
     title,
+
     description,
 
     keywords: [
@@ -82,21 +116,37 @@ export async function generateMetadata({
       blog.category?.name,
       "Himachal Pradesh travel",
       "Himalayan travel",
-      "The Musafir Diaries",
+      "India travel",
+      SITE_NAME,
     ].filter(Boolean),
 
     alternates: {
-      canonical: canonicalPath,
+      canonical: canonicalUrl,
     },
 
     openGraph: {
-      title,
-      description,
       type: "article",
-      url: canonicalPath,
+
+      locale: "en_IN",
+
+      siteName: SITE_NAME,
+
+      title,
+
+      description,
+
+      url: canonicalUrl,
 
       publishedTime: blog.publishedAt
-        ? new Date(blog.publishedAt).toISOString()
+        ? new Date(
+            blog.publishedAt,
+          ).toISOString()
+        : undefined,
+
+      modifiedTime: blog.updatedAt
+        ? new Date(
+            blog.updatedAt,
+          ).toISOString()
         : undefined,
 
       authors: blog.author
@@ -107,162 +157,389 @@ export async function generateMetadata({
         ? blog.tags
         : undefined,
 
-      images: blog.featuredImage
-        ? [
-            {
-              url: blog.featuredImage,
-              alt: blog.title,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: featuredImage,
+          width: 1200,
+          height: 630,
+          alt: `${blog.title} | ${SITE_NAME}`,
+        },
+      ],
     },
 
     twitter: {
       card: "summary_large_image",
+
       title,
+
       description,
 
-      images: blog.featuredImage
-        ? [blog.featuredImage]
-        : undefined,
+      images: [featuredImage],
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
   };
 }
+
+/* =========================================================
+   BLOG DETAIL PAGE
+========================================================= */
 
 export default async function BlogDetailPage({
   params,
 }: PageProps) {
   const { slug } = await params;
 
+  /*
+   * ---------------------------------------------------------
+   * Resolve blog
+   * ---------------------------------------------------------
+   */
+
   const blog = await getBlogBySlug(slug);
 
+  /*
+   * ---------------------------------------------------------
+   * Real not-found handling
+   * ---------------------------------------------------------
+   *
+   * Keep existing visual fallback instead of allowing an
+   * indexable soft 404.
+   */
+
   if (!blog) {
-    return (
-      <>
-        <Navbar />
-        <BlogNotFound />
-        <Footer />
-      </>
-    );
+    return <BlogNotFound />;
   }
 
-  const category = blog.category as BlogCategory | null;
+  /*
+   * ---------------------------------------------------------
+   * Category
+   * ---------------------------------------------------------
+   */
 
-  const categoryId = getCategoryId(category);
+  const category =
+    blog.category as BlogCategory | null;
 
-  const relatedBlogs = await getRelatedBlogs(
-    categoryId,
-    blog.slug,
-    3
-  );
+  const categoryId =
+    getCategoryId(category);
 
-  const blogPath = `/blog/${blog.slug}`;
-  const blogUrl = getAbsoluteUrl(blogPath);
+  /*
+   * ---------------------------------------------------------
+   * Related posts
+   * ---------------------------------------------------------
+   */
+
+  const relatedBlogs =
+    await getRelatedBlogs(
+      categoryId,
+      blog.slug,
+      3,
+    );
+
+  /*
+   * ---------------------------------------------------------
+   * URLs
+   * ---------------------------------------------------------
+   */
+
+  const blogUrl =
+    getAbsoluteUrl(`/blog/${blog.slug}`);
+
+  const blogImage = blog.featuredImage
+    ? getAbsoluteUrl(blog.featuredImage)
+    : getAbsoluteUrl("/og-image.jpg");
+
+  /*
+   * ---------------------------------------------------------
+   * Dates
+   * ---------------------------------------------------------
+   */
 
   const publishedDate = blog.publishedAt
     ? new Date(blog.publishedAt)
     : null;
 
+  const modifiedDate = blog.updatedAt
+    ? new Date(blog.updatedAt)
+    : publishedDate;
+
+  /*
+   * ---------------------------------------------------------
+   * Article schema
+   * ---------------------------------------------------------
+   */
+
   const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
+
+    "@id": `${blogUrl}#article`,
 
     headline: blog.title,
 
-    description: blog.seoDescription?.trim() || blog.excerpt,
+    description:
+      blog.seoDescription?.trim() ||
+      blog.excerpt,
 
-    image: blog.featuredImage
-      ? [blog.featuredImage]
-      : undefined,
+    image: [blogImage],
 
-    datePublished: publishedDate
-      ? publishedDate.toISOString()
-      : undefined,
+    url: blogUrl,
 
-    dateModified: blog.updatedAt
-      ? new Date(blog.updatedAt).toISOString()
-      : publishedDate
-        ? publishedDate.toISOString()
-        : undefined,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+
+      "@id": `${blogUrl}#webpage`,
+    },
+
+    ...(publishedDate
+      ? {
+          datePublished:
+            publishedDate.toISOString(),
+        }
+      : {}),
+
+    ...(modifiedDate
+      ? {
+          dateModified:
+            modifiedDate.toISOString(),
+        }
+      : {}),
 
     author: {
       "@type": "Person",
-      name: blog.author,
+
+      name:
+        blog.author ||
+        SITE_NAME,
     },
 
     publisher: {
       "@type": "Organization",
-      name: "The Musafir Diaries",
+
+      "@id":
+        `${SITE_URL}/#organization`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
+
+      logo: {
+        "@type": "ImageObject",
+
+        url: SITE_LOGO,
+
+        width: 512,
+
+        height: 512,
+      },
     },
 
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": blogUrl,
+    ...(blog.tags?.length
+      ? {
+          keywords:
+            blog.tags.join(", "),
+        }
+      : {}),
+
+    inLanguage: "en-IN",
+
+    isPartOf: {
+      "@type": "WebSite",
+
+      "@id":
+        `${SITE_URL}/#website`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
     },
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * WebPage schema
+   * ---------------------------------------------------------
+   */
+
+  const webPageSchema = {
+    "@type": "WebPage",
+
+    "@id": `${blogUrl}#webpage`,
 
     url: blogUrl,
 
-    keywords: blog.tags?.length
-      ? blog.tags.join(", ")
-      : undefined,
+    name: blog.title,
+
+    description:
+      blog.seoDescription?.trim() ||
+      blog.excerpt,
+
+    isPartOf: {
+      "@type": "WebSite",
+
+      "@id":
+        `${SITE_URL}/#website`,
+
+      name: SITE_NAME,
+
+      url: SITE_URL,
+    },
+
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+
+      url: blogImage,
+    },
+
+    mainEntity: {
+      "@id": `${blogUrl}#article`,
+    },
+
+    breadcrumb: {
+      "@id": `${blogUrl}#breadcrumb`,
+    },
+
+    inLanguage: "en-IN",
   };
 
+  /*
+   * ---------------------------------------------------------
+   * Breadcrumb schema
+   * ---------------------------------------------------------
+   */
+
+  const breadcrumbItems = [
+    {
+      "@type": "ListItem",
+
+      position: 1,
+
+      name: "Home",
+
+      item: SITE_URL,
+    },
+
+    {
+      "@type": "ListItem",
+
+      position: 2,
+
+      name: "Journal",
+
+      item:
+        getAbsoluteUrl("/blog"),
+    },
+  ];
+
+  if (category?.name) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+
+      position: 3,
+
+      name: category.name,
+
+      item: category.slug
+        ? getAbsoluteUrl(
+            `/blog?category=${encodeURIComponent(
+              category.slug,
+            )}`,
+          )
+        : getAbsoluteUrl("/blog"),
+    });
+  }
+
+  breadcrumbItems.push({
+    "@type": "ListItem",
+
+    position: category?.name ? 4 : 3,
+
+    name: blog.title,
+
+    item: blogUrl,
+  });
+
   const breadcrumbSchema = {
-    "@context": "https://schema.org",
     "@type": "BreadcrumbList",
 
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: getAbsoluteUrl("/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Journal",
-        item: getAbsoluteUrl("/blog"),
-      },
-      ...(category?.name
-        ? [
-            {
-              "@type": "ListItem",
-              position: 3,
-              name: category.name,
-              item: category.slug
-                ? getAbsoluteUrl(
-                    `/blog?category=${encodeURIComponent(
-                      category.slug
-                    )}`
-                  )
-                : getAbsoluteUrl("/blog"),
-            },
-          ]
-        : []),
-      {
-        "@type": "ListItem",
-        position: category?.name ? 4 : 3,
-        name: blog.title,
-        item: blogUrl,
-      },
+    "@id": `${blogUrl}#breadcrumb`,
+
+    itemListElement:
+      breadcrumbItems,
+  };
+
+  /*
+   * ---------------------------------------------------------
+   * Combined structured data
+   * ---------------------------------------------------------
+   */
+
+  const structuredData = {
+    "@context": "https://schema.org",
+
+    "@graph": [
+      articleSchema,
+      webPageSchema,
+      breadcrumbSchema,
     ],
   };
 
   return (
     <>
-    
+      {/* =====================================================
+          STRUCTURED DATA
+      ====================================================== */}
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html:
+            JSON.stringify(
+              structuredData,
+            ),
+        }}
+      />
+
+      {/* =====================================================
+          READING PROGRESS
+      ====================================================== */}
 
       <BlogReadingProgress />
 
-      <main>
+      <main className="min-h-screen bg-[#FAF9F5]">
+        {/* ===================================================
+            BREADCRUMB
+        ==================================================== */}
+
         <BlogBreadcrumb
           blogTitle={blog.title}
-          categoryName={category?.name}
-          categorySlug={category?.slug}
+          categoryName={
+            category?.name
+          }
+          categorySlug={
+            category?.slug
+          }
         />
 
+        {/* ===================================================
+            BLOG HERO
+        ==================================================== */}
+
         <BlogHero blog={blog} />
+
+        {/* ===================================================
+            ARTICLE
+        ==================================================== */}
 
         <BlogArticle
           content={blog.content}
@@ -270,31 +547,31 @@ export default async function BlogDetailPage({
           title={blog.title}
         />
 
-        <BlogTags tags={blog.tags || []} />
+        {/* ===================================================
+            TAGS
+        ==================================================== */}
+
+        <BlogTags
+          tags={blog.tags || []}
+        />
+
+        {/* ===================================================
+            RELATED BLOGS
+        ==================================================== */}
 
         <RelatedBlogs
           blogs={relatedBlogs}
           currentSlug={blog.slug}
         />
 
-        <BlogCTA blogTitle={blog.title} />
+        {/* ===================================================
+            FINAL CTA
+        ==================================================== */}
+
+        <BlogCTA
+          blogTitle={blog.title}
+        />
       </main>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleSchema),
-        }}
-      />
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema),
-        }}
-      />
-
-     
     </>
   );
 }

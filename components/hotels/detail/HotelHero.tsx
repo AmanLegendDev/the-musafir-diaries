@@ -5,9 +5,11 @@ import {
 } from "lucide-react";
 
 type HotelDestination = {
-  name: string;
-  slug: string;
+  _id?: string;
+  name?: string;
+  slug?: string;
   state?: string;
+  city?: string;
 };
 
 type HotelHeroData = {
