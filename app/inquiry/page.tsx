@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 
 import { InquiryPage } from "@/components/inquiry";
-import InquiryFAQ from "@/components/inquiry/InquiryFAQ";
 
 /* =========================================================
    SITE CONFIG
@@ -338,10 +337,6 @@ export default function InquiryRoutePage() {
 
       <main>
         <InquiryPage />
-
-        <InquiryFAQ
-          items={faqItems}
-        />
       </main>
     </>
   );

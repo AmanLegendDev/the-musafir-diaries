@@ -10,11 +10,11 @@ interface FAQItem {
 }
 
 interface InquiryFAQProps {
-  items: FAQItem[];
+  faqs: FAQItem[];
 }
 
 export default function InquiryFAQ({
-  items = [],
+  faqs = [],
 }: InquiryFAQProps) {
   const [openIndex, setOpenIndex] =
     useState<number | null>(0);
@@ -51,7 +51,7 @@ export default function InquiryFAQ({
         {/* FAQ LIST */}
 
         <div className="mt-10 divide-y divide-[#071A33]/10 border-y border-[#071A33]/10">
-          {items.map(
+          {faqs.map(
             (item, index) => {
               const isOpen =
                 openIndex === index;
