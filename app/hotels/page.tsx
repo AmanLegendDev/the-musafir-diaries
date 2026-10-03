@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import HotelHero from "@/components/hotels/listing/HotelHero";
 import HotelListing from "@/components/hotels/listing/HotelListing";
 import HotelCTA from "@/components/hotels/listing/HotelCTA";
+import HotelFAQ from "@/components/hotels/listing/HotelFAQ";
 
 import connectDB from "@/lib/db";
 import Hotel from "@/models/hotel.model";
@@ -21,10 +23,7 @@ const SITE_URL =
 
 const SITE_NAME = "The Musafir Diaries";
 
-const HOTELS_URL = `${SITE_URL.replace(
-  /\/$/,
-  "",
-)}/hotels`;
+const HOTELS_URL = `${SITE_URL.replace(/\/$/, "")}/hotels`;
 
 const DEFAULT_HERO_IMAGE = `${SITE_URL.replace(
   /\/$/,
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
   title:
-    "Hotels & Stays | Handpicked Hotels, Resorts & Mountain Stays | The Musafir Diaries",
+    "Hotels & Stays | Handpicked Stays",
 
   description:
     "Discover thoughtfully selected hotels, resorts, boutique stays, homestays and mountain retreats across India with The Musafir Diaries.",
@@ -71,46 +70,33 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-
     locale: "en_IN",
-
     siteName: SITE_NAME,
-
-    title:
-      "Hotels & Stays | The Musafir Diaries",
-
+    title: "Hotels & Stays | The Musafir Diaries",
     description:
       "Find thoughtfully selected hotels, resorts, boutique stays and mountain retreats across destinations with The Musafir Diaries.",
-
     url: HOTELS_URL,
-
     images: [
       {
         url: DEFAULT_HERO_IMAGE,
         width: 1200,
         height: 630,
-        alt:
-          "The Musafir Diaries — hotels and stays",
+        alt: "The Musafir Diaries — hotels and stays",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-
-    title:
-      "Hotels & Stays | The Musafir Diaries",
-
+    title: "Hotels & Stays | The Musafir Diaries",
     description:
       "Explore handpicked stays across Himalayan and Indian destinations with The Musafir Diaries.",
-
     images: [DEFAULT_HERO_IMAGE],
   },
 
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
@@ -122,40 +108,76 @@ export const metadata: Metadata = {
 };
 
 /* =========================================================
+   FAQ DATA
+========================================================= */
+
+const faqItems = [
+  {
+    question: "What types of hotels and stays are available?",
+    answer:
+      "The Musafir Diaries features thoughtfully selected hotels, resorts, boutique stays, homestays and mountain retreats across destinations in India.",
+  },
+  {
+    question: "Which destinations have hotels listed?",
+    answer:
+      "Hotel listings are available across destinations featured by The Musafir Diaries, including Himalayan destinations and other travel regions in India. You can browse available stays by destination.",
+  },
+  {
+    question: "Can I choose a hotel based on my destination?",
+    answer:
+      "Yes. The hotels page allows you to explore stays by destination so you can find accommodation relevant to the place you plan to visit.",
+  },
+  {
+    question: "How do I find a suitable hotel for my trip?",
+    answer:
+      "You can browse the available hotel listings and use the destination and search options to narrow down stays according to your travel plans.",
+  },
+  {
+    question: "Can I enquire about a hotel before booking?",
+    answer:
+      "Yes. If you need help selecting a stay or want more information before booking, you can use the available enquiry options on The Musafir Diaries.",
+  },
+  {
+    question: "Are hotels available as part of travel packages?",
+    answer:
+      "Selected stays may be included in travel packages depending on the destination and package. Check the individual package details or enquire with The Musafir Diaries for the available accommodation options.",
+  },
+];
+
+/* =========================================================
    DATA
 ========================================================= */
 
 async function getHotelPageData() {
   await connectDB();
 
-  const [hotels, destinations] =
-    await Promise.all([
-      Hotel.find({
-        status: "active",
+  const [hotels, destinations] = await Promise.all([
+    Hotel.find({
+      status: "active",
+    })
+      .populate(
+        "destination",
+        "name slug state",
+      )
+      .sort({
+        featured: -1,
+        displayOrder: 1,
+        createdAt: -1,
       })
-        .populate(
-          "destination",
-          "name slug state",
-        )
-        .sort({
-          featured: -1,
-          displayOrder: 1,
-          createdAt: -1,
-        })
-        .lean(),
+      .lean(),
 
-      Destination.find({
-        status: "active",
+    Destination.find({
+      status: "active",
+    })
+      .select(
+        "name slug state featured featuredOrder",
+      )
+      .sort({
+        featuredOrder: 1,
+        name: 1,
       })
-        .select(
-          "name slug state featured featuredOrder",
-        )
-        .sort({
-          featuredOrder: 1,
-          name: 1,
-        })
-        .lean(),
-    ]);
+      .lean(),
+  ]);
 
   return {
     hotels: JSON.parse(
@@ -182,9 +204,6 @@ export default async function HotelsPage() {
    * -------------------------------------------------------
    * Hero image
    * -------------------------------------------------------
-   *
-   * Prefer the first featured hotel with an image.
-   * Fall back to the site's Himalayan hero image.
    */
 
   const heroHotel = hotels.find(
@@ -204,8 +223,6 @@ export default async function HotelsPage() {
    * -------------------------------------------------------
    * Hotel collection schema
    * -------------------------------------------------------
-   *
-   * Only active hotels are already present in `hotels`.
    */
 
   const hotelItems = hotels
@@ -234,9 +251,7 @@ export default async function HotelsPage() {
         index: number,
       ) => ({
         "@type": "ListItem",
-
         position: index + 1,
-
         item: {
           "@type": "Hotel",
 
@@ -254,7 +269,8 @@ export default async function HotelsPage() {
 
           ...(hotel.heroImage
             ? {
-                image: hotel.heroImage,
+                image:
+                  hotel.heroImage,
               }
             : {}),
 
@@ -399,17 +415,45 @@ export default async function HotelsPage() {
 
   /*
    * -------------------------------------------------------
+   * FAQ schema
+   * -------------------------------------------------------
+   */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id": `${HOTELS_URL}#faq`,
+
+    mainEntity: faqItems.map(
+      (faq) => ({
+        "@type": "Question",
+
+        name: faq.question,
+
+        acceptedAnswer: {
+          "@type": "Answer",
+
+          text: faq.answer,
+        },
+      }),
+    ),
+  };
+
+  /*
+   * -------------------------------------------------------
    * Combined structured data
    * -------------------------------------------------------
    */
 
   const structuredData = {
-    "@context": "https://schema.org",
+    "@context":
+      "https://schema.org",
 
     "@graph": [
       websiteSchema,
       collectionPageSchema,
       breadcrumbSchema,
+      faqSchema,
     ],
   };
 
@@ -449,9 +493,19 @@ export default async function HotelsPage() {
         <Suspense fallback={null}>
           <HotelListing
             hotels={hotels}
-            destinations={destinations}
+            destinations={
+              destinations
+            }
           />
         </Suspense>
+
+        {/* ===================================================
+            FAQ
+        ==================================================== */}
+
+        <HotelFAQ
+          items={faqItems}
+        />
 
         {/* ===================================================
             CONVERSION CTA
@@ -462,3 +516,4 @@ export default async function HotelsPage() {
     </>
   );
 }
+

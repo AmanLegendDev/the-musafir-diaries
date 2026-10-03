@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
   title:
-    "Contact Us | Plan Your Himalayan Journey | The Musafir Diaries",
+    "Contact Us | Plan Himalayan Journey",
 
   description:
     "Get in touch with The Musafir Diaries to discuss your destination, travel dates, group size and Himalayan travel plans. Start planning your personalised journey.",

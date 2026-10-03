@@ -16,7 +16,7 @@ export default function Hero() {
       <div className="absolute inset-0">
        <img
   src={HERO_IMAGE.src}
-  alt=""
+  alt="Himalayan mountain landscape at sunrise"
   aria-hidden="true"
   fetchPriority="high"
   className="h-full w-full object-cover object-[68%_center]"

@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import BlogHero from "@/components/blog/listing/BlogHero";
 import BlogListing from "@/components/blog/listing/BlogListing";
 import BlogCTA from "@/components/blog/listing/BlogCTA";
+import BlogFAQ from "@/components/blog/listing/BlogFAQ";
 
 import {
   getBlogCategories,
@@ -11,19 +13,30 @@ import {
   getPublishedBlogs,
 } from "@/lib/queries/blog.queries";
 
+/* =========================================================
+   SITE CONFIG
+========================================================= */
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://www.themusafirdiaries.com";
 
 const SITE_NAME = "The Musafir Diaries";
 
-const PAGE_URL = `${SITE_URL}/blog`;
+const PAGE_URL = `${SITE_URL.replace(
+  /\/$/,
+  "",
+)}/blog`;
 
 const PAGE_TITLE =
-  "Travel Stories, Guides & Himalayan Inspiration | The Musafir Diaries";
+  "Travel Stories & Guides";
 
 const PAGE_DESCRIPTION =
   "Explore Himalayan travel stories, destination guides, practical travel tips and journey inspiration from The Musafir Diaries.";
+
+/* =========================================================
+   METADATA
+========================================================= */
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -97,6 +110,53 @@ export const metadata: Metadata = {
   },
 };
 
+/* =========================================================
+   FAQ DATA
+========================================================= */
+
+const faqItems = [
+  {
+    question:
+      "What can I find on The Musafir Diaries travel blog?",
+    answer:
+      "The Musafir Diaries travel blog features Himalayan travel stories, destination guides, practical travel tips and inspiration to help you plan meaningful journeys across India.",
+  },
+  {
+    question:
+      "Does the blog cover Himachal Pradesh destinations?",
+    answer:
+      "Yes. The blog covers travel information and stories around Himachal Pradesh destinations such as Shimla, Manali, Spiti Valley and other Himalayan places.",
+  },
+  {
+    question:
+      "Can I find practical travel tips in the blog?",
+    answer:
+      "Yes. The blog includes practical travel information, destination planning ideas, travel tips and useful guidance for exploring Himalayan and Indian destinations.",
+  },
+  {
+    question:
+      "Are there travel guides for Shimla and Manali?",
+    answer:
+      "Yes. The Musafir Diaries publishes destination-focused content covering popular Himalayan destinations including Shimla and Manali.",
+  },
+  {
+    question:
+      "Can I use the blog to plan a Himalayan trip?",
+    answer:
+      "Yes. Destination guides, travel stories and practical tips can help you research places, understand the travel experience and plan your Himalayan journey.",
+  },
+  {
+    question:
+      "How often are new travel stories and guides added?",
+    answer:
+      "New travel stories, destination guides and useful travel content can be added to The Musafir Diaries as the travel guide collection grows.",
+  },
+];
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 export default async function BlogPage() {
   /*
    * =========================================================
@@ -135,9 +195,6 @@ export default async function BlogPage() {
    * =========================================================
    * BLOG ITEM LIST
    * =========================================================
-   *
-   * Featured blog is represented first when available.
-   * Normal published posts follow it.
    */
 
   const blogItems = [
@@ -147,7 +204,10 @@ export default async function BlogPage() {
             "@type": "ListItem",
             position: 1,
             name: featuredBlog.title,
-            url: `${SITE_URL}/blog/${featuredBlog.slug}`,
+            url: `${SITE_URL.replace(
+              /\/$/,
+              "",
+            )}/blog/${featuredBlog.slug}`,
           },
         ]
       : []),
@@ -167,10 +227,39 @@ export default async function BlogPage() {
 
         name: blog.title,
 
-        url: `${SITE_URL}/blog/${blog.slug}`,
+        url: `${SITE_URL.replace(
+          /\/$/,
+          "",
+        )}/blog/${blog.slug}`,
       }),
     ),
   ];
+
+  /*
+   * =========================================================
+   * FAQ SCHEMA
+   * =========================================================
+   */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id": `${PAGE_URL}#faq`,
+
+    mainEntity: faqItems.map(
+      (faq) => ({
+        "@type": "Question",
+
+        name: faq.question,
+
+        acceptedAnswer: {
+          "@type": "Answer",
+
+          text: faq.answer,
+        },
+      }),
+    ),
+  };
 
   /*
    * =========================================================
@@ -273,15 +362,25 @@ export default async function BlogPage() {
               description:
                 "Published travel stories, destination guides and travel inspiration from The Musafir Diaries.",
 
-              numberOfItems: blogItems.length,
+              numberOfItems:
+                blogItems.length,
 
               itemListOrder:
                 "https://schema.org/ItemListOrderDescending",
 
-              itemListElement: blogItems,
+              itemListElement:
+                blogItems,
             },
           ]
         : []),
+
+      /*
+       * =====================================================
+       * FAQ
+       * =====================================================
+       */
+
+      faqSchema,
     ],
   };
 
@@ -294,7 +393,10 @@ export default async function BlogPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html:
+            JSON.stringify(
+              structuredData,
+            ),
         }}
       />
 
@@ -316,6 +418,14 @@ export default async function BlogPage() {
             categories={categories}
           />
         </Suspense>
+
+        {/* ===================================================
+            FAQ
+        ==================================================== */}
+
+        <BlogFAQ
+          items={faqItems}
+        />
 
         {/* ===================================================
             FINAL CTA

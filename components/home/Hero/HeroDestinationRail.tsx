@@ -29,7 +29,7 @@ export default function HeroDestinationRail() {
             <div className="relative h-14 w-14 overflow-hidden rounded-full border border-white/50 shadow-lg">
               <img
                 src={destination.image}
-                alt=""
+                alt={`${destination.name} - ${destination.subtitle}`}
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
               />
 

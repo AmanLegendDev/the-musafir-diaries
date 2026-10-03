@@ -9,20 +9,20 @@ interface FAQItem {
   answer: string;
 }
 
-interface InquiryFAQProps {
+interface BlogFAQProps {
   items: FAQItem[];
 }
 
-export default function InquiryFAQ({
-  items = [],
-}: InquiryFAQProps) {
+export default function BlogFAQ({
+  items,
+}: BlogFAQProps) {
   const [openIndex, setOpenIndex] =
     useState<number | null>(0);
 
   return (
     <section
-      id="inquiry-faq"
-      aria-labelledby="inquiry-faq-heading"
+      id="blog-faq"
+      aria-labelledby="blog-faq-heading"
       className="bg-[#FAF9F5] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28 xl:px-20"
     >
       <div className="mx-auto max-w-[1100px]">
@@ -30,21 +30,21 @@ export default function InquiryFAQ({
 
         <div className="max-w-2xl">
           <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#087E8B]">
-            Trip Planning
+            Travel Questions
           </p>
 
           <h2
-            id="inquiry-faq-heading"
+            id="blog-faq-heading"
             className="mt-4 font-serif text-4xl leading-tight text-[#071A33] sm:text-5xl"
           >
-            Questions before you plan?
+            Everything you need to know.
           </h2>
 
           <p className="mt-5 text-base leading-7 text-[#071A33]/60">
             Find answers to common questions
-            about making a travel enquiry and
-            planning a personalised Himalayan
-            journey.
+            about The Musafir Diaries travel blog,
+            destination guides and Himalayan travel
+            stories.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function InquiryFAQ({
                     aria-expanded={
                       isOpen
                     }
-                    aria-controls={`inquiry-faq-answer-${index}`}
+                    aria-controls={`blog-faq-answer-${index}`}
                     className="flex w-full items-center justify-between gap-6 py-6 text-left"
                   >
                     <h3 className="text-base font-semibold leading-7 text-[#071A33] sm:text-lg">
@@ -90,7 +90,7 @@ export default function InquiryFAQ({
                   </button>
 
                   <div
-                    id={`inquiry-faq-answer-${index}`}
+                    id={`blog-faq-answer-${index}`}
                     hidden={!isOpen}
                     className="pb-6"
                   >
@@ -107,4 +107,3 @@ export default function InquiryFAQ({
     </section>
   );
 }
-

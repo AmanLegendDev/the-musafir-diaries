@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -67,9 +68,10 @@ export default function DestinationMegaMenu({
                 Discover
               </p>
 
-              <h3 className="mt-3 max-w-xs font-serif text-3xl leading-tight">
+              {/* Changed from H3 to P for SEO heading hierarchy */}
+              <p className="mt-3 max-w-xs font-serif text-3xl leading-tight">
                 Places that become stories.
-              </h3>
+              </p>
 
               <p className="mt-4 max-w-sm text-sm leading-6 text-white/60">
                 Explore carefully selected destinations and
@@ -132,3 +134,4 @@ export default function DestinationMegaMenu({
     </motion.div>
   );
 }
+

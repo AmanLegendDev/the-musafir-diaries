@@ -11,7 +11,7 @@ export default function AboutHero() {
       <div className="absolute inset-0 -z-20">
         <img
           src="/images/hero/himalayan-hero.webp"
-          alt=""
+          alt="abote page hero image"
           className="h-full w-full object-cover object-center"
         />
       </div>

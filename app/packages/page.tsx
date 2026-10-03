@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import PackageHero from "@/components/packages/listing/PackageHero";
 import PackageListing from "@/components/packages/listing/PackageListing";
+import PackageFAQ from "@/components/packages/listing/PackageFAQ";
 
 import { getAllPackages } from "@/lib/queries/package.queries";
 
@@ -37,8 +38,7 @@ const SITE_LOGO = `${SITE_URL.replace(
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title:
-    "Himalayan Travel Packages | Himachal Tours & Custom Trips | The Musafir Diaries",
+  title: "Himalayan Travel Packages Custom Trips",
 
   description:
     "Explore thoughtfully crafted Himalayan travel packages with beautiful stays, meaningful experiences and journeys designed around your pace.",
@@ -119,14 +119,9 @@ export const metadata: Metadata = {
 export default async function PackagesPage() {
   const packages = await getAllPackages();
 
-  /*
-   * -------------------------------------------------------
-   * Package collection schema
-   * -------------------------------------------------------
-   *
-   * The package query is the source of truth.
-   * Only packages returned by getAllPackages() are represented.
-   */
+  /* =======================================================
+     PACKAGE COLLECTION ITEMS
+  ======================================================== */
 
   const packageItems = packages
     .filter(
@@ -179,11 +174,63 @@ export default async function PackagesPage() {
       }),
     );
 
-  /*
-   * -------------------------------------------------------
-   * CollectionPage schema
-   * -------------------------------------------------------
-   */
+  /* =======================================================
+     FAQ CONTENT
+  ======================================================== */
+
+  const faqItems = [
+    {
+      question:
+        "What types of Himalayan travel packages are available?",
+
+      answer:
+        "The Musafir Diaries offers thoughtfully curated Himalayan journeys covering destinations, mountain experiences, stays and customised travel plans based on your preferences.",
+    },
+
+    {
+      question:
+        "Can I customise a Himalayan travel package?",
+
+      answer:
+        "Yes. Himalayan trips can be customised around your preferred destinations, travel dates, trip duration, experiences, stays and travel requirements.",
+    },
+
+    {
+      question:
+        "Which destinations are covered in the travel packages?",
+
+      answer:
+        "Packages can cover destinations across the Himalayas including Shimla, Manali, Spiti Valley, Dharamshala, Dalhousie and other destinations featured by The Musafir Diaries.",
+    },
+
+    {
+      question:
+        "Are hotels included in the Himalayan travel packages?",
+
+      answer:
+        "Package inclusions depend on the individual journey. Selected packages can include thoughtfully chosen stays, while the exact accommodation details are provided with each package.",
+    },
+
+    {
+      question:
+        "How many days do I need for a Himalayan trip?",
+
+      answer:
+        "The ideal duration depends on the destination and itinerary. Short Himalayan escapes can take around four to five days, while longer journeys such as Spiti Valley trips may require more time.",
+    },
+
+    {
+      question:
+        "How can I enquire about a Himalayan travel package?",
+
+      answer:
+        "You can explore the available packages and submit an enquiry for the journey you are interested in. The Musafir Diaries team can then help you plan the trip around your requirements.",
+    },
+  ];
+
+  /* =======================================================
+     COLLECTION PAGE SCHEMA
+  ======================================================== */
 
   const collectionPageSchema = {
     "@type": "CollectionPage",
@@ -236,11 +283,9 @@ export default async function PackagesPage() {
     inLanguage: "en-IN",
   };
 
-  /*
-   * -------------------------------------------------------
-   * WebSite schema
-   * -------------------------------------------------------
-   */
+  /* =======================================================
+     WEBSITE SCHEMA
+  ======================================================== */
 
   const websiteSchema = {
     "@type": "WebSite",
@@ -252,8 +297,7 @@ export default async function PackagesPage() {
     url: SITE_URL,
 
     publisher: {
-      "@type":
-        "Organization",
+      "@type": "Organization",
 
       "@id": `${SITE_URL}/#organization`,
 
@@ -262,8 +306,7 @@ export default async function PackagesPage() {
       url: SITE_URL,
 
       logo: {
-        "@type":
-          "ImageObject",
+        "@type": "ImageObject",
 
         url: SITE_LOGO,
 
@@ -276,22 +319,18 @@ export default async function PackagesPage() {
     inLanguage: "en-IN",
   };
 
-  /*
-   * -------------------------------------------------------
-   * Breadcrumb schema
-   * -------------------------------------------------------
-   */
+  /* =======================================================
+     BREADCRUMB SCHEMA
+  ======================================================== */
 
   const breadcrumbSchema = {
-    "@type":
-      "BreadcrumbList",
+    "@type": "BreadcrumbList",
 
     "@id": `${PACKAGES_URL}#breadcrumb`,
 
     itemListElement: [
       {
-        "@type":
-          "ListItem",
+        "@type": "ListItem",
 
         position: 1,
 
@@ -301,8 +340,7 @@ export default async function PackagesPage() {
       },
 
       {
-        "@type":
-          "ListItem",
+        "@type": "ListItem",
 
         position: 2,
 
@@ -313,28 +351,52 @@ export default async function PackagesPage() {
     ],
   };
 
-  /*
-   * -------------------------------------------------------
-   * Combined structured data
-   * -------------------------------------------------------
-   */
+  /* =======================================================
+     FAQ SCHEMA
+  ======================================================== */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id": `${PACKAGES_URL}#faq`,
+
+    mainEntity: faqItems.map((faq) => ({
+      "@type": "Question",
+
+      name: faq.question,
+
+      acceptedAnswer: {
+        "@type": "Answer",
+
+        text: faq.answer,
+      },
+    })),
+  };
+
+  /* =======================================================
+     COMBINED STRUCTURED DATA
+  ======================================================== */
 
   const structuredData = {
-    "@context":
-      "https://schema.org",
+    "@context": "https://schema.org",
 
     "@graph": [
       websiteSchema,
       collectionPageSchema,
       breadcrumbSchema,
+      faqSchema,
     ],
   };
 
+  /* =======================================================
+     PAGE
+  ======================================================== */
+
   return (
     <>
-      {/* =====================================================
+      {/* ===================================================
           STRUCTURED DATA
-      ====================================================== */}
+      ==================================================== */}
 
       <script
         type="application/ld+json"
@@ -346,20 +408,21 @@ export default async function PackagesPage() {
         }}
       />
 
-      {/* =====================================================
+      {/* ===================================================
           PACKAGES PAGE
-      ====================================================== */}
+      ==================================================== */}
 
       <main className="min-h-screen bg-[#FAF9F5]">
-        {/* ===================================================
+
+        {/* =================================================
             CINEMATIC PACKAGE HERO
-        ==================================================== */}
+        ================================================== */}
 
         <PackageHero />
 
-        {/* ===================================================
+        {/* =================================================
             PACKAGE DISCOVERY
-        ==================================================== */}
+        ================================================== */}
 
         <section
           id="packages"
@@ -372,6 +435,15 @@ export default async function PackagesPage() {
             />
           </div>
         </section>
+
+        {/* =================================================
+            PACKAGE FAQ
+        ================================================== */}
+
+        <PackageFAQ
+          items={faqItems}
+        />
+
       </main>
     </>
   );

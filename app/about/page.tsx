@@ -13,7 +13,7 @@ const SITE_NAME = "The Musafir Diaries";
 const PAGE_URL = `${SITE_URL}/about`;
 
 const PAGE_TITLE =
-  "About The Musafir Diaries | Shimla & Himachal Travel";
+  "About The Musafir Diaries";
 
 const PAGE_DESCRIPTION =
   "Learn about The Musafir Diaries, a Shimla-based travel business creating meaningful journeys, curated stays and thoughtful travel experiences across Himachal Pradesh and India.";

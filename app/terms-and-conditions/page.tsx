@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 
 import TermsPage from "@/components/terms/TermsPage";
+import TermsFAQ from "@/components/terms/TermsFAQ";
 import { TERMS_CONFIG } from "@/lib/config/terms";
 
 /* =========================================================
@@ -28,6 +30,12 @@ const SITE_LOGO = `${SITE_URL.replace(
   "",
 )}/icon-512.png`;
 
+const PAGE_TITLE =
+  "Terms & Conditions";
+
+const PAGE_DESCRIPTION =
+  "Read the Terms & Conditions of The Musafir Diaries covering enquiries, bookings, pricing, payments, cancellations, itineraries, accommodation, transportation and travel conditions.";
+
 /* =========================================================
    METADATA
 ========================================================= */
@@ -35,11 +43,9 @@ const SITE_LOGO = `${SITE_URL.replace(
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title:
-    "Terms & Conditions | The Musafir Diaries",
+  title: PAGE_TITLE,
 
-  description:
-    "Read the Terms & Conditions of The Musafir Diaries covering enquiries, bookings, pricing, payments, cancellations, itineraries, accommodation, transportation and travel conditions.",
+  description: PAGE_DESCRIPTION,
 
   keywords: [
     "The Musafir Diaries Terms and Conditions",
@@ -62,8 +68,7 @@ export const metadata: Metadata = {
 
     siteName: SITE_NAME,
 
-    title:
-      "Terms & Conditions | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Terms covering travel enquiries, bookings, payments, cancellations, itineraries and related travel services.",
@@ -84,8 +89,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title:
-      "Terms & Conditions | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Read the Terms & Conditions for The Musafir Diaries.",
@@ -108,6 +112,43 @@ export const metadata: Metadata = {
 };
 
 /* =========================================================
+   FAQ DATA
+========================================================= */
+
+const faqItems = [
+  {
+    question:
+      "Where can I read the Terms & Conditions for The Musafir Diaries?",
+    answer:
+      "The complete Terms & Conditions are available on this page and cover travel enquiries, bookings, pricing, payments, cancellations, itineraries, accommodation, transportation and related travel conditions.",
+  },
+  {
+    question:
+      "Do the Terms & Conditions apply to travel bookings?",
+    answer:
+      "Yes. The Terms & Conditions explain the conditions that apply to enquiries, bookings and related travel arrangements made through The Musafir Diaries.",
+  },
+  {
+    question:
+      "Do the Terms cover cancellation and payment conditions?",
+    answer:
+      "Yes. The Terms & Conditions include provisions relating to pricing, payments and cancellations. Please review the complete terms on this page before confirming a booking.",
+  },
+  {
+    question:
+      "Do the Terms cover accommodation and transportation?",
+    answer:
+      "Yes. The Terms & Conditions address accommodation, transportation, itineraries and other travel-related arrangements where applicable.",
+  },
+  {
+    question:
+      "Should I read the Terms before making a booking?",
+    answer:
+      "Yes. Travellers should review the complete Terms & Conditions before submitting or confirming a booking so they understand the applicable travel conditions.",
+  },
+];
+
+/* =========================================================
    PAGE
 ========================================================= */
 
@@ -123,8 +164,7 @@ export default function TermsAndConditionsPage() {
 
     "@id": `${TERMS_URL}#webpage`,
 
-    name:
-      "Terms & Conditions | The Musafir Diaries",
+    name: PAGE_TITLE,
 
     description:
       "Terms and Conditions for The Musafir Diaries.",
@@ -173,19 +213,16 @@ export default function TermsAndConditionsPage() {
     url: SITE_URL,
 
     publisher: {
-      "@type":
-        "Organization",
+      "@type": "Organization",
 
-      "@id":
-        `${SITE_URL}/#organization`,
+      "@id": `${SITE_URL}/#organization`,
 
       name: SITE_NAME,
 
       url: SITE_URL,
 
       logo: {
-        "@type":
-          "ImageObject",
+        "@type": "ImageObject",
 
         url: SITE_LOGO,
 
@@ -205,16 +242,13 @@ export default function TermsAndConditionsPage() {
    */
 
   const breadcrumbSchema = {
-    "@type":
-      "BreadcrumbList",
+    "@type": "BreadcrumbList",
 
-    "@id":
-      `${TERMS_URL}#breadcrumb`,
+    "@id": `${TERMS_URL}#breadcrumb`,
 
     itemListElement: [
       {
-        "@type":
-          "ListItem",
+        "@type": "ListItem",
 
         position: 1,
 
@@ -224,8 +258,7 @@ export default function TermsAndConditionsPage() {
       },
 
       {
-        "@type":
-          "ListItem",
+        "@type": "ListItem",
 
         position: 2,
 
@@ -234,6 +267,32 @@ export default function TermsAndConditionsPage() {
         item: TERMS_URL,
       },
     ],
+  };
+
+  /*
+   * -------------------------------------------------------
+   * FAQ schema
+   * -------------------------------------------------------
+   */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id": `${TERMS_URL}#faq`,
+
+    mainEntity: faqItems.map(
+      (faq) => ({
+        "@type": "Question",
+
+        name: faq.question,
+
+        acceptedAnswer: {
+          "@type": "Answer",
+
+          text: faq.answer,
+        },
+      }),
+    ),
   };
 
   /*
@@ -250,6 +309,7 @@ export default function TermsAndConditionsPage() {
       websiteSchema,
       webPageSchema,
       breadcrumbSchema,
+      faqSchema,
     ],
   };
 
@@ -275,7 +335,12 @@ export default function TermsAndConditionsPage() {
 
       <main>
         <TermsPage />
+
+        <TermsFAQ
+          items={faqItems}
+        />
       </main>
     </>
   );
 }
+

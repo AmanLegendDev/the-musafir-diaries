@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 
 import { InquiryPage } from "@/components/inquiry";
+import InquiryFAQ from "@/components/inquiry/InquiryFAQ";
 
 /* =========================================================
    SITE CONFIG
@@ -28,17 +30,25 @@ const SITE_LOGO = `${SITE_URL.replace(
 )}/icon-512.png`;
 
 /* =========================================================
+   PAGE CONTENT
+========================================================= */
+
+const PAGE_TITLE =
+  "Plan Your Trip | The Musafir Diaries";
+
+const PAGE_DESCRIPTION =
+  "Tell The Musafir Diaries about your destination, travel dates, group size and preferences, and start planning a personalised Himalayan journey.";
+
+/* =========================================================
    METADATA
 ========================================================= */
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title:
-    "Plan Your Journey | Custom Himalayan Travel | The Musafir Diaries",
+  title: PAGE_TITLE,
 
-  description:
-    "Tell The Musafir Diaries about your destination, travel dates, group size and preferences, and start planning a personalised Himalayan journey.",
+  description: PAGE_DESCRIPTION,
 
   keywords: [
     "Plan Himalayan trip",
@@ -63,8 +73,7 @@ export const metadata: Metadata = {
 
     siteName: SITE_NAME,
 
-    title:
-      "Plan Your Journey | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Share your travel plans and start a conversation about your personalised Himalayan journey.",
@@ -85,8 +94,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title:
-      "Plan Your Journey | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Share your destination, dates and travel preferences to start planning your Himalayan journey.",
@@ -109,6 +117,49 @@ export const metadata: Metadata = {
 };
 
 /* =========================================================
+   FAQ DATA
+========================================================= */
+
+const faqItems = [
+  {
+    question:
+      "How can I enquire about a Himalayan trip?",
+    answer:
+      "You can submit your travel requirements through The Musafir Diaries enquiry form by sharing your destination, travel dates, group size and preferences.",
+  },
+  {
+    question:
+      "Can I request a customised Himalayan trip?",
+    answer:
+      "Yes. You can share your preferred destination, dates, group size and travel preferences so your journey requirements can be understood before planning.",
+  },
+  {
+    question:
+      "What information should I provide in my enquiry?",
+    answer:
+      "Useful details include your preferred destination, travel dates, number of travellers, trip preferences and any specific requirements you may have.",
+  },
+  {
+    question:
+      "Can I enquire about Himachal Pradesh travel?",
+    answer:
+      "Yes. You can use the enquiry page to share your requirements for travel to Himachal Pradesh and other Himalayan destinations covered by The Musafir Diaries.",
+  },
+  {
+    question:
+      "Can I ask about travel packages through the enquiry form?",
+    answer:
+      "Yes. You can mention the destination, approximate travel dates, group size and package requirements in your enquiry so the relevant travel options can be discussed.",
+  },
+  {
+    question:
+      "Is the enquiry the same as a confirmed booking?",
+    answer:
+      "No. An enquiry is a request to discuss your travel requirements. A booking is confirmed separately after the applicable trip details and arrangements are agreed.",
+  },
+];
+
+/* =========================================================
    PAGE
 ========================================================= */
 
@@ -124,8 +175,7 @@ export default function InquiryRoutePage() {
 
     "@id": `${INQUIRY_URL}#webpage`,
 
-    name:
-      "Plan Your Journey | The Musafir Diaries",
+    name: PAGE_TITLE,
 
     description:
       "Start planning a personalised Himalayan journey with The Musafir Diaries.",
@@ -225,6 +275,32 @@ export default function InquiryRoutePage() {
 
   /*
    * -------------------------------------------------------
+   * FAQ structured data
+   * -------------------------------------------------------
+   */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id": `${INQUIRY_URL}#faq`,
+
+    mainEntity: faqItems.map(
+      (faq) => ({
+        "@type": "Question",
+
+        name: faq.question,
+
+        acceptedAnswer: {
+          "@type": "Answer",
+
+          text: faq.answer,
+        },
+      }),
+    ),
+  };
+
+  /*
+   * -------------------------------------------------------
    * Combined structured data
    * -------------------------------------------------------
    */
@@ -236,6 +312,7 @@ export default function InquiryRoutePage() {
       websiteSchema,
       webPageSchema,
       breadcrumbSchema,
+      faqSchema,
     ],
   };
 
@@ -261,7 +338,12 @@ export default function InquiryRoutePage() {
 
       <main>
         <InquiryPage />
+
+        <InquiryFAQ
+          items={faqItems}
+        />
       </main>
     </>
   );
 }
+

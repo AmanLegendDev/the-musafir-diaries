@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 
 import connectDB from "@/lib/db";
@@ -6,6 +7,7 @@ import Destination from "@/models/destination.model";
 import DestinationHero from "@/components/destinations/listing/DestinationHero";
 import DestinationListing from "./DestinationListing";
 import DestinationCTA from "@/components/destinations/listing/DestinationCTA";
+import DestinationFAQ from "@/components/destinations/listing/DestinationFAQ";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -16,7 +18,7 @@ const PAGE_URL = `${SITE_URL}/destinations`;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title: "Himalayan Destinations & Travel Guide | The Musafir Diaries",
+  title: "Himalayan Destinations",
 
   description:
     "Explore Himalayan destinations including Shimla, Manali, Spiti Valley, Dharamshala, Dalhousie and more with The Musafir Diaries. Discover places, travel experiences and thoughtfully planned journeys.",
@@ -26,8 +28,7 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title:
-      "Himalayan Destinations & Travel Guide | The Musafir Diaries",
+    title: "Himalayan Destinations | The Musafir Diaries",
 
     description:
       "Explore Himalayan destinations, mountain landscapes and memorable travel experiences with The Musafir Diaries.",
@@ -44,8 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title:
-      "Himalayan Destinations & Travel Guide | The Musafir Diaries",
+    title: "Himalayan Destinations | The Musafir Diaries",
 
     description:
       "Explore Himalayan destinations, mountain landscapes and thoughtfully planned journeys with The Musafir Diaries.",
@@ -98,15 +98,18 @@ export default async function DestinationsPage({
   const destinations = await getDestinations();
 
   const destinationItems = destinations.map(
-    (destination: {
-      _id: string;
-      name: string;
-      slug: string;
-      shortDescription?: string;
-      heroImage?: string;
-      state?: string;
-      city?: string;
-    }, index: number) => ({
+    (
+      destination: {
+        _id: string;
+        name: string;
+        slug: string;
+        shortDescription?: string;
+        heroImage?: string;
+        state?: string;
+        city?: string;
+      },
+      index: number,
+    ) => ({
       "@type": "ListItem",
       position: index + 1,
       name: destination.name,
@@ -114,26 +117,64 @@ export default async function DestinationsPage({
     }),
   );
 
+  const faqItems = [
+    {
+      question: "Which Himalayan destinations can I explore?",
+      answer:
+        "The Musafir Diaries features Himalayan destinations including Shimla, Manali, Spiti Valley, Dharamshala, Dalhousie and other carefully selected mountain destinations.",
+    },
+    {
+      question: "What is the best time to visit Himalayan destinations?",
+      answer:
+        "The best time depends on the destination and the experience you want. Spring, summer, autumn and winter each offer different landscapes and travel conditions across the Himalayas.",
+    },
+    {
+      question: "Can I plan a customised Himalayan trip?",
+      answer:
+        "Yes. The Musafir Diaries can help you plan a customised Himalayan journey based on your destination preferences, travel dates, duration, interests and requirements.",
+    },
+    {
+      question: "How long should a Himalayan trip be?",
+      answer:
+        "Trip duration depends on the destination. Short mountain escapes can take around 4 to 5 days, while destinations such as Spiti Valley may require a longer itinerary.",
+    },
+    {
+      question: "Can I explore hotels and travel packages for these destinations?",
+      answer:
+        "Yes. Destination pages can connect you with relevant travel packages and recommended stays to help you plan your Himalayan journey.",
+    },
+  ];
+
   const structuredData = {
     "@context": "https://schema.org",
+
     "@graph": [
       {
         "@type": "CollectionPage",
+
         "@id": `${PAGE_URL}#webpage`,
+
         url: PAGE_URL,
-        name:
-          "Himalayan Destinations & Travel Guide | The Musafir Diaries",
+
+        name: "Himalayan Destinations | The Musafir Diaries",
+
         description:
           "Explore Himalayan destinations, mountain landscapes and thoughtfully planned travel experiences with The Musafir Diaries.",
+
         isPartOf: {
           "@type": "WebSite",
+
           "@id": `${SITE_URL}#website`,
+
           url: SITE_URL,
+
           name: "The Musafir Diaries",
         },
+
         breadcrumb: {
           "@id": `${PAGE_URL}#breadcrumb`,
         },
+
         mainEntity: {
           "@id": `${PAGE_URL}#destination-list`,
         },
@@ -141,18 +182,27 @@ export default async function DestinationsPage({
 
       {
         "@type": "BreadcrumbList",
+
         "@id": `${PAGE_URL}#breadcrumb`,
+
         itemListElement: [
           {
             "@type": "ListItem",
+
             position: 1,
+
             name: "Home",
+
             item: SITE_URL,
           },
+
           {
             "@type": "ListItem",
+
             position: 2,
+
             name: "Destinations",
+
             item: PAGE_URL,
           },
         ],
@@ -160,22 +210,45 @@ export default async function DestinationsPage({
 
       {
         "@type": "ItemList",
+
         "@id": `${PAGE_URL}#destination-list`,
+
         name: "The Musafir Diaries Destinations",
+
         description:
           "Destinations available to explore through The Musafir Diaries.",
+
         numberOfItems: destinationItems.length,
-        itemListOrder: "https://schema.org/ItemListOrderAscending",
+
+        itemListOrder:
+          "https://schema.org/ItemListOrderAscending",
+
         itemListElement: destinationItems,
+      },
+
+      {
+        "@type": "FAQPage",
+
+        "@id": `${PAGE_URL}#faq`,
+
+        mainEntity: faqItems.map((faq) => ({
+          "@type": "Question",
+
+          name: faq.question,
+
+          acceptedAnswer: {
+            "@type": "Answer",
+
+            text: faq.answer,
+          },
+        })),
       },
     ],
   };
 
   return (
     <main className="min-h-screen bg-[#FAF9F5]">
-      {/* =====================================================
-          SEO STRUCTURED DATA
-      ====================================================== */}
+      {/* SEO STRUCTURED DATA */}
 
       <script
         type="application/ld+json"
@@ -184,15 +257,11 @@ export default async function DestinationsPage({
         }}
       />
 
-      {/* =====================================================
-          DESTINATION INTRO
-      ====================================================== */}
+      {/* DESTINATION HERO */}
 
       <DestinationHero />
 
-      {/* =====================================================
-          DESTINATION SEARCH / FILTER / LISTING
-      ====================================================== */}
+      {/* DESTINATION SEARCH / FILTER / LISTING */}
 
       <DestinationListing
         destinations={destinations}
@@ -202,11 +271,14 @@ export default async function DestinationsPage({
         initialSort={params.sort ?? "featured"}
       />
 
-      {/* =====================================================
-          FINAL JOURNEY CTA
-      ====================================================== */}
+      {/* DESTINATION FAQ */}
+
+      <DestinationFAQ items={faqItems} />
+
+      {/* FINAL JOURNEY CTA */}
 
       <DestinationCTA />
     </main>
   );
 }
+

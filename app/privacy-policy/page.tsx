@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 
 import PrivacyPage from "@/components/privacy-policy/PrivacyPage";
+import PrivacyFAQ from "@/components/privacy-policy/PrivacyFAQ";
 import { PRIVACY_CONFIG } from "@/lib/config/privacy";
 
 /* =========================================================
@@ -29,6 +31,12 @@ const SITE_LOGO = `${SITE_URL.replace(
   "",
 )}/icon-512.png`;
 
+const PAGE_TITLE =
+  "Privacy Policy | The Musafir Diaries";
+
+const PAGE_DESCRIPTION =
+  "Read the Privacy Policy of The Musafir Diaries and learn how we collect, use, share and protect information provided through our website and travel-related communications.";
+
 /* =========================================================
    METADATA
 ========================================================= */
@@ -36,11 +44,9 @@ const SITE_LOGO = `${SITE_URL.replace(
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title:
-    "Privacy Policy | The Musafir Diaries",
+  title: PAGE_TITLE,
 
-  description:
-    "Read the Privacy Policy of The Musafir Diaries and learn how we collect, use, share and protect information provided through our website and travel-related communications.",
+  description: PAGE_DESCRIPTION,
 
   keywords: [
     "The Musafir Diaries Privacy Policy",
@@ -61,8 +67,7 @@ export const metadata: Metadata = {
 
     siteName: SITE_NAME,
 
-    title:
-      "Privacy Policy | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Learn how The Musafir Diaries handles information shared through its website and travel-related communications.",
@@ -83,8 +88,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title:
-      "Privacy Policy | The Musafir Diaries",
+    title: PAGE_TITLE,
 
     description:
       "Learn how The Musafir Diaries handles personal information.",
@@ -107,6 +111,43 @@ export const metadata: Metadata = {
 };
 
 /* =========================================================
+   FAQ DATA
+========================================================= */
+
+const faqItems = [
+  {
+    question:
+      "What does The Musafir Diaries Privacy Policy cover?",
+    answer:
+      "The Privacy Policy explains how The Musafir Diaries handles information provided through its website and travel-related communications.",
+  },
+  {
+    question:
+      "What information may be collected through the website?",
+    answer:
+      "Information may be provided when you use website forms, make travel enquiries, submit booking details or communicate with The Musafir Diaries. Please refer to the complete Privacy Policy for the applicable details.",
+  },
+  {
+    question:
+      "How does The Musafir Diaries use information?",
+    answer:
+      "Information may be used to respond to enquiries, support travel-related communications, process relevant requests and provide website or travel services as described in the Privacy Policy.",
+  },
+  {
+    question:
+      "How is personal information protected?",
+    answer:
+      "The Privacy Policy explains the measures and practices used by The Musafir Diaries to handle and protect information shared through its website and related communications.",
+  },
+  {
+    question:
+      "Can I learn more about how my information is handled?",
+    answer:
+      "Yes. The complete Privacy Policy on this page provides the applicable information about collection, use, sharing and protection of information.",
+  },
+];
+
+/* =========================================================
    PAGE
 ========================================================= */
 
@@ -122,8 +163,7 @@ export default function PrivacyPolicyPage() {
 
     "@id": `${PRIVACY_URL}#webpage`,
 
-    name:
-      "Privacy Policy | The Musafir Diaries",
+    name: PAGE_TITLE,
 
     description:
       "Privacy Policy for The Musafir Diaries.",
@@ -263,6 +303,33 @@ export default function PrivacyPolicyPage() {
 
   /*
    * -------------------------------------------------------
+   * FAQ schema
+   * -------------------------------------------------------
+   */
+
+  const faqSchema = {
+    "@type": "FAQPage",
+
+    "@id":
+      `${PRIVACY_URL}#faq`,
+
+    mainEntity: faqItems.map(
+      (faq) => ({
+        "@type": "Question",
+
+        name: faq.question,
+
+        acceptedAnswer: {
+          "@type": "Answer",
+
+          text: faq.answer,
+        },
+      }),
+    ),
+  };
+
+  /*
+   * -------------------------------------------------------
    * Combined structured data
    * -------------------------------------------------------
    */
@@ -275,6 +342,7 @@ export default function PrivacyPolicyPage() {
       websiteSchema,
       webPageSchema,
       breadcrumbSchema,
+      faqSchema,
     ],
   };
 
@@ -300,7 +368,12 @@ export default function PrivacyPolicyPage() {
 
       <main>
         <PrivacyPage />
+
+        <PrivacyFAQ
+          items={faqItems}
+        />
       </main>
     </>
   );
 }
+

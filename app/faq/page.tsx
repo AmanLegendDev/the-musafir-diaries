@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
   title:
-    "Frequently Asked Questions | Travel & Trip Planning | The Musafir Diaries",
+    "Frequently Asked Questions ",
 
   description:
     "Find answers about destinations, trip planning, bookings, stays, custom itineraries and Himalayan journeys with The Musafir Diaries.",
