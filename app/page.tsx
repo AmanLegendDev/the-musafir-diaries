@@ -454,9 +454,7 @@ export default async function Home() {
           TESTIMONIALS
       ===================================================== */}
 
-      <TestimonialsSection
-        testimonials={testimonials}
-      />
+    
 
       {/* =====================================================
           JOURNAL
