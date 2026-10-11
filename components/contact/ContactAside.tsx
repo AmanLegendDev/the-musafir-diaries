@@ -77,7 +77,7 @@ export default function ContactAside() {
 
       {/* Direct contact */}
       <motion.a
-        href="https://wa.me/919999999999"
+        href="https://wa.me/918262946566"
         target="_blank"
         rel="noreferrer"
         initial={{ opacity: 0, x: 18 }}

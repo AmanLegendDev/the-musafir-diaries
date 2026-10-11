@@ -140,7 +140,7 @@ export default function DestinationBookingCard({
           </Link>
 
           <a
-            href="https://wa.me/919999999999"
+            href="https://wa.me/918262946566"
             target="_blank"
             rel="noopener noreferrer"
             className="
@@ -163,7 +163,7 @@ export default function DestinationBookingCard({
           </a>
 
           <a
-            href="tel:+919999999999"
+            href="tel:+918262946566"
             className="
               flex
               h-12

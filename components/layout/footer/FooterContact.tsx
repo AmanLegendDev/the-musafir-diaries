@@ -58,7 +58,7 @@ export default function FooterContact() {
             </p>
 
             <p className="mt-1 text-xs text-white/40">
-              Available for journey enquiries
+              +91 8262946566
             </p>
           </div>
         </div>

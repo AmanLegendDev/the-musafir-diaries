@@ -154,7 +154,7 @@ export default function DestinationSidebar({
         </p>
 
         <a
-          href="tel:+919999999999"
+          href="tel:+918262946566"
           className="
             mt-6
             flex

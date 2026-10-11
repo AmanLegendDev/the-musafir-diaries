@@ -11,8 +11,8 @@ const CONTACT_METHODS = [
     label: "Call",
     title: "Speak with us",
     description: "For a quick conversation about your travel plans.",
-    value: "999999999",
-    href: "tel:999999999",
+    value: "8262946566",
+    href: "tel:8262946566",
     accent: "teal" as const,
   },
   {
@@ -21,7 +21,7 @@ const CONTACT_METHODS = [
     title: "Message us",
     description: "Send us your idea, dates or questions directly.",
     value: "WhatsApp",
-    href: "https://wa.me/919999999999",
+    href: "https://wa.me/918262946566",
     accent: "orange" as const,
   },
   {
@@ -39,7 +39,7 @@ const CONTACT_METHODS = [
     title: "Follow the journey",
     description: "A glimpse into the places, stories and moments we love.",
     value: "Instagram",
-    href: "https://instagram.com/",
+    href: "https://www.instagram.com/the_musafirdiaries2026?xtok=cjdpdTF1a3J1azF3",
     accent: "orange" as const,
   },
 ];

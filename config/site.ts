@@ -39,7 +39,7 @@ export const siteConfig = {
 
   // Social
   social: {
-    instagram: "",
+    instagram: "https://www.instagram.com/the_musafirdiaries2026?xtok=cjdpdTF1a3J1azF3",
     facebook: "",
     linkedin: "",
     youtube: "",

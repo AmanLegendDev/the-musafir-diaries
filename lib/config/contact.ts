@@ -1,7 +1,7 @@
 export const CONTACT_CONFIG = {
   phone: {
-    display: "999999999",
-    href: "tel:999999999",
+    display: "8262946566",
+    href: "tel:8262946566",
   },
 
   email: {
@@ -11,12 +11,12 @@ export const CONTACT_CONFIG = {
 
   whatsapp: {
     display: "WhatsApp",
-    href: "https://wa.me/919999999999",
+    href: "https://wa.me/918262946566",
   },
 
   instagram: {
     display: "Instagram",
-    href: "https://instagram.com/",
+    href: "https://www.instagram.com/the_musafirdiaries2026?xtok=cjdpdTF1a3J1azF3",
   },
 
   site: {

@@ -62,7 +62,7 @@ export default function FooterBrand() {
       {/* Socials / CTA */}
       <div className="mt-9 flex items-center gap-3">
         <Link
-          href="https://instagram.com/"
+          href="https://www.instagram.com/the_musafirdiaries2026?xtok=cjdpdTF1a3J1azF3"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Instagram"

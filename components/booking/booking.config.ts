@@ -2,9 +2,9 @@ export const BOOKING_CONFIG = {
   businessName: "The Musafir Diaries",
 
   support: {
-    phone: "999999999",
+    phone: "8262946566",
     email: "hello@themusafirdiaries.com",
-    whatsapp: "https://wa.me/919999999999",
+    whatsapp: "https://wa.me/918262946566",
   },
 
   steps: [

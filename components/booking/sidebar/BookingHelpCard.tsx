@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 
 const CONTACT = {
-  phone: "999999999",
+  phone: "8262946566",
   email: "hello@themusafirdiaries.com",
-  whatsapp: "https://wa.me/919999999999",
+  whatsapp: "https://wa.me/918262946566",
 };
 
 export default function BookingHelpCard() {
