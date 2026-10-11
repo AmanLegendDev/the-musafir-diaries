@@ -77,6 +77,11 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
 
+
+  verification: {
+    google: "wRL3z2csSXERQi0OwmBcgNh7np6lUkhBoH3qPj4_i6g",
+  },
+
   keywords: [
     "The Musafir Diaries",
     "Himachal Pradesh travel",
