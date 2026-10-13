@@ -20,7 +20,7 @@ export default function Hero() {
           fill
           priority
           sizes="100vw"
-          quality={70}
+          quality={60}
           className="object-cover object-[68%_center]"
         />
       </div>
@@ -31,10 +31,7 @@ export default function Hero() {
       {/* Bottom gradient */}
       <div className="absolute inset-x-0 bottom-0 h-[48%] bg-gradient-to-t from-[#071A33] via-[#071A33]/55 to-transparent" />
 
-      {/* Ambient lighting */}
-      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[#1597C7]/10 blur-[140px]" />
-
-      <div className="pointer-events-none absolute right-0 top-24 h-80 w-80 rounded-full bg-[#F59E0B]/10 blur-[140px]" />
+    
 
       {/* Editorial line */}
       <div className="pointer-events-none absolute left-0 top-1/2 hidden h-px w-32 bg-white/20 lg:block" />
@@ -58,7 +55,7 @@ export default function Hero() {
           Scroll to explore
         </span>
 
-        <div className="flex h-10 w-10 animate-bounce items-center justify-center rounded-full border border-white/30 [animation-duration:1.8s]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30">
           <span className="text-sm" aria-hidden="true">
             ↓
           </span>
