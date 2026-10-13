@@ -27,11 +27,10 @@ export default function TestimonialsGrid({
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
-          transition={{
-            duration: 0.65,
-            delay: index * 0.08,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+         transition={{
+  duration: 0.4,
+  ease: [0.22, 1, 0.36, 1],
+}}
           className="group relative flex min-h-[390px] flex-col border border-[#071A33]/10 bg-white p-6 sm:p-7 lg:p-8"
         >
           <div className="flex items-start justify-between">

@@ -1,8 +1,6 @@
-"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   MapPin,
@@ -83,12 +81,18 @@ function HotelMeta({ hotel }: { hotel: HomeHotel }) {
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
       {destinationName && (
         <span className="inline-flex items-center gap-1.5 text-white/75">
-          <MapPin size={13} strokeWidth={1.8} />
+          <MapPin
+            aria-hidden="true"
+            size={13}
+            strokeWidth={1.8}
+          />
           {destinationName}
         </span>
       )}
 
-      <span className="text-white/40">•</span>
+      <span aria-hidden="true" className="text-white/40">
+        •
+      </span>
 
       <span className="text-white/75">
         {formatHotelType(hotel.hotelType)}
@@ -96,10 +100,13 @@ function HotelMeta({ hotel }: { hotel: HomeHotel }) {
 
       {hotel.starRating > 0 && (
         <>
-          <span className="text-white/40">•</span>
+          <span aria-hidden="true" className="text-white/40">
+            •
+          </span>
 
           <span className="inline-flex items-center gap-1 text-white/80">
             <Star
+              aria-hidden="true"
               size={12}
               fill="currentColor"
               strokeWidth={1.5}
@@ -111,10 +118,12 @@ function HotelMeta({ hotel }: { hotel: HomeHotel }) {
 
       {hasGuestRating && (
         <>
-          <span className="text-white/40">•</span>
+          <span aria-hidden="true" className="text-white/40">
+            •
+          </span>
 
           <span className="text-white/80">
-            {hotel.guestRating?.toFixed(1)} · {hotel.reviewCount} reviews
+            {hotel.guestRating!.toFixed(1)} · {hotel.reviewCount} reviews
           </span>
         </>
       )}
@@ -122,22 +131,12 @@ function HotelMeta({ hotel }: { hotel: HomeHotel }) {
   );
 }
 
-function FeaturedHotelCard({
-  hotel,
-}: {
-  hotel: HomeHotel;
-}) {
+function FeaturedHotelCard({ hotel }: { hotel: HomeHotel }) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative min-h-[520px] overflow-hidden bg-[#071A33] sm:min-h-[580px] lg:min-h-[650px]"
-    >
+    <article className="group relative min-h-[520px] overflow-hidden bg-[#071A33] sm:min-h-[580px] lg:min-h-[650px]">
       <Link
         href={`/hotels/${hotel.slug}`}
-        className="absolute inset-0"
+        className="absolute inset-0 rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#F59E0B]"
         aria-label={`View ${hotel.name}`}
       >
         {/* Image */}
@@ -145,15 +144,20 @@ function FeaturedHotelCard({
           src={hotel.heroImage}
           alt={`${hotel.name} - ${hotel.destination?.name || hotel.city || "Himachal Pradesh"}`}
           fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 58vw"
-          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.045]"
+          sizes="(max-width: 1023px) 100vw, 58vw"
+          className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.045] motion-reduce:transform-none"
         />
 
         {/* Cinematic overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#071A33] via-[#071A33]/25 to-transparent" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-[#071A33] via-[#071A33]/25 to-transparent"
+        />
 
-        <div className="absolute inset-0 bg-black/5 transition-colors duration-500 group-hover:bg-black/15" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-black/5 transition-colors duration-500 group-hover:bg-black/15 motion-reduce:transition-none"
+        />
 
         {/* Top label */}
         <div className="absolute left-5 top-5 sm:left-7 sm:top-7">
@@ -163,7 +167,10 @@ function FeaturedHotelCard({
         </div>
 
         {/* Number */}
-        <span className="absolute right-6 top-6 font-serif text-5xl font-light text-white/25 sm:right-8 sm:top-7">
+        <span
+          aria-hidden="true"
+          className="absolute right-6 top-6 font-serif text-5xl font-light text-white/25 sm:right-8 sm:top-7"
+        >
           01
         </span>
 
@@ -186,17 +193,20 @@ function FeaturedHotelCard({
               View stay
             </span>
 
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-all duration-300 group-hover:border-[#F59E0B] group-hover:bg-[#F59E0B] group-hover:text-[#071A33]">
+            <span
+              aria-hidden="true"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-colors duration-300 group-hover:border-[#F59E0B] group-hover:bg-[#F59E0B] group-hover:text-[#071A33] motion-reduce:transition-none"
+            >
               <ArrowUpRight
                 size={18}
                 strokeWidth={1.7}
-                className="transition-transform duration-300 group-hover:rotate-45"
+                className="transition-transform duration-300 group-hover:rotate-45 motion-reduce:transition-none"
               />
             </span>
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }
 
@@ -207,21 +217,13 @@ function SecondaryHotelCard({
   hotel: HomeHotel;
   number: string;
 }) {
+  const destinationName = hotel.destination?.name || hotel.city;
+
   return (
-    <motion.article
-      initial={{ opacity: 0, x: 25 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{
-        duration: 0.7,
-        delay: 0.08,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      className="group relative overflow-hidden bg-[#071A33]"
-    >
+    <article className="group relative overflow-hidden bg-[#071A33]">
       <Link
         href={`/hotels/${hotel.slug}`}
-        className="block"
+        className="block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-[#087E8B]"
         aria-label={`View ${hotel.name}`}
       >
         {/* Image */}
@@ -230,13 +232,19 @@ function SecondaryHotelCard({
             src={hotel.heroImage}
             alt={`${hotel.name} - ${hotel.destination?.name || hotel.city || "Himachal Pradesh"}`}
             fill
-            sizes="(max-width: 1024px) 100vw, 42vw"
-            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.045]"
+            sizes="(max-width: 1023px) 100vw, 42vw"
+            className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.045] motion-reduce:transform-none"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#071A33]/80 via-transparent to-transparent" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-[#071A33]/80 via-transparent to-transparent"
+          />
 
-          <span className="absolute right-5 top-5 font-serif text-3xl font-light text-white/35">
+          <span
+            aria-hidden="true"
+            className="absolute right-5 top-5 font-serif text-3xl font-light text-white/35"
+          >
             {number}
           </span>
 
@@ -251,19 +259,22 @@ function SecondaryHotelCard({
         <div className="border border-t-0 border-[#071A33]/10 bg-white px-5 py-5 sm:px-6 sm:py-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              {hotel.destination?.name || hotel.city ? (
+              {destinationName && (
                 <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#087E8B]">
-                  <MapPin size={11} />
-                  {hotel.destination?.name || hotel.city}
+                  <MapPin aria-hidden="true" size={11} />
+                  {destinationName}
                 </p>
-              ) : null}
+              )}
 
               <h3 className="font-serif text-2xl font-medium tracking-[-0.02em] text-[#071A33] transition-colors duration-300 group-hover:text-[#087E8B] sm:text-3xl">
                 {hotel.name}
               </h3>
             </div>
 
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#071A33]/15 text-[#071A33] transition-all duration-300 group-hover:border-[#087E8B] group-hover:bg-[#087E8B] group-hover:text-white">
+            <span
+              aria-hidden="true"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#071A33]/15 text-[#071A33] transition-colors duration-300 group-hover:border-[#087E8B] group-hover:bg-[#087E8B] group-hover:text-white"
+            >
               <ArrowUpRight
                 size={16}
                 strokeWidth={1.7}
@@ -282,6 +293,7 @@ function SecondaryHotelCard({
             {hotel.starRating > 0 && (
               <span className="inline-flex items-center gap-1">
                 <Star
+                  aria-hidden="true"
                   size={12}
                   fill="currentColor"
                   className="text-[#F59E0B]"
@@ -294,7 +306,7 @@ function SecondaryHotelCard({
               hotel.guestRating > 0 &&
               hotel.reviewCount > 0 && (
                 <>
-                  <span>•</span>
+                  <span aria-hidden="true">•</span>
                   <span>
                     {hotel.guestRating.toFixed(1)} ({hotel.reviewCount})
                   </span>
@@ -303,14 +315,14 @@ function SecondaryHotelCard({
 
             {hotel.area && (
               <>
-                <span>•</span>
+                <span aria-hidden="true">•</span>
                 <span>{hotel.area}</span>
               </>
             )}
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }
 
@@ -318,9 +330,7 @@ export default function HotelsStaysGrid({
   hotels,
 }: HotelsStaysGridProps) {
   const visibleHotels = hotels
-    .filter(
-      (hotel) => hotel.status === "active" && hotel.featured
-    )
+    .filter((hotel) => hotel.status === "active" && hotel.featured)
     .sort((a, b) => {
       if (a.displayOrder !== b.displayOrder) {
         return a.displayOrder - b.displayOrder;
@@ -330,10 +340,11 @@ export default function HotelsStaysGrid({
     })
     .slice(0, 3);
 
-  if (visibleHotels.length === 0) return null;
+  if (visibleHotels.length === 0) {
+    return null;
+  }
 
-  const featuredHotel = visibleHotels[0];
-  const secondaryHotels = visibleHotels.slice(1);
+  const [featuredHotel, ...secondaryHotels] = visibleHotels;
 
   return (
     <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">

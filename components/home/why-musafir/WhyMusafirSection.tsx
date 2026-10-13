@@ -5,6 +5,7 @@ export default function WhyMusafirSection() {
   return (
     <section
       id="why-musafir"
+      aria-labelledby="why-musafir-heading"
       className="relative overflow-hidden bg-[#071A33] py-20 text-white sm:py-24 lg:py-32"
     >
       {/* Ambient details */}

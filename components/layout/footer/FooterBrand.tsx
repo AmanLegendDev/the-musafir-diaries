@@ -1,8 +1,6 @@
-"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
 export default function FooterBrand() {
@@ -14,16 +12,17 @@ export default function FooterBrand() {
         className="group inline-flex items-center gap-4"
         aria-label="The Musafir Diaries home"
       >
-       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white p-2.5">
-  <Image
-    src="/logo.png"
-    alt="The Musafir Diaries"
-    width={64}
-    height={64}
-    priority
-    className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.04]"
-  />
-</div>
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white p-2.5">
+          <Image
+            src="/logo.png"
+            alt="The Musafir Diaries"
+            width={64}
+            height={64}
+            sizes="64px"
+            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+          />
+        </div>
+
         <div className="flex flex-col">
           <span className="font-serif text-[21px] font-medium leading-none tracking-[-0.025em] text-white">
             The Musafir
@@ -40,17 +39,11 @@ export default function FooterBrand() {
       </Link>
 
       {/* Statement */}
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="mt-8 text-lg leading-8 text-white/65"
-      >
+      <p className="mt-8 text-lg leading-8 text-white/65">
         Thoughtfully crafted journeys through the Himalayas,
         beautiful stays and experiences that become part of
         your story.
-      </motion.p>
+      </p>
 
       {/* Quote */}
       <div className="mt-8 border-l border-[#F59E0B] pl-5">

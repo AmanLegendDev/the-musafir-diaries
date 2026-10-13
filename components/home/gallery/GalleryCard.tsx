@@ -50,18 +50,13 @@ export default function GalleryCard({
         }
       `}
     >
-      <Image
-        src={image.image}
-        alt={image.alt || image.title}
-        fill
-        className="
-          object-cover
-          transition-transform
-          duration-700
-          group-hover:scale-110
-        "
-      />
-
+    <Image
+  src={image.image}
+  alt={image.alt || image.title}
+  fill
+  sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1279px) calc(50vw - 32px), (max-width: 1535px) calc(33vw - 24px), 480px"
+  className="object-cover transition-transform duration-700 group-hover:scale-110"
+/>
       {/* Luxury Overlay */}
 
       <div

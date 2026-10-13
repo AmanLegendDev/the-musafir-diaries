@@ -1,4 +1,4 @@
-"use client";
+
 
 import Link from "next/link";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";

@@ -10,14 +10,15 @@ export default function NavbarLogo() {
     >
       {/* Brand mark */}
       <span className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center">
-        <Image
-          src="/logo.png"
-          alt="The Musafir Diaries"
-          width={52}
-          height={52}
-          priority
-          className="h-[52px] w-[52px] object-contain transition-transform duration-200 group-hover:scale-[1.03]"
-        />
+    <Image
+  src="/logo.png"
+  alt="The Musafir Diaries"
+  width={52}
+  height={52}
+  sizes="52px"
+  priority
+  className="h-[52px] w-[52px] object-contain transition-transform duration-200 group-hover:scale-[1.03]"
+/>
       </span>
 
       {/* Brand name */}

@@ -1,34 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Inter, Poppins } from "next/font/google";
+import { Geist } from "next/font/google";
 
 import "./globals.css";
 
 import FloatingWhatsApp from "@/components/common/whatsapp/FloatingWhatsApp";
 import PublicChrome from "@/components/layout/PublicChrome";
 import { Toaster } from "sonner";
-import { cn } from "@/lib/utils";
 
 /* =========================================================
-   FONTS
+   SINGLE FONT — GEIST
 ========================================================= */
 
 const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-geist",
   display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  preload: true,
 });
 
 /* =========================================================
@@ -54,10 +41,6 @@ const DEFAULT_OG_IMAGE = "/og-image.jpg";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  /* =======================================================
-     SITE IDENTITY
-  ======================================================== */
-
   title: {
     default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
@@ -77,7 +60,6 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
 
-
   verification: {
     google: "wRL3z2csSXERQi0OwmBcgNh7np6lUkhBoH3qPj4_i6g",
   },
@@ -93,19 +75,11 @@ export const metadata: Metadata = {
     "Himalayan travel experiences",
   ],
 
-  /* =======================================================
-     FORMAT DETECTION
-  ======================================================== */
-
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-
-  /* =======================================================
-     ICONS
-  ======================================================== */
 
   icons: {
     icon: [
@@ -151,63 +125,41 @@ export const metadata: Metadata = {
     ],
   },
 
-  /* =======================================================
-     OPEN GRAPH
-  ======================================================== */
-
   openGraph: {
     type: "website",
-
     locale: "en_IN",
-
     siteName: SITE_NAME,
-
     title: SITE_NAME,
-
     description: DEFAULT_DESCRIPTION,
-
+    url: SITE_URL,
     images: [
       {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt:
-          "The Musafir Diaries — Himalayan Travel Experiences",
+        alt: "The Musafir Diaries — Himalayan Travel Experiences",
       },
     ],
   },
-
-  /* =======================================================
-     TWITTER / X
-  ======================================================== */
 
   twitter: {
     card: "summary_large_image",
-
     title: SITE_NAME,
-
     description:
       "Thoughtful Himalayan journeys, curated stays and unforgettable travel experiences from The Musafir Diaries.",
-
     images: [
       {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt:
-          "The Musafir Diaries — Himalayan Travel Experiences",
+        alt: "The Musafir Diaries — Himalayan Travel Experiences",
       },
     ],
   },
-
-  /* =======================================================
-     ROBOTS
-  ======================================================== */
 
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
@@ -241,13 +193,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn(
-        inter.variable,
-        poppins.variable,
-        geist.variable,
-        "font-sans",
-      )}
+      className={`${geist.variable} font-sans`}
     >
       <body className="min-h-screen bg-[#FAF9F5] text-[#071A33] antialiased">
         <PublicChrome>{children}</PublicChrome>

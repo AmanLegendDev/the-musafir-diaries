@@ -1,30 +1,14 @@
-"use client";
-
 import { MessageCircle } from "lucide-react";
-import { motion } from "framer-motion";
 
 import { WHATSAPP_HREF } from "./whatsapp.config";
 
 export default function FloatingWhatsApp() {
   return (
-    <motion.a
+    <a
       href={WHATSAPP_HREF}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with The Musafir Diaries on WhatsApp"
-      initial={{ opacity: 0, scale: 0.8, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{
-        duration: 0.45,
-        ease: "easeOut",
-      }}
-      whileHover={{
-        y: -3,
-        scale: 1.02,
-      }}
-      whileTap={{
-        scale: 0.97,
-      }}
       className="
         group fixed bottom-5 right-5 z-[80]
         flex items-center gap-3
@@ -35,13 +19,15 @@ export default function FloatingWhatsApp() {
         text-white
         shadow-[0_18px_50px_rgba(7,26,51,0.25)]
         backdrop-blur-md
-        transition-shadow duration-300
+        transition-[box-shadow,transform] duration-300
+        hover:-translate-y-0.5
         hover:shadow-[0_22px_60px_rgba(7,26,51,0.32)]
+        active:scale-[0.97]
         sm:bottom-7 sm:right-7
         sm:px-4 sm:py-3.5
+        motion-reduce:transition-none
       "
     >
-      {/* WhatsApp Icon */}
       <span
         className="
           relative flex h-11 w-11 shrink-0
@@ -52,27 +38,28 @@ export default function FloatingWhatsApp() {
           shadow-[0_8px_25px_rgba(8,126,139,0.25)]
         "
       >
-        {/* Subtle pulse */}
         <span
+          aria-hidden="true"
           className="
             absolute inset-0
             rounded-full
             bg-[#087E8B]
             opacity-20
             animate-ping
+            motion-reduce:animate-none
           "
         />
 
         <MessageCircle
           size={21}
           strokeWidth={2.2}
+          aria-hidden="true"
           className="relative"
         />
       </span>
 
-      {/* Desktop Text */}
       <span className="hidden pr-1 text-left sm:block">
-        <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45">
+        <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-white/60">
           Plan your journey
         </span>
 
@@ -80,6 +67,6 @@ export default function FloatingWhatsApp() {
           Chat with us
         </span>
       </span>
-    </motion.a>
+    </a>
   );
 }

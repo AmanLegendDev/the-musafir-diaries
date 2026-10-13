@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
@@ -30,8 +28,7 @@ export default function FeaturedPackageCard({
   const hasDiscount =
     packageData.discountedPrice > 0 &&
     packageData.originalPrice > 0 &&
-    packageData.discountedPrice <
-      packageData.originalPrice;
+    packageData.discountedPrice < packageData.originalPrice;
 
   const hasPrice =
     packageData.discountedPrice > 0 ||
@@ -74,9 +71,7 @@ export default function FeaturedPackageCard({
           <Image
             src={image}
             alt={`${packageData.name}${
-              destinationName
-                ? `, ${destinationName}`
-                : ""
+              destinationName ? `, ${destinationName}` : ""
             }`}
             fill
             priority={priority}
@@ -110,7 +105,7 @@ export default function FeaturedPackageCard({
           className="absolute left-6 top-6 h-px w-10 bg-[#F59E0B] transition-all duration-500 group-hover:w-16"
         />
 
-        {/* Number */}
+        {/* Position */}
         <span className="absolute right-6 top-5 font-serif text-sm text-white/50">
           {String(position).padStart(2, "0")}
         </span>
@@ -128,15 +123,16 @@ export default function FeaturedPackageCard({
         <div
           className={[
             "absolute inset-x-0 bottom-0",
-            featured
-              ? "p-6 sm:p-8 lg:p-9"
-              : "p-5 sm:p-6",
+            featured ? "p-6 sm:p-8 lg:p-9" : "p-5 sm:p-6",
           ].join(" ")}
         >
           {/* Destination */}
           {destinationName && (
             <div className="mb-3 flex items-center gap-2 text-white/65">
-              <MapPin className="h-3.5 w-3.5 text-[#1597C7]" />
+              <MapPin
+                aria-hidden="true"
+                className="h-3.5 w-3.5 text-[#1597C7]"
+              />
 
               <span className="text-[9px] font-medium uppercase tracking-[0.18em]">
                 {destinationName}
@@ -186,7 +182,6 @@ export default function FeaturedPackageCard({
                   <p className="text-[8px] uppercase tracking-[0.18em] text-white/40">
                     Duration
                   </p>
-
                   <p className="mt-1 text-xs font-medium text-white/85">
                     {packageData.duration}
                   </p>
@@ -199,7 +194,6 @@ export default function FeaturedPackageCard({
                   <p className="text-[8px] uppercase tracking-[0.18em] text-white/40">
                     Style
                   </p>
-
                   <p className="mt-1 text-xs font-medium capitalize text-white/85">
                     {packageData.difficulty}
                   </p>
@@ -220,9 +214,7 @@ export default function FeaturedPackageCard({
 
                     {hasDiscount && (
                       <span className="text-[10px] text-white/40 line-through">
-                        ₹{packageData.originalPrice.toLocaleString(
-                          "en-IN"
-                        )}
+                        ₹{packageData.originalPrice.toLocaleString("en-IN")}
                       </span>
                     )}
                   </div>
@@ -238,17 +230,11 @@ export default function FeaturedPackageCard({
                 "bg-[#FAF9F5] text-[#071A33]",
                 "transition-all duration-500",
                 "group-hover:rotate-45 group-hover:bg-[#087E8B] group-hover:text-white",
-                featured
-                  ? "h-12 w-12"
-                  : "h-10 w-10",
+                featured ? "h-12 w-12" : "h-10 w-10",
               ].join(" ")}
             >
               <ArrowUpRight
-                className={
-                  featured
-                    ? "h-5 w-5"
-                    : "h-4 w-4"
-                }
+                className={featured ? "h-5 w-5" : "h-4 w-4"}
               />
             </span>
           </div>

@@ -11,8 +11,8 @@ export default function GalleryGrid({
     <div
       className="
         grid
-        aauto-rows-[247px]
-gap-6
+        auto-rows-[247px]
+        gap-6
 
         md:grid-cols-2
 

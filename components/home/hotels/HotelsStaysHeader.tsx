@@ -1,22 +1,16 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function HotelsStaysHeader() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end"
-    >
+    <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
       <div className="max-w-3xl">
         {/* Eyebrow */}
         <div className="mb-5 flex items-center gap-3">
-          <span className="h-px w-10 bg-[#F59E0B]" />
+          <span
+            aria-hidden="true"
+            className="h-px w-10 bg-[#F59E0B]"
+          />
 
           <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#087E8B]">
             Where You Stay
@@ -24,7 +18,10 @@ export default function HotelsStaysHeader() {
         </div>
 
         {/* Heading */}
-        <h2 className="font-serif text-4xl font-medium leading-[1.05] tracking-[-0.035em] text-[#071A33] sm:text-5xl lg:text-6xl">
+        <h2
+          id="hotels-heading"
+          className="font-serif text-4xl font-medium leading-[1.05] tracking-[-0.035em] text-[#071A33] sm:text-5xl lg:text-6xl"
+        >
           Beautiful stays,
           <br />
           <span className="text-[#087E8B]">
@@ -42,7 +39,7 @@ export default function HotelsStaysHeader() {
       {/* Explore CTA */}
       <Link
         href="/hotels"
-        className="group inline-flex w-fit items-center gap-3 border-b border-[#071A33]/20 pb-2 text-sm font-semibold text-[#071A33] transition-colors duration-300 hover:border-[#F59E0B] hover:text-[#087E8B]"
+        className="group inline-flex w-fit items-center gap-3 border-b border-[#071A33]/20 pb-2 text-sm font-semibold text-[#071A33] transition-colors duration-300 hover:border-[#F59E0B] hover:text-[#087E8B] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#087E8B]"
       >
         <span>Explore all stays</span>
 
@@ -50,10 +47,11 @@ export default function HotelsStaysHeader() {
           <ArrowUpRight
             size={15}
             strokeWidth={1.8}
+            aria-hidden="true"
             className="transition-transform duration-300 group-hover:rotate-45"
           />
         </span>
       </Link>
-    </motion.div>
+    </div>
   );
 }

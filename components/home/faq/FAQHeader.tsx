@@ -1,23 +1,14 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { MessageCircleQuestion } from "lucide-react";
 
 export default function FAQHeader() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      className="lg:sticky lg:top-28"
-    >
+    <div className="lg:sticky lg:top-28">
       {/* Eyebrow */}
       <div className="mb-6 flex items-center gap-3">
-        <span className="h-px w-10 bg-[#F59E0B]" />
+        <span
+          aria-hidden="true"
+          className="h-px w-10 bg-[#F59E0B]"
+        />
 
         <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#087E8B]">
           Questions, Answered
@@ -25,7 +16,10 @@ export default function FAQHeader() {
       </div>
 
       {/* Icon */}
-      <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-[#087E8B]/15 bg-[#087E8B]/5 text-[#087E8B]">
+      <div
+        aria-hidden="true"
+        className="mb-7 flex h-12 w-12 items-center justify-center rounded-full border border-[#087E8B]/15 bg-[#087E8B]/5 text-[#087E8B]"
+      >
         <MessageCircleQuestion
           size={21}
           strokeWidth={1.5}
@@ -45,23 +39,29 @@ export default function FAQHeader() {
       </h2>
 
       {/* Description */}
-      <p className="mt-6 max-w-md text-base leading-7 text-[#071A33]/60 sm:text-lg sm:leading-8">
+      <p className="mt-6 max-w-md text-base leading-7 text-[#071A33]/75 sm:text-lg sm:leading-8">
         A few things worth knowing before your journey begins. And if you
         still have a question, we are only a conversation away.
       </p>
 
       {/* Small detail */}
       <div className="mt-10 flex items-center gap-4">
-        <span className="font-serif text-4xl font-light text-[#071A33]/10">
+        <span
+          aria-hidden="true"
+          className="font-serif text-4xl font-light text-[#071A33]/30"
+        >
           01
         </span>
 
-        <span className="h-px w-14 bg-[#071A33]/10" />
+        <span
+          aria-hidden="true"
+          className="h-px w-14 bg-[#071A33]/20"
+        />
 
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#071A33]/40">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#071A33]/65">
           Travel, simply considered
         </span>
       </div>
-    </motion.div>
+    </div>
   );
 }

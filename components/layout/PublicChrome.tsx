@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
@@ -10,28 +10,25 @@ interface Props {
   children: ReactNode;
 }
 
-export default function PublicChrome({
-  children,
-}: Props) {
+function PublicChrome({ children }: Props) {
   const pathname = usePathname();
 
- const isAdminRoute =
-  pathname === "/admin" ||
-  pathname.startsWith("/admin/");
+  const isAdminRoute =
+    pathname === "/admin" || pathname.startsWith("/admin/");
 
-const isAuthRoute = pathname === "/login";
+  const isAuthRoute = pathname === "/login";
 
-if (isAdminRoute || isAuthRoute) {
-  return <>{children}</>;
-}
+  if (isAdminRoute || isAuthRoute) {
+    return children;
+  }
 
   return (
     <>
       <Navbar />
-
       {children}
-
       <Footer />
     </>
   );
 }
+
+export default memo(PublicChrome);

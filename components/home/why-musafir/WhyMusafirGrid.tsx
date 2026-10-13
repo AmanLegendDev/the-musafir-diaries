@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import {
   Compass,
   Heart,
@@ -46,16 +43,8 @@ export default function WhyMusafirGrid() {
         const Icon = reason.icon;
 
         return (
-          <motion.article
+          <article
             key={reason.number}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{
-              duration: 0.6,
-              delay: index * 0.08,
-              ease: [0.22, 1, 0.36, 1],
-            }}
             className={[
               "group relative p-6 sm:p-7 lg:p-8",
               index % 2 === 0
@@ -73,7 +62,10 @@ export default function WhyMusafirGrid() {
                 {reason.number}
               </span>
 
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-[#5CC5CE] transition-all duration-300 group-hover:border-[#5CC5CE]/40 group-hover:bg-[#087E8B]/10">
+              <span
+                aria-hidden="true"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-[#5CC5CE] transition-all duration-300 group-hover:border-[#5CC5CE]/40 group-hover:bg-[#087E8B]/10"
+              >
                 <Icon size={18} strokeWidth={1.5} />
               </span>
             </div>
@@ -84,14 +76,17 @@ export default function WhyMusafirGrid() {
                 {reason.title}
               </h3>
 
-              <p className="mt-4 max-w-sm text-sm leading-6 text-white/55">
+              <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
                 {reason.description}
               </p>
             </div>
 
             {/* Bottom accent */}
-            <div className="mt-7 h-px w-8 bg-[#F59E0B]/50 transition-all duration-500 group-hover:w-16" />
-          </motion.article>
+            <div
+              aria-hidden="true"
+              className="mt-7 h-px w-8 bg-[#F59E0B]/50 transition-all duration-500 group-hover:w-16"
+            />
+          </article>
         );
       })}
     </div>

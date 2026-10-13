@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import FeaturedPackageCard from "./FeaturedPackageCard";
 
 export interface HomePackage {
@@ -58,85 +55,32 @@ export default function FeaturedPackagesGrid({
   const secondaryPackages = visiblePackages.slice(1);
 
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{
-        once: true,
-        margin: "-100px",
-      }}
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: 0.12,
-          },
-        },
-      }}
-      className="grid gap-5 lg:grid-cols-12 lg:gap-6"
-    >
-      {/* ─────────────────────────────────────
-          FEATURED PACKAGE
-      ───────────────────────────────────── */}
-
-      <motion.div
-        variants={{
-          hidden: {
-            opacity: 0,
-            y: 30,
-          },
-          visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-              duration: 0.75,
-              ease: [0.22, 1, 0.36, 1],
-            },
-          },
-        }}
-        className="lg:col-span-7"
-      >
+    <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
+      {/* Featured package */}
+      <div className="lg:col-span-7">
         <FeaturedPackageCard
           packageData={featuredPackage}
           featured
-          priority
           position={1}
         />
-      </motion.div>
+      </div>
 
-      {/* ─────────────────────────────────────
-          SECONDARY PACKAGES
-      ───────────────────────────────────── */}
-
+      {/* Secondary packages */}
       {secondaryPackages.length > 0 && (
         <div className="grid gap-5 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1 lg:gap-6">
           {secondaryPackages.map((pkg, index) => (
-            <motion.div
+            <div
               key={pkg._id}
-              variants={{
-                hidden: {
-                  opacity: 0,
-                  y: 30,
-                },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    duration: 0.75,
-                    ease: [0.22, 1, 0.36, 1],
-                  },
-                },
-              }}
               className="min-h-[300px] lg:min-h-0 lg:flex-1"
             >
               <FeaturedPackageCard
                 packageData={pkg}
                 position={index + 2}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

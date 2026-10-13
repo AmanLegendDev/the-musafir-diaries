@@ -1,35 +1,29 @@
-"use client";
-
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+
 import { HERO_DESTINATIONS } from "./heroData";
-
-
 
 export default function HeroDestinationRail() {
   return (
-    <motion.aside
-      initial={{ opacity: 0, x: 35 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{
-        delay: 0.8,
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+    <aside
+      aria-label="Featured destinations"
       className="absolute right-7 top-1/2 z-20 hidden -translate-y-1/2 xl:block"
     >
       <div className="flex flex-col gap-5">
-       {HERO_DESTINATIONS.map((destination) => (
-        <Link
-  key={destination.name}
-  href={destination.href}
-  className="group flex items-center gap-3"
->
+        {HERO_DESTINATIONS.map((destination) => (
+          <Link
+            key={destination.name}
+            href={destination.href}
+            className="group flex items-center gap-3"
+          >
             <div className="relative h-14 w-14 overflow-hidden rounded-full border border-white/50 shadow-lg">
-              <img
+              <Image
                 src={destination.image}
                 alt={`${destination.name} - ${destination.subtitle}`}
+                width={56}
+                height={56}
+                sizes="56px"
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
               />
 
@@ -61,6 +55,6 @@ export default function HeroDestinationRail() {
           </span>
         </Link>
       </div>
-    </motion.aside>
+    </aside>
   );
 }

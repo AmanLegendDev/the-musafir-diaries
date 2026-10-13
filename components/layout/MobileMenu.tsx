@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -92,11 +92,14 @@ export default function MobileMenu({
     className="flex items-center gap-3"
   >
     <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl">
-      <img
-        src="/logo.png"
-        alt="The Musafir Diaries"
-        className="h-full w-full object-contain"
-      />
+   <Image
+  src="/logo.png"
+  alt="The Musafir Diaries"
+  width={48}
+  height={48}
+  sizes="48px"
+  className="h-full w-full object-contain"
+/>
     </div>
 
     <span className="flex flex-col leading-none">

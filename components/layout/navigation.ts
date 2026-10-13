@@ -1,7 +1,7 @@
 import {
   Compass,
   Hotel,
-  Images,
+  
   HelpCircle,
   Info,
   Mail,

@@ -1,8 +1,6 @@
-"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   MapPin,
@@ -45,16 +43,11 @@ export default function DestinationCard({
     <Link
       href={`/destinations/${destination.slug}`}
       aria-label={`Explore ${destination.name}`}
-      className="group block h-full"
+      className="group block h-full rounded-[28px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#087E8B]/40"
     >
-      <motion.article
-        whileHover={{ y: -4 }}
-        transition={{
-          duration: 0.35,
-          ease: [0.22, 1, 0.36, 1],
-        }}
+      <article
         className={[
-          "relative isolate h-full min-h-[390px] overflow-hidden rounded-[28px] bg-[#071A33] shadow-[0_18px_50px_rgba(7,26,51,0.12)]",
+          "relative isolate h-full min-h-[390px] overflow-hidden rounded-[28px] bg-[#071A33] shadow-[0_18px_50px_rgba(7,26,51,0.12)] transition-transform duration-300 ease-out hover:-translate-y-1 motion-reduce:transform-none",
           featured
             ? "sm:min-h-[520px] lg:min-h-[580px]"
             : "sm:min-h-[420px] lg:min-h-[460px]",
@@ -72,10 +65,13 @@ export default function DestinationCard({
                 ? "(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 58vw"
                 : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 42vw"
             }
-            className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+            className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06] motion-reduce:transform-none"
           />
         ) : (
-          <div className="absolute inset-0 bg-[#0D2747]">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[#0D2747]"
+          >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(21,151,199,0.22),transparent_40%)]" />
           </div>
         )}
@@ -89,7 +85,7 @@ export default function DestinationCard({
         {/* TOP ACCENT */}
         <div
           aria-hidden="true"
-          className="absolute left-6 top-6 h-px w-10 bg-[#F59E0B] transition-all duration-500 group-hover:w-16"
+          className="absolute left-6 top-6 h-px w-10 bg-[#F59E0B] transition-[width] duration-500 group-hover:w-16"
         />
 
         {/* DESTINATION NUMBER */}
@@ -104,7 +100,10 @@ export default function DestinationCard({
           {/* LOCATION */}
           {location && (
             <div className="mb-3 flex items-center gap-2 text-white/65">
-              <MapPin className="h-3.5 w-3.5 text-[#1597C7]" />
+              <MapPin
+                aria-hidden="true"
+                className="h-3.5 w-3.5 text-[#1597C7]"
+              />
 
               <span className="text-[10px] font-medium uppercase tracking-[0.18em]">
                 {location}
@@ -167,7 +166,10 @@ export default function DestinationCard({
 
               {hasRating && (
                 <div className="flex items-center gap-1.5">
-                  <Star className="h-3.5 w-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                  <Star
+                    aria-hidden="true"
+                    className="h-3.5 w-3.5 fill-[#F59E0B] text-[#F59E0B]"
+                  />
 
                   <span className="text-xs font-semibold text-white">
                     {destination.rating.toFixed(1)}
@@ -183,9 +185,9 @@ export default function DestinationCard({
             {/* ARROW */}
             <span
               aria-hidden="true"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FAF9F5] text-[#071A33] transition-all duration-500 group-hover:rotate-45 group-hover:bg-[#087E8B] group-hover:text-white"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FAF9F5] text-[#071A33] transition-colors duration-300 group-hover:bg-[#087E8B] group-hover:text-white"
             >
-              <ArrowUpRight className="h-5 w-5" />
+              <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
             </span>
           </div>
         </div>
@@ -195,7 +197,7 @@ export default function DestinationCard({
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-[28px] border border-white/0 transition-colors duration-500 group-hover:border-white/20"
         />
-      </motion.article>
+      </article>
     </Link>
   );
 }

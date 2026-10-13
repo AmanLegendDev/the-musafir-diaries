@@ -1,22 +1,12 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 export default function WhyMusafirHeader() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      className="lg:sticky lg:top-28"
-    >
+    <div className="lg:sticky lg:top-28">
       {/* Eyebrow */}
       <div className="mb-6 flex items-center gap-3">
-        <span className="h-px w-10 bg-[#F59E0B]" />
+        <span
+          aria-hidden="true"
+          className="h-px w-10 bg-[#F59E0B]"
+        />
 
         <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#5CC5CE]">
           Why The Musafir Diaries
@@ -24,7 +14,10 @@ export default function WhyMusafirHeader() {
       </div>
 
       {/* Heading */}
-      <h2 className="font-serif text-4xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-5xl lg:text-6xl">
+      <h2
+        id="why-musafir-heading"
+        className="font-serif text-4xl font-medium leading-[1.05] tracking-[-0.035em] sm:text-5xl lg:text-6xl"
+      >
         Travel should
         <br />
         feel{" "}
@@ -46,6 +39,6 @@ export default function WhyMusafirHeader() {
           “Go somewhere beautiful. Come back with a story.”
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

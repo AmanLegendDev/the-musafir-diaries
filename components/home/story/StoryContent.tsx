@@ -69,10 +69,9 @@ export default function StoryContent() {
             initial={{ opacity: 0, x: -12 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{
-              duration: 0.45,
-              delay: 0.16 + index * 0.07,
-            }}
+           transition={{
+  duration: 0.4,
+}}
             className="group flex gap-4"
           >
             {/* Icon */}

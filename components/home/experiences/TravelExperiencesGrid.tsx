@@ -1,7 +1,5 @@
-"use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import {
   Compass,
   Mountain,
@@ -42,57 +40,16 @@ export default function TravelExperiencesGrid() {
   return (
     <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
       {/* Featured Experience */}
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 30,
-        }}
-        whileInView={{
-          opacity: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-          margin: "-100px",
-        }}
-        transition={{
-          duration: 0.75,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        className="lg:col-span-7"
-      >
-        <ExperienceCard
-          experience={EXPERIENCES[0]}
-          featured
-        />
-      </motion.div>
+      <div className="lg:col-span-7">
+        <ExperienceCard experience={EXPERIENCES[0]} featured />
+      </div>
 
       {/* Secondary Experiences */}
       <div className="grid gap-5 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1 lg:gap-6">
-        {EXPERIENCES.slice(1).map((experience, index) => (
-          <motion.div
-            key={experience.number}
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-              margin: "-100px",
-            }}
-            transition={{
-              duration: 0.75,
-              delay: (index + 1) * 0.12,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            className="min-h-[300px]"
-          >
+        {EXPERIENCES.slice(1).map((experience) => (
+          <div key={experience.number} className="min-h-[300px]">
             <ExperienceCard experience={experience} />
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -126,13 +83,12 @@ function ExperienceCard({
           src={experience.image}
           alt={experience.title}
           fill
-          priority={featured}
           sizes={
             featured
               ? "(max-width: 1024px) 100vw, 58vw"
               : "(max-width: 1024px) 100vw, 42vw"
           }
-          className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+          className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06] motion-reduce:transform-none"
         />
 
         {/* Cinematic overlay */}
@@ -143,14 +99,14 @@ function ExperienceCard({
             featured
               ? "bg-gradient-to-t from-[#071A33] via-[#071A33]/45 to-[#071A33]/5"
               : "bg-gradient-to-t from-[#071A33] via-[#071A33]/55 to-transparent",
-            "group-hover:opacity-95",
+            "group-hover:opacity-95 motion-reduce:transition-none",
           ].join(" ")}
         />
 
         {/* Top accent */}
         <div
           aria-hidden="true"
-          className="absolute left-6 top-6 h-px w-10 bg-[#F59E0B] transition-all duration-500 group-hover:w-16"
+          className="absolute left-6 top-6 h-px w-10 bg-[#F59E0B] transition-[width] duration-500 group-hover:w-16 motion-reduce:transition-none"
         />
 
         {/* Number */}
@@ -160,31 +116,23 @@ function ExperienceCard({
 
         {/* Icon */}
         <div
+          aria-hidden="true"
           className={[
-            "absolute flex items-center justify-center rounded-full border border-white/15 bg-[#071A33]/30 text-white/80 backdrop-blur-md transition-all duration-500",
+            "absolute flex items-center justify-center rounded-full border border-white/15 bg-[#071A33]/30 text-white/80 backdrop-blur-md transition-colors duration-300",
             featured
               ? "left-6 top-16 h-11 w-11 sm:left-8 sm:top-16"
               : "left-6 top-16 h-10 w-10",
-            "group-hover:border-[#087E8B]/70 group-hover:bg-[#087E8B]",
-            "group-hover:text-white",
+            "group-hover:border-[#087E8B]/70 group-hover:bg-[#087E8B] group-hover:text-white motion-reduce:transition-none",
           ].join(" ")}
         >
-          <Icon
-            className={
-              featured
-                ? "h-5 w-5"
-                : "h-4 w-4"
-            }
-          />
+          <Icon className={featured ? "h-5 w-5" : "h-4 w-4"} />
         </div>
 
         {/* Content */}
         <div
           className={[
             "absolute inset-x-0 bottom-0",
-            featured
-              ? "p-6 sm:p-8 lg:p-9"
-              : "p-5 sm:p-6",
+            featured ? "p-6 sm:p-8 lg:p-9" : "p-5 sm:p-6",
           ].join(" ")}
         >
           <p className="mb-3 text-[9px] font-semibold uppercase tracking-[0.22em] text-[#1597C7]">
@@ -217,7 +165,7 @@ function ExperienceCard({
         {/* Hover border */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-[28px] border border-white/0 transition-colors duration-500 group-hover:border-white/20"
+          className="pointer-events-none absolute inset-0 rounded-[28px] border border-white/0 transition-colors duration-500 group-hover:border-white/20 motion-reduce:transition-none"
         />
       </article>
     </div>

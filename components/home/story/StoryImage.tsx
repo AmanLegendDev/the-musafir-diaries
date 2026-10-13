@@ -16,13 +16,14 @@ export default function StoryImage() {
       <div className="absolute -bottom-8 -right-8 h-48 w-48 rounded-full bg-[#F59E0B]/10 blur-3xl" />
 
       <div className="relative overflow-hidden rounded-[36px] shadow-[0_35px_80px_rgba(7,26,51,0.18)]">
-        <Image
-          src={STORY.image}
-          alt="The Musafir Diaries editorial journey"
-          width={700}
-          height={850}
-          className="h-[520px] w-full object-cover"
-        />
+      <Image
+  src={STORY.image}
+  alt="The Musafir Diaries editorial journey"
+  width={700}
+  height={850}
+  sizes="(max-width: 1023px) calc(100vw - 48px), 45vw"
+  className="h-[520px] w-full object-cover"
+/>
       </div>
 
       {/* Floating quote */}
