@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -32,7 +31,7 @@ export default function FooterBrand() {
             Diaries
           </span>
 
-          <span className="mt-2 text-[8px] font-medium uppercase tracking-[0.28em] text-white/35">
+          <span className="mt-2 text-[8px] font-medium uppercase tracking-[0.28em] text-white/50">
             Explore · Experience · Belong
           </span>
         </div>
@@ -59,7 +58,7 @@ export default function FooterBrand() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Instagram"
-          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold text-white/50 transition-all duration-200 hover:border-[#1597C7]/50 hover:bg-[#1597C7]/10 hover:text-[#1597C7]"
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold text-white/65 transition-[color,background-color,border-color] duration-200 hover:border-[#1597C7]/50 hover:bg-[#1597C7]/10 hover:text-[#1597C7]"
         >
           IG
         </Link>

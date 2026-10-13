@@ -5,16 +5,16 @@ import FooterBottom from "./FooterBottom";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#071A33] text-[#FAF9F5]">
+    <footer className="relative isolate overflow-hidden bg-[#071A33] text-[#FAF9F5]">
       {/* Subtle background atmosphere */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-[#087E8B]/10 blur-3xl"
+        className="pointer-events-none absolute -right-40 top-0 hidden h-96 w-96 rounded-full bg-[#087E8B]/10 blur-3xl sm:block"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 bottom-20 h-80 w-80 rounded-full bg-[#1597C7]/5 blur-3xl"
+        className="pointer-events-none absolute -left-40 bottom-20 hidden h-80 w-80 rounded-full bg-[#1597C7]/5 blur-3xl sm:block"
       />
 
       <div className="relative mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-16 xl:px-20">

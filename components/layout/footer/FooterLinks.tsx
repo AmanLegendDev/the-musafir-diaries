@@ -1,5 +1,3 @@
-
-
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -36,13 +34,13 @@ function LinkColumn({
           <li key={link.label}>
             <Link
               href={link.href}
-              className="group inline-flex items-center gap-2 text-sm text-white/55 transition-colors duration-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#1597C7]/40"
+              className="group inline-flex items-center gap-2 text-sm text-white/65 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1597C7]/60"
             >
               <span>{link.label}</span>
 
               <ArrowUpRight
                 aria-hidden="true"
-                className="h-3.5 w-3.5 -translate-x-1 -translate-y-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+                className="h-3.5 w-3.5 -translate-x-1 -translate-y-1 opacity-0 transition-[transform,opacity] duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
               />
             </Link>
           </li>
@@ -55,15 +53,8 @@ function LinkColumn({
 export default function FooterLinks() {
   return (
     <div className="grid grid-cols-2 gap-10">
-      <LinkColumn
-        title="Explore"
-        links={EXPLORE_LINKS}
-      />
-
-      <LinkColumn
-        title="The Journey"
-        links={COMPANY_LINKS}
-      />
+      <LinkColumn title="Explore" links={EXPLORE_LINKS} />
+      <LinkColumn title="The Journey" links={COMPANY_LINKS} />
     </div>
   );
 }
