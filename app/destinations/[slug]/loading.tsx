@@ -1,11 +1,11 @@
 import {
   Camera,
-  MapPin,
+  
 } from "lucide-react";
 
 export default function Loading() {
   return (
-    <main className="animate-pulse">
+   <main className="min-h-[100svh] animate-pulse">
 
       {/* Breadcrumb */}
 
