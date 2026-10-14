@@ -1,7 +1,7 @@
 export default function Loading() {
   return (
     <main
-      className="flex min-h-[70vh] items-center justify-center bg-[#FAF9F5] px-6"
+      className="flex min-h-[100svh] items-center justify-center bg-[#FAF9F5] px-6"
       aria-busy="true"
       aria-live="polite"
       aria-label="Loading page"
