@@ -39,6 +39,13 @@ export const NAV_ITEMS = [
     hasMegaMenu: false,
   },
 
+  {
+    label: "Reviews",
+    href: "/testimonials",
+    icon: Hotel,
+    hasMegaMenu: false,
+  },
+
   
   {
     label: "Blogs",

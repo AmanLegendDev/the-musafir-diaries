@@ -14,6 +14,7 @@ import {
   Mail,
   Package,
   X,
+   Map,
 } from "lucide-react";
 import { NAV_ITEMS } from "./navigation";
 
@@ -34,6 +35,7 @@ const ICONS = {
   About: Info,
   Contact: Mail,
 };
+const DEFAULT_ICON = Compass;
 
 export default function MobileMenu({
   open,
@@ -139,9 +141,8 @@ export default function MobileMenu({
                         );
 
                   const Icon =
-                    ICONS[
-                      item.label as keyof typeof ICONS
-                    ];
+  ICONS[item.label as keyof typeof ICONS] ??
+  DEFAULT_ICON;
 
                   return (
                     <motion.li
