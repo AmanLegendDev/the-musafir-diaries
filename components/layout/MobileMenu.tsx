@@ -141,8 +141,8 @@ export default function MobileMenu({
                         );
 
                   const Icon =
-  ICONS[item.label as keyof typeof ICONS] ??
-  DEFAULT_ICON;
+         ICONS[item.label as keyof typeof ICONS] ??
+          DEFAULT_ICON;
 
                   return (
                     <motion.li

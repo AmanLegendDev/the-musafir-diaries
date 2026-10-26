@@ -12,6 +12,8 @@ import {
   getFeaturedBlog,
   getPublishedBlogs,
 } from "@/lib/queries/blog.queries";
+// Revalidate the blog listing page at least once every hour.
+export const revalidate = 3600;
 
 /* =========================================================
    SITE CONFIG
