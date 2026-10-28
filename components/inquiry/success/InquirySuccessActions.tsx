@@ -43,7 +43,7 @@ export default function InquirySuccessActions({
           </Link>
 
           <Link
-            href="/blog"
+            href="/blogs"
             className="group rounded-[1.5rem] border border-[#071A33]/8 bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-[0_15px_40px_rgba(7,26,51,0.07)]"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFF4DD] text-[#D88900]">

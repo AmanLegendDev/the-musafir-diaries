@@ -28,7 +28,7 @@ export default function BlogBreadcrumb({
         <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#071A33]/20" />
 
         <Link
-          href="/blog"
+          href="/blogs"
           className="shrink-0 text-xs font-medium text-[#071A33]/45 transition hover:text-[#087E8B]"
         >
           Journal

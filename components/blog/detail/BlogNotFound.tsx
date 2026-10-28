@@ -24,7 +24,7 @@ export default function BlogNotFound() {
 
         <div className="mt-9 flex flex-wrap justify-center gap-3">
           <Link
-            href="/blog"
+            href="/blogs"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#071A33] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0D2747]"
           >
             <ArrowLeft className="h-4 w-4" />

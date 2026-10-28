@@ -64,7 +64,7 @@ export default function RelatedBlogs({
           </div>
 
           <Link
-            href="/blog"
+            href="/blogs"
             className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#071A33] transition hover:text-[#087E8B]"
           >
             View all stories
