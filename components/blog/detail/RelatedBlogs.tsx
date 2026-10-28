@@ -82,7 +82,7 @@ export default function RelatedBlogs({
                 className="group"
               >
                 <Link
-                  href={`/blog/${blog.slug}`}
+                  href={`/blogs/${blog.slug}`}
                   aria-label={`Read ${blog.title}`}
                 >
                   <div className="relative aspect-[16/10] overflow-hidden rounded-[1.5rem] bg-[#071A33]/5">
